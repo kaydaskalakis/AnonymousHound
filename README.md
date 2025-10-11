@@ -260,6 +260,7 @@ This initial alpha release includes comprehensive anonymization capabilities wit
 - ✅ **Well-Known Domains** - Preserves security-relevant domains like NT AUTHORITY
 
 ### Technical Improvements
+- ✅ **Distinguished Name Consistency** - DN leaf components match object names across all types (e.g., `CN=USER_{token}` matches `USER_{token}@domain`)
 - ✅ **Regex Pattern Matching** - Flexible group recognition using configurable regex patterns
 - ✅ **Safe JSON Handling** - Automatic depth adjustment for deeply nested structures
 - ✅ **Memory Efficient** - Streams large files without loading entire datasets into memory

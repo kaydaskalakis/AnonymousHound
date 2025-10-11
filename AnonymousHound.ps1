@@ -61,6 +61,7 @@
 #   * PKI: containers, certtemplates, ntauthstores, aiacas, rootcas, enterprisecas
 # - Maintains consistent domain and OU mappings across all file types
 # - Preserves well-known security principals and structure
+# - Ensures DN consistency: leaf CN/OU components match object names across all types
 # - Anonymizes PII: names, emails, descriptions, certificate thumbprints
 # - Idempotent: safely skips already anonymized files
 #
@@ -827,6 +828,14 @@ function Get-AnonymizedDomain {
         return $Domain
     }
 
+    # Skip bare TLDs - they're not qualified domains
+    # Common TLDs: LOCAL, COM, NET, ORG, CORP, etc.
+    $commonTLDs = @('LOCAL', 'COM', 'NET', 'ORG', 'CORP', 'GOV', 'EDU', 'MIL')
+    if ($Domain -in $commonTLDs) {
+        $script:PreservedItems.Domains[$Domain] = "Bare TLD (not a qualified domain)"
+        return $Domain
+    }
+
     # Check for well-known domains
     if (Test-WellKnownDomain $Domain) {
         $script:PreservedItems.Domains[$Domain] = "Well-known domain"
@@ -850,6 +859,88 @@ function Get-AnonymizedDomain {
     # Case-insensitive lookup using the dictionary
     if ($script:DomainMapping.ContainsKey($Domain)) {
         return $script:DomainMapping[$Domain]
+    }
+
+    # Special handling for .LOCAL domains and bare base domain names
+    # For .LOCAL: Map the base domain (label before .LOCAL) while preserving subdomains
+    # For bare names: Check if BASE.* already exists, otherwise treat as BASE.LOCAL
+    # Examples:
+    #   ESSOS or ESSOS.LOCAL            -> DOMAIN1.LOCAL
+    #   NORTH.SEVENKINGDOMS.LOCAL       -> NORTH.DOMAIN2.LOCAL
+    #   PHANTOM, PHANTOM.CORP, PHANTOM.LOCAL -> all map to same DOMAIN#.LOCAL
+    $isLocalDomain = $Domain -match '^(.+)\.LOCAL$'
+    $isBareBase = $Domain -notmatch '\.'
+
+    if ($isLocalDomain -or $isBareBase) {
+        if ($isLocalDomain) {
+            $beforeLocal = $matches[1]
+            # Split on dots to identify subdomains vs base domain
+            $parts = $beforeLocal -split '\.'
+            if ($parts.Count -eq 1) {
+                $baseDomain = $parts[0]
+                $subdomain = ""
+            } else {
+                # Base domain is the last part, everything before is subdomains
+                $baseDomain = $parts[-1]
+                $subdomain = ($parts[0..($parts.Count - 2)] -join '.') + '.'
+            }
+        } else {
+            # Bare base domain (no dots)
+            $baseDomain = $Domain
+            $subdomain = ""
+        }
+
+        # Check if we already have a mapping for this base domain with any TLD
+        # Priority: BASE.LOCAL, BASE, BASE.CORP, BASE.COM, etc.
+        $baseDotLocal = "$baseDomain.LOCAL"
+        $baseAnonDomain = $null
+
+        if ($script:DomainMapping.ContainsKey($baseDotLocal)) {
+            $baseAnonDomain = $script:DomainMapping[$baseDotLocal]
+        } elseif ($script:DomainMapping.ContainsKey($baseDomain)) {
+            $baseAnonDomain = $script:DomainMapping[$baseDomain]
+        } else {
+            # Check if BASE.something already exists (e.g., PHANTOM.CORP when we see PHANTOM)
+            $existingMapping = $script:DomainMapping.Keys | Where-Object {
+                $_ -match "^$baseDomain\."
+            } | Select-Object -First 1
+
+            if ($existingMapping) {
+                $baseAnonDomain = $script:DomainMapping[$existingMapping]
+                Write-Verbose "Found existing mapping for $baseDomain via $existingMapping -> $baseAnonDomain"
+            }
+        }
+
+        if (-not $baseAnonDomain) {
+            # Create new mapping for BASE and BASE.LOCAL
+            $script:domainCounter++
+            $baseAnonDomain = "DOMAIN$($script:domainCounter).LOCAL"
+            $script:DomainMapping[$baseDomain] = $baseAnonDomain
+            $script:DomainMapping[$baseDotLocal] = $baseAnonDomain
+            Write-Verbose "Mapped base domain: $baseDomain / $baseDotLocal -> $baseAnonDomain"
+        } else {
+            # Ensure BASE and BASE.LOCAL both point to the same mapping
+            if (-not $script:DomainMapping.ContainsKey($baseDomain)) {
+                $script:DomainMapping[$baseDomain] = $baseAnonDomain
+            }
+            if (-not $script:DomainMapping.ContainsKey($baseDotLocal)) {
+                $script:DomainMapping[$baseDotLocal] = $baseAnonDomain
+            }
+        }
+
+        # Construct final anonymized domain
+        if ($subdomain) {
+            # Has subdomains: NORTH.SEVENKINGDOMS.LOCAL -> NORTH.DOMAIN#.LOCAL
+            $baseAnonDomainNoTld = $baseAnonDomain -replace '\.LOCAL$', ''
+            $anonDomain = "$subdomain$baseAnonDomainNoTld.LOCAL"
+        } else {
+            # No subdomains: ESSOS or ESSOS.LOCAL -> DOMAIN#.LOCAL
+            $anonDomain = $baseAnonDomain
+        }
+
+        $script:DomainMapping[$Domain] = $anonDomain
+        Write-Verbose "Mapped .LOCAL domain: $Domain -> $anonDomain"
+        return $anonDomain
     }
 
     # Preserve forest hierarchy: if this is a child domain, inherit parent's anonymized root
@@ -1632,7 +1723,21 @@ function Get-AnonymizedUser {
             $script:PreservedItems.Users[$User.Properties.samaccountname] = "Well-known user account"
         }
 
-        if (-not $isWellKnownUser) {
+        if ($isWellKnownUser) {
+            # Well-known users: preserve the principal name but anonymize the domain
+            if ($User.Properties.name -and $User.Properties.name -match '^(.+?)@(.+)$') {
+                $principalPart = $matches[1]
+                $domainPart = $matches[2]
+                $anonDomain = Get-AnonymizedDomain $domainPart
+                $anonymizedUser.Properties.name = "$principalPart@$anonDomain".ToUpper()
+            }
+            # sAMAccountName, displayname preserved as-is for well-known users
+            # DN gets anonymized via Get-AnonymizedOuPath for domain parts
+            if ($User.Properties.distinguishedname) {
+                $anonymizedUser.Properties.distinguishedname = Get-AnonymizedOuPath $User.Properties.distinguishedname
+            }
+        } else {
+            # Regular users: fully anonymize
             # Build a single alias token to use for UPN, displayName, and DN leaf CN
             # This makes the anonymized data much more readable and consistent
             $aliasToken = Get-RandomHex $script:HEX_LENGTH_LONG
@@ -1683,8 +1788,8 @@ function Get-AnonymizedUser {
             if ($User.Properties.distinguishedname) {
                 # First anonymize the full DN (OU/DC and any non-leaf CNs)
                 $anonDN = Get-AnonymizedOuPath $User.Properties.distinguishedname
-                # Then replace ONLY the leaf CN to align with UPN/displayName
-                $anonymizedUser.Properties.distinguishedname = Set-DNLeafCN -DN $anonDN -NewLeafCN ("CN_{0}" -f $aliasToken)
+                # Then replace ONLY the leaf CN to align with UPN/displayName (USER_{token})
+                $anonymizedUser.Properties.distinguishedname = Set-DNLeafCN -DN $anonDN -NewLeafCN ("USER_{0}" -f $aliasToken)
             }
 
             # Email anonymization - correlate with domain
@@ -1760,9 +1865,29 @@ function Get-AnonymizedGroup {
             $isExchangeGroup = $true
         }
 
-        if (-not $isWellKnownGroup -and -not $isExchangeGroup) {
+        if ($isWellKnownGroup) {
+            # Well-known groups: preserve the principal name but anonymize the domain
+            if ($Group.Properties.name -and $Group.Properties.name -match '^(.+?)@(.+)$') {
+                $principalPart = $matches[1]
+                $domainPart = $matches[2]
+                $anonDomain = Get-AnonymizedDomain $domainPart
+                $anonymizedGroup.Properties.name = "$principalPart@$anonDomain".ToUpper()
+            }
+            # sAMAccountName and DN are preserved as-is for well-known groups
+            # (they get anonymized via Get-AnonymizedOuPath for DN domain parts)
+            if ($Group.Properties.distinguishedname) {
+                $anonymizedGroup.Properties.distinguishedname = Get-AnonymizedOuPath $Group.Properties.distinguishedname
+            }
+        } elseif ($isExchangeGroup) {
+            # Keep Exchange/special groups format (any group starting with $)
+            # Examples: $D31000-NDAG01AAG0, $A31000-..., $xxxxxxxx-xxxx-xxxx...
+            $anonSAM = '$' + (Get-RandomHex $script:HEX_LENGTH_MEDIUM) + '-' + (Get-RandomHex $script:HEX_LENGTH_XLONG)
+            $anonymizedGroup.Properties.samaccountname = $anonSAM
+        } else {
+            # Regular groups: fully anonymize
             # Build a single alias token for name, sAMAccountName, and DN leaf CN
             $aliasToken = Get-RandomHex $script:HEX_LENGTH_LONG
+            $groupAlias = "GROUP_$aliasToken"
 
             # Group name (UPN format)
             if ($Group.Properties.name) {
@@ -1770,9 +1895,9 @@ function Get-AnonymizedGroup {
                 if ($origName -match '^(.+?)@(.+)$') {
                     $domainPart = $matches[2]
                     $anonDomain = Get-AnonymizedDomain $domainPart
-                    $anonymizedGroup.Properties.name = ("GROUP_{0}@{1}" -f $aliasToken, $anonDomain).ToUpper()
+                    $anonymizedGroup.Properties.name = "$groupAlias@$anonDomain".ToUpper()
                 } else {
-                    $anonymizedGroup.Properties.name = "GROUP_" + $aliasToken
+                    $anonymizedGroup.Properties.name = $groupAlias
                 }
             }
 
@@ -1785,18 +1910,10 @@ function Get-AnonymizedGroup {
                 }
             }
 
-            # distinguishedName - anonymize OU/DC parts, then force leaf CN to match alias
+            # distinguishedName - force leaf CN to match group alias (GROUP_{token})
             if ($Group.Properties.distinguishedname) {
-                # First anonymize the full DN (OU/DC and any non-leaf CNs)
-                $anonDN = Get-AnonymizedOuPath $Group.Properties.distinguishedname
-                # Then replace ONLY the leaf CN to align with name/sAMAccountName
-                $anonymizedGroup.Properties.distinguishedname = Set-DNLeafCN -DN $anonDN -NewLeafCN ("CN_{0}" -f $aliasToken)
+                $anonymizedGroup.Properties.distinguishedname = Set-DNLeafCN -DN $anonymizedGroup.Properties.distinguishedname -NewLeafCN $groupAlias
             }
-        } elseif ($isExchangeGroup) {
-            # Keep Exchange/special groups format (any group starting with $)
-            # Examples: $D31000-NDAG01AAG0, $A31000-..., $xxxxxxxx-xxxx-xxxx...
-            $anonSAM = '$' + (Get-RandomHex $script:HEX_LENGTH_MEDIUM) + '-' + (Get-RandomHex $script:HEX_LENGTH_XLONG)
-            $anonymizedGroup.Properties.samaccountname = $anonSAM
         }
 
         # Description
@@ -2164,11 +2281,14 @@ function Get-AnonymizedGPO {
             }
         }
 
-        # Distinguished name with consistent GUID (case-insensitive replace)
+        # Distinguished name with consistent GUID
+        # GPO DNs have format: CN={GUID},CN=POLICIES,CN=SYSTEM,DC=...
+        # We need to preserve the {GUID} format in the leaf CN
         if ($GPO.Properties.distinguishedname -and $gpoGuid) {
-            $dn = $GPO.Properties.distinguishedname
-            $anonDN = $dn -replace '(?i)\{[A-F0-9\-]+\}', "{$gpoGuid}"
-            $anonymizedGPO.Properties.distinguishedname = Get-AnonymizedOuPath $anonDN
+            # First anonymize the full DN (this will anonymize DC parts and other CNs)
+            $anonDN = Get-AnonymizedOuPath $GPO.Properties.distinguishedname
+            # Then force the leaf CN to be the anonymized GUID in braces
+            $anonymizedGPO.Properties.distinguishedname = Set-DNLeafCN -DN $anonDN -NewLeafCN "{$gpoGuid}"
         }
 
         # GPC Path with consistent GUID (case-insensitive)
@@ -2290,6 +2410,7 @@ function Get-AnonymizedContainer {
         Process-StandardDomainProperties -Object $Container -AnonymizedObject $anonymizedContainer -OriginalDomain $originalDomain
 
         # Container name - preserve well-known containers (USERS, COMPUTERS, SYSTEM, etc.)
+        $containerAlias = $null
         if ($Container.Properties.name) {
             $origName = $Container.Properties.name
             if ($origName -match '^(.+?)@(.+)$') {
@@ -2318,14 +2439,19 @@ function Get-AnonymizedContainer {
                     if (-not $script:ContainerMapping.ContainsKey($containerPart)) {
                         $script:ContainerMapping[$containerPart] = $script:ANONYMIZED_PREFIX_OU + (Get-RandomHex $script:HEX_LENGTH_LONG)
                     }
-                    $containerPart = $script:ContainerMapping[$containerPart]
+                    $containerAlias = $script:ContainerMapping[$containerPart]
                 } else {
-                    $containerPart = $containerPart.ToUpper()
+                    $containerAlias = $containerPart.ToUpper()
                 }
 
                 $anonDomain = Get-AnonymizedDomain $domainPart
-                $anonymizedContainer.Properties.name = "$containerPart@$anonDomain".ToUpper()
+                $anonymizedContainer.Properties.name = "$containerAlias@$anonDomain".ToUpper()
             }
+        }
+
+        # Distinguished name - force leaf CN to match container name
+        if ($Container.Properties.distinguishedname -and $containerAlias) {
+            $anonymizedContainer.Properties.distinguishedname = Set-DNLeafCN -DN $anonymizedContainer.Properties.distinguishedname -NewLeafCN $containerAlias
         }
 
         # Object identifier (GUID)
@@ -2397,12 +2523,13 @@ function Get-AnonymizedCertTemplate {
         if (-not $isWellKnown) {
             # Build a single alias token for name, displayname, and DN leaf CN
             $aliasToken = Get-RandomHex $script:HEX_LENGTH_LONG
+            $templateAlias = "CERTTEMPLATE_$aliasToken"
 
             # Certificate template name
             if ($CertTemplate.Properties.name -and $CertTemplate.Properties.name -match '^(.+?)@(.+)$') {
                 $domainPart = $matches[2]
                 $anonDomain = Get-AnonymizedDomain $domainPart
-                $anonymizedCertTemplate.Properties.name = ("CERTTEMPLATE_{0}@{1}" -f $aliasToken, $anonDomain).ToUpper()
+                $anonymizedCertTemplate.Properties.name = "$templateAlias@$anonDomain".ToUpper()
             }
 
             # Display name - use same alias token
@@ -2410,20 +2537,23 @@ function Get-AnonymizedCertTemplate {
                 $anonymizedCertTemplate.Properties.displayname = "Certificate Template " + $aliasToken
             }
 
-            # distinguishedName - anonymize OU/DC parts, then force leaf CN to match alias
+            # distinguishedName - force leaf CN to match full template alias (with CERTTEMPLATE_ prefix)
             if ($CertTemplate.Properties.distinguishedname) {
-                # First anonymize the full DN (OU/DC and any non-leaf CNs)
-                $anonDN = Get-AnonymizedOuPath $CertTemplate.Properties.distinguishedname
-                # Then replace ONLY the leaf CN to align with name/displayname
-                $anonymizedCertTemplate.Properties.distinguishedname = Set-DNLeafCN -DN $anonDN -NewLeafCN $aliasToken
+                $anonymizedCertTemplate.Properties.distinguishedname = Set-DNLeafCN -DN $anonymizedCertTemplate.Properties.distinguishedname -NewLeafCN $templateAlias
             }
         } else {
             # Preserve well-known template names
+            $templatePart = $null
             if ($CertTemplate.Properties.name -and $CertTemplate.Properties.name -match '^(.+?)@(.+)$') {
                 $templatePart = $matches[1].ToUpper()
                 $domainPart = $matches[2]
                 $anonDomain = Get-AnonymizedDomain $domainPart
                 $anonymizedCertTemplate.Properties.name = "$templatePart@$anonDomain".ToUpper()
+            }
+
+            # Distinguished name - force leaf CN to match the well-known template name
+            if ($CertTemplate.Properties.distinguishedname -and $templatePart) {
+                $anonymizedCertTemplate.Properties.distinguishedname = Set-DNLeafCN -DN $anonymizedCertTemplate.Properties.distinguishedname -NewLeafCN $templatePart
             }
         }
 
@@ -2586,28 +2716,36 @@ function Get-AnonymizedAIACA {
         # Track original domain for SID mapping
         $originalDomain = $AIACA.Properties.domain
 
+        # Generate CA alias token FIRST (before DN processing) for consistency
+        $caAlias = $null
+        if ($AIACA.Properties.name -and $AIACA.Properties.name -match '^(.+?)@(.+)$') {
+            $caNamePart = $matches[1]
+
+            # Anonymize CA name and store for DN leaf CN
+            if (-not $script:AIACANameMapping) {
+                $script:AIACANameMapping = @{}
+            }
+            if (-not $script:AIACANameMapping.ContainsKey($caNamePart)) {
+                $script:AIACANameMapping[$caNamePart] = "AIACA_" + (Get-RandomHex $script:HEX_LENGTH_LONG)
+            }
+            $caAlias = $script:AIACANameMapping[$caNamePart]
+        }
+
         # Process standard properties (domain, domainsid, distinguishedname, whencreated)
         Process-StandardDomainProperties -Object $AIACA -AnonymizedObject $anonymizedAIACA -OriginalDomain $originalDomain
 
-        # AIACA name - typically includes CA hostname/name and domain
-        if ($AIACA.Properties.name) {
-            $origName = $AIACA.Properties.name
-            if ($origName -match '^(.+?)@(.+)$') {
-                $caNamePart = $matches[1]
-                $domainPart = $matches[2]
+        # AIACA name - use the pre-generated alias
+        if ($AIACA.Properties.name -and $AIACA.Properties.name -match '^(.+?)@(.+)$') {
+            $domainPart = $matches[2]
+            $anonDomain = Get-AnonymizedDomain $domainPart
+            $anonymizedAIACA.Properties.name = "$caAlias@$anonDomain".ToUpper()
+        }
 
-                # Anonymize CA name
-                if (-not $script:AIACANameMapping) {
-                    $script:AIACANameMapping = @{}
-                }
-                if (-not $script:AIACANameMapping.ContainsKey($caNamePart)) {
-                    $script:AIACANameMapping[$caNamePart] = "AIACA_" + (Get-RandomHex $script:HEX_LENGTH_LONG)
-                }
-                $caNamePart = $script:AIACANameMapping[$caNamePart]
-
-                $anonDomain = Get-AnonymizedDomain $domainPart
-                $anonymizedAIACA.Properties.name = "$caNamePart@$anonDomain".ToUpper()
-            }
+        # Distinguished name - force leaf CN to match CA alias
+        if ($AIACA.Properties.distinguishedname -and $caAlias) {
+            # The DN was already anonymized by Process-StandardDomainProperties
+            # Now replace ONLY the leaf CN to align with CA name
+            $anonymizedAIACA.Properties.distinguishedname = Set-DNLeafCN -DN $anonymizedAIACA.Properties.distinguishedname -NewLeafCN $caAlias
         }
 
         # Certificate thumbprint - anonymize (SHA1 hash)
