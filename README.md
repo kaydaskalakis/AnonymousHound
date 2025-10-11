@@ -126,6 +126,12 @@ Think of it like a witness protection program for data:
 
 ## Quick Start
 
+### Auto-discovery mode (easiest - no parameters needed):
+```powershell
+.\AnonymousHound.ps1
+```
+Scans the current directory and subdirectories for BloodHound JSON files, then presents an interactive menu to select what to process.
+
 ### Process an entire BloodHound collection:
 ```powershell
 .\AnonymousHound.ps1 -InputDirectory "C:\BloodHound\Data" -OutputDirectory "C:\BloodHound\Anonymized"
@@ -215,6 +221,13 @@ Found a bug? Have a suggestion? Contributions are welcome! This is an ALPHA rele
 **Kay Daskalakis**
 
 GitHub: [https://github.com/kaydaskalakis](https://github.com/kaydaskalakis)
+
+## Credits
+
+Special thanks to:
+- **My Family** - For bearing with me during development
+- **SpecterOps** - For being a super cool company to work for
+- **Eleysia Friend** - For inspiring this project and being super patient during my Gulliver's travels
 
 ---
 
