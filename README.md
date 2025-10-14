@@ -5,12 +5,8 @@ Mask the trail, keep the scent. AnonymousHound anonymizes sensitive data within 
 <img width="896" height="1152" alt="AnonymousHound" src="https://github.com/user-attachments/assets/1c04d92c-3dda-4299-967f-b9fe0b4d5f17" />
 
 He is super anonymous.
-He is...
 
-**Version:** 0.2 BETA
-**Author:** Kay Daskalakis
-**GitHub:** [https://github.com/kaydaskalakis](https://github.com/kaydaskalakis)
-**LinkedIn:** [https://www.linkedin.com/in/kdaskalakis](https://www.linkedin.com/in/kdaskalakis)
+He is...
 ---
 
 ## Table of Contents
@@ -31,6 +27,10 @@ He is...
 - [Credits](#credits)
 
 ---
+**Version:** 0.2 BETA
+**Author:** Kay Daskalakis
+**GitHub:** [https://github.com/kaydaskalakis](https://github.com/kaydaskalakis)
+**LinkedIn:** [https://www.linkedin.com/in/kdaskalakis](https://www.linkedin.com/in/kdaskalakis)
 
 ## What is AnonymousHound?
 
