@@ -28,8 +28,11 @@ He is...
 
 ---
 **Version:** 0.2 BETA
+
 **Author:** Kay Daskalakis
+
 **GitHub:** [https://github.com/kaydaskalakis](https://github.com/kaydaskalakis)
+
 **LinkedIn:** [https://www.linkedin.com/in/kdaskalakis](https://www.linkedin.com/in/kdaskalakis)
 
 ## What is AnonymousHound?
