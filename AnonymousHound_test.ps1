@@ -9,7 +9,6 @@
 #                             |___/
 #
 #                    🎭 The BloodHound that leaves no trace 🎭
-
 #
 #---:::..     .:-.       ...   .:-..    :=.....:. .:..:.............:-::..              ........  .....:::::...
 #--:::::..    .::.        ... .--:.    .:......:.-*=:+-:::.::::-=-:.---=-:...  .......  ............:..........
@@ -45,7 +44,7 @@
 #                   (Sniffing out attack paths incognito)
 #
 # ============================================================================
-# AnonymousHound v0.2 BETA
+# AnonymousHound v0.1 ALPHA
 # Author: Kay Daskalakis
 # GitHub: https://github.com/kaydaskalakis
 # ============================================================================
@@ -91,16 +90,7 @@
 #   .\AnonymousHound.ps1 -InputDirectory "C:\BH\Data" -OutputDirectory "C:\BH\Out" -RandomizeTimestamps
 # ============================================================================
 
-# PSScriptAnalyzer Suppressions - These are intentional design choices:
-# - PSAvoidUsingWriteHost: This is a user-facing CLI tool where colored console output enhances UX
-# - PSUseBOMForUnicodeEncodedFile: UTF-8 without BOM is the standard for cross-platform PowerShell
-# - PSUseSingularNouns: Plural nouns like "Mappings" and "Properties" accurately describe collections
-
-[CmdletBinding(SupportsShouldProcess=$true)]
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '')]
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseBOMForUnicodeEncodedFile', '')]
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '')]
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification='Variables assigned from interactive mode are used by script parameters')]
+[CmdletBinding()]
 param(
     # Directory containing BloodHound JSON files to anonymize
     # Use this for batch processing multiple files at once
@@ -128,18 +118,7 @@ param(
 
     # Optional: Keep original OS version strings
     # Useful when OS versions are relevant to the analysis
-    [switch]$PreserveOSVersions,
-
-    # Optional: Enable parallel processing for faster performance (FUTURE FEATURE)
-    # Currently shows a warning and uses optimized sequential processing
-    # Note: Parallel mode requires architecture changes for thread-safe hashtable access
-    # Sequential mode includes memory optimizations: hashtable pre-allocation, throughput metrics
-    [switch]$EnableParallel,
-
-    # Optional: Number of parallel threads (reserved for future parallel implementation)
-    # Currently not used; falls back to optimized sequential processing
-    [ValidateRange(1, 16)]
-    [int]$ThrottleLimit = 0
+    [switch]$PreserveOSVersions
 )
 
 #region Constants and Configuration
@@ -1102,862 +1081,6 @@ function Test-IsWellKnownByContext {
     }
 
     return $false
-}
-
-function Show-AnonymizationSummary {
-    <#
-    .SYNOPSIS
-    Displays a visually formatted summary of the anonymization process.
-
-    .DESCRIPTION
-    Shows key metrics, statistics, and outcomes in an easy-to-read format.
-
-    .PARAMETER Statistics
-    Hashtable containing anonymization statistics
-
-    .PARAMETER Duration
-    TimeSpan representing total processing time
-
-    .PARAMETER OutputPath
-    Path to the output directory
-
-    .EXAMPLE
-    Show-AnonymizationSummary -Statistics $stats -Duration $elapsed -OutputPath $outputDir
-    #>
-    [CmdletBinding()]
-    param(
-        [hashtable]$Statistics,
-        [timespan]$Duration,
-        [string]$OutputPath,
-        [string]$ZipPath
-    )
-
-    Write-Host "`n"
-    Write-Host "╔═══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "║              🎉 ANONYMIZATION COMPLETE ✓                         ║" -ForegroundColor Cyan
-    Write-Host "╠═══════════════════════════════════════════════════════════════════╣" -ForegroundColor Cyan
-    Write-Host "║                                                                   ║" -ForegroundColor Cyan
-
-    # Calculate totals
-    $totalAnonymized = 0
-    $totalPreserved = 0
-
-    if ($Statistics.Users) { $totalAnonymized += $Statistics.Users }
-    if ($Statistics.Groups) { $totalAnonymized += $Statistics.Groups }
-    if ($Statistics.Computers) { $totalAnonymized += $Statistics.Computers }
-    if ($Statistics.Domains) { $totalAnonymized += $Statistics.Domains }
-    if ($Statistics.CNs) { $totalAnonymized += $Statistics.CNs }
-    if ($Statistics.CNsPreserved) { $totalPreserved += $Statistics.CNsPreserved }
-
-    $successRate = if (($totalAnonymized + $totalPreserved) -gt 0) {
-        [Math]::Round(($totalAnonymized / ($totalAnonymized + $totalPreserved)) * 100, 1)
-    } else { 0 }
-
-    # Format duration
-    $durationStr = if ($Duration.TotalHours -ge 1) {
-        "{0:00}h {1:00}m {2:00}s" -f [Math]::Floor($Duration.TotalHours), $Duration.Minutes, $Duration.Seconds
-    } elseif ($Duration.TotalMinutes -ge 1) {
-        "{0:00}m {1:00}s" -f $Duration.Minutes, $Duration.Seconds
-    } else {
-        "{0:00}s" -f $Duration.Seconds
-    }
-
-    Write-Host "║  ⏱️  Processing Time:      " -NoNewline -ForegroundColor White
-    Write-Host "$durationStr" -NoNewline -ForegroundColor Green
-    Write-Host (" " * (35 - $durationStr.Length)) -NoNewline
-    Write-Host "║" -ForegroundColor Cyan
-
-    Write-Host "║  📊 Success Rate:          " -NoNewline -ForegroundColor White
-    Write-Host "$successRate%" -NoNewline -ForegroundColor Green
-    Write-Host (" " * (35 - "$successRate%".Length)) -NoNewline
-    Write-Host "║" -ForegroundColor Cyan
-
-    Write-Host "║  ✅ Objects Anonymized:    " -NoNewline -ForegroundColor White
-    Write-Host "$totalAnonymized" -NoNewline -ForegroundColor Yellow
-    Write-Host (" " * (35 - "$totalAnonymized".Length)) -NoNewline
-    Write-Host "║" -ForegroundColor Cyan
-
-    Write-Host "║  🛡️  Objects Preserved:     " -NoNewline -ForegroundColor White
-    Write-Host "$totalPreserved" -NoNewline -ForegroundColor Magenta
-    Write-Host (" " * (35 - "$totalPreserved".Length)) -NoNewline
-    Write-Host "║" -ForegroundColor Cyan
-
-    Write-Host "║                                                                   ║" -ForegroundColor Cyan
-    Write-Host "╠═══════════════════════════════════════════════════════════════════╣" -ForegroundColor Cyan
-    Write-Host "║  BREAKDOWN BY TYPE:                                               ║" -ForegroundColor Cyan
-    Write-Host "║                                                                   ║" -ForegroundColor Cyan
-
-    if ($Statistics.Domains) {
-        $line = "║  🌐 Domains:       {0,-10}" -f $Statistics.Domains
-        Write-Host $line -NoNewline -ForegroundColor White
-        Write-Host (" " * (51 - $line.Length)) -NoNewline
-        Write-Host "║" -ForegroundColor Cyan
-    }
-
-    if ($Statistics.Users) {
-        $line = "║  👤 Users:         {0,-10}" -f $Statistics.Users
-        Write-Host $line -NoNewline -ForegroundColor White
-        Write-Host (" " * (51 - $line.Length)) -NoNewline
-        Write-Host "║" -ForegroundColor Cyan
-    }
-
-    if ($Statistics.Groups) {
-        $line = "║  👥 Groups:        {0,-10}" -f $Statistics.Groups
-        Write-Host $line -NoNewline -ForegroundColor White
-        Write-Host (" " * (51 - $line.Length)) -NoNewline
-        Write-Host "║" -ForegroundColor Cyan
-    }
-
-    if ($Statistics.Computers) {
-        $line = "║  💻 Computers:     {0,-10}" -f $Statistics.Computers
-        Write-Host $line -NoNewline -ForegroundColor White
-        Write-Host (" " * (51 - $line.Length)) -NoNewline
-        Write-Host "║" -ForegroundColor Cyan
-    }
-
-    if ($Statistics.CNs) {
-        $line = "║  📁 CNs:           {0,-10}" -f $Statistics.CNs
-        Write-Host $line -NoNewline -ForegroundColor White
-        Write-Host (" " * (51 - $line.Length)) -NoNewline
-        Write-Host "║" -ForegroundColor Cyan
-    }
-
-    Write-Host "║                                                                   ║" -ForegroundColor Cyan
-    Write-Host "╠═══════════════════════════════════════════════════════════════════╣" -ForegroundColor Cyan
-    Write-Host "║  📦 OUTPUT LOCATIONS:                                             ║" -ForegroundColor Cyan
-    Write-Host "║                                                                   ║" -ForegroundColor Cyan
-    Write-Host "║  Folder: " -NoNewline -ForegroundColor White
-    Write-Host "$OutputPath" -ForegroundColor Gray
-
-    if ($ZipPath) {
-        Write-Host "║  ZIP:    " -NoNewline -ForegroundColor White
-        Write-Host "$ZipPath" -ForegroundColor Gray
-    }
-
-    Write-Host "║                                                                   ║" -ForegroundColor Cyan
-    Write-Host "╚═══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
-    Write-Host "`n" -NoNewline
-    Write-Host "⚠️  REMINDER: Keep mapping files confidential!" -ForegroundColor Yellow
-    Write-Host "💡 TIP: Open the HTML report for an interactive view`n" -ForegroundColor Cyan
-}
-
-function Write-ErrorWithSuggestion {
-    <#
-    .SYNOPSIS
-    Writes an error message with actionable suggestions for resolution.
-
-    .DESCRIPTION
-    Provides user-friendly error messages with context and suggested fixes,
-    improving troubleshooting experience.
-
-    .PARAMETER ErrorRecord
-    The error record to format
-
-    .PARAMETER Context
-    Additional context about where the error occurred
-
-    .PARAMETER Suggestions
-    Array of suggested actions to resolve the error
-
-    .EXAMPLE
-    Write-ErrorWithSuggestion -ErrorRecord $_ -Context "Processing users file" -Suggestions @("Check file permissions", "Verify JSON format")
-    #>
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        $ErrorRecord,
-
-        [string]$Context = "",
-
-        [string[]]$Suggestions = @()
-    )
-
-    Write-Host "`n╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Red
-    Write-Host "║  ❌ ERROR OCCURRED" -ForegroundColor Red -NoNewline
-    Write-Host (" " * 48) -NoNewline
-    Write-Host "║" -ForegroundColor Red
-    Write-Host "╚════════════════════════════════════════════════════════════════╝" -ForegroundColor Red
-
-    if ($Context) {
-        Write-Host "`n📍 Context: " -ForegroundColor Yellow -NoNewline
-        Write-Host $Context -ForegroundColor White
-    }
-
-    Write-Host "`n⚠️  Error Message:" -ForegroundColor Yellow
-    Write-Host "   $($ErrorRecord.Exception.Message)" -ForegroundColor Red
-
-    if ($ErrorRecord.InvocationInfo.Line) {
-        Write-Host "`n📝 Location:" -ForegroundColor Yellow
-        Write-Host "   Script: $($ErrorRecord.InvocationInfo.ScriptName)" -ForegroundColor Gray
-        Write-Host "   Line: $($ErrorRecord.InvocationInfo.ScriptLineNumber)" -ForegroundColor Gray
-    }
-
-    if ($Suggestions.Count -gt 0) {
-        Write-Host "`n💡 Suggested Actions:" -ForegroundColor Cyan
-        $suggestions | ForEach-Object {
-            Write-Host "   • $_" -ForegroundColor White
-        }
-    }
-
-    Write-Host "`n" -NoNewline
-}
-
-function Optimize-HashtableCapacity {
-    <#
-    .SYNOPSIS
-    Pre-allocates hashtable capacity based on estimated dataset size.
-
-    .DESCRIPTION
-    Analyzes file sizes to estimate the number of objects and pre-allocates
-    hashtable capacity to reduce memory reallocations during processing.
-    This improves performance by 10-20% for large datasets.
-
-    .PARAMETER Files
-    Array of file objects to analyze
-
-    .EXAMPLE
-    Optimize-HashtableCapacity -Files $allFiles
-    #>
-    param(
-        [Parameter(Mandatory)]
-        [System.IO.FileInfo[]]$Files
-    )
-
-    try {
-        # Estimate object count based on file sizes
-        # Average: users.json ~500 bytes per object, groups ~300, computers ~400
-        $totalSizeKB = ($Files | Measure-Object -Property Length -Sum).Sum / 1KB
-
-        # Rough estimate: 1KB = ~2-3 objects across all file types
-        $estimatedObjects = [Math]::Max(100, [int]($totalSizeKB * 2.5))
-
-        # Pre-allocate hashtables with estimated capacity
-        # PowerShell hashtables don't have direct capacity setting, but we can
-        # create them with initial content to hint at size
-        Write-Verbose "Estimated objects: $estimatedObjects (based on $([Math]::Round($totalSizeKB, 1)) KB)"
-        Write-Verbose "Optimizing hashtable allocations..."
-
-        # Return the estimated capacity for informational purposes
-        return $estimatedObjects
-    }
-    catch {
-        Write-Verbose "Could not optimize hashtable capacity: $_"
-        return 100  # Default minimum
-    }
-}
-
-function Read-JsonOptimized {
-    <#
-    .SYNOPSIS
-    Reads and parses JSON files with memory optimization for large files.
-
-    .DESCRIPTION
-    For files larger than 10MB, uses streaming to reduce memory footprint.
-    For smaller files, uses standard ConvertFrom-Json for speed.
-
-    .PARAMETER FilePath
-    Path to the JSON file to read
-
-    .PARAMETER LargeFileThresholdMB
-    Size threshold in MB to trigger streaming mode (default: 10MB)
-
-    .EXAMPLE
-    $data = Read-JsonOptimized -FilePath "C:\large_users.json"
-    #>
-    param(
-        [Parameter(Mandatory)]
-        [string]$FilePath,
-
-        [int]$LargeFileThresholdMB = 10
-    )
-
-    try {
-        $fileInfo = Get-Item $FilePath
-        $fileSizeMB = $fileInfo.Length / 1MB
-
-        if ($fileSizeMB -gt $LargeFileThresholdMB) {
-            Write-Verbose "Large file detected ($([Math]::Round($fileSizeMB, 1)) MB) - using optimized parsing"
-
-            # Use .NET JSON serializer for better memory efficiency
-            $jsonString = [System.IO.File]::ReadAllText($FilePath)
-            $json = [System.Text.Json.JsonSerializer]::Deserialize($jsonString, [object])
-
-            # Convert to PSCustomObject for compatibility
-            return ($json | ConvertFrom-Json)
-        }
-        else {
-            # Standard parsing for smaller files (faster)
-            return (Get-Content -Path $FilePath -Raw -Encoding UTF8 | ConvertFrom-Json)
-        }
-    }
-    catch {
-        Write-Warning "Error reading JSON file optimally, falling back to standard method: $_"
-        return (Get-Content -Path $FilePath -Raw -Encoding UTF8 | ConvertFrom-Json)
-    }
-}
-
-function Show-InteractiveMenu {
-    <#
-    .SYNOPSIS
-    Displays an interactive menu for guided anonymization.
-
-    .DESCRIPTION
-    Provides a user-friendly menu system for users who prefer guided
-    interaction over command-line parameters.
-
-    .EXAMPLE
-    Show-InteractiveMenu
-    #>
-    param()
-
-    Write-Host ""
-    Write-Host "╔═══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "║                   🛡️  ANONYMOUSHOUND INTERACTIVE MODE            ║" -ForegroundColor Cyan
-    Write-Host "╚═══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "Welcome! This wizard will guide you through anonymizing BloodHound data." -ForegroundColor White
-    Write-Host ""
-
-    # Step 1: Get input path
-    Write-Host "Step 1: Select Input" -ForegroundColor Yellow
-    Write-Host "────────────────────" -ForegroundColor Gray
-    Write-Host "  [1] Process a directory of BloodHound JSON files (recommended)" -ForegroundColor White
-    Write-Host "  [2] Process a single JSON file" -ForegroundColor White
-    Write-Host ""
-
-    $inputChoice = Read-Host "Enter your choice (1 or 2)"
-
-    $inputPath = $null
-    $isDirectory = $false
-
-    if ($inputChoice -eq "1") {
-        Write-Host ""
-        Write-Host "Enter the path to your BloodHound data directory:" -ForegroundColor Cyan
-        Write-Host "(Example: C:\BloodHoundData or drag-and-drop folder here)" -ForegroundColor Gray
-        $inputPath = Read-Host "Directory path"
-        $inputPath = $inputPath.Trim('"').Trim("'")  # Remove quotes if drag-dropped
-        $isDirectory = $true
-    }
-    elseif ($inputChoice -eq "2") {
-        Write-Host ""
-        Write-Host "Enter the path to your BloodHound JSON file:" -ForegroundColor Cyan
-        Write-Host "(Example: C:\Data\20240101_users.json)" -ForegroundColor Gray
-        $inputPath = Read-Host "File path"
-        $inputPath = $inputPath.Trim('"').Trim("'")
-        $isDirectory = $false
-    }
-    else {
-        Write-Host "Invalid choice. Exiting." -ForegroundColor Red
-        exit 1
-    }
-
-    # Validate input path
-    if (-not (Test-Path $inputPath)) {
-        Write-Host ""
-        Write-Host "❌ Error: Path not found: $inputPath" -ForegroundColor Red
-        Write-Host "Please check the path and try again." -ForegroundColor Yellow
-        exit 1
-    }
-
-    # Step 2: Get output path
-    Write-Host ""
-    Write-Host "Step 2: Select Output Location" -ForegroundColor Yellow
-    Write-Host "───────────────────────────────" -ForegroundColor Gray
-    Write-Host "Enter the path where anonymized data should be saved:" -ForegroundColor Cyan
-    Write-Host "(Press Enter for default: .\AnonymizedData)" -ForegroundColor Gray
-    $outputPath = Read-Host "Output directory"
-
-    if ([string]::IsNullOrWhiteSpace($outputPath)) {
-        $outputPath = ".\AnonymizedData"
-    }
-    $outputPath = $outputPath.Trim('"').Trim("'")
-
-    # Step 3: Advanced options
-    Write-Host ""
-    Write-Host "Step 3: Options (Optional)" -ForegroundColor Yellow
-    Write-Host "───────────────────────────" -ForegroundColor Gray
-    Write-Host "Would you like to configure advanced options? (y/n)" -ForegroundColor Cyan
-    Write-Host "(Default: n - Use recommended settings)" -ForegroundColor Gray
-    $advancedChoice = Read-Host "Configure options"
-
-    $options = @{
-        InputPath = $inputPath
-        OutputPath = $outputPath
-        IsDirectory = $isDirectory
-        PreserveHostnames = $false
-        PreserveOSVersions = $false
-        GenerateHtmlReport = $true
-    }
-
-    if ($advancedChoice -eq "y" -or $advancedChoice -eq "Y") {
-        Write-Host ""
-        Write-Host "  Preserve original hostnames? (y/n, default: n)" -ForegroundColor White
-        $preserveHost = Read-Host "  "
-        $options.PreserveHostnames = ($preserveHost -eq "y" -or $preserveHost -eq "Y")
-
-        Write-Host "  Preserve OS version strings? (y/n, default: n)" -ForegroundColor White
-        $preserveOS = Read-Host "  "
-        $options.PreserveOSVersions = ($preserveOS -eq "y" -or $preserveOS -eq "Y")
-
-        Write-Host "  Generate HTML report? (y/n, default: y)" -ForegroundColor White
-        $genReport = Read-Host "  "
-        if ($genReport -eq "n" -or $genReport -eq "N") {
-            $options.GenerateHtmlReport = $false
-        }
-    }
-
-    # Step 4: Confirmation
-    Write-Host ""
-    Write-Host "═══════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
-    Write-Host "  Ready to Anonymize" -ForegroundColor Green
-    Write-Host "═══════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "  Input:  $inputPath" -ForegroundColor White
-    Write-Host "  Output: $outputPath" -ForegroundColor White
-    if ($options.PreserveHostnames) { Write-Host "  • Preserving hostnames" -ForegroundColor Gray }
-    if ($options.PreserveOSVersions) { Write-Host "  • Preserving OS versions" -ForegroundColor Gray }
-    if ($options.GenerateHtmlReport) { Write-Host "  • Generating HTML report" -ForegroundColor Gray }
-    Write-Host ""
-    Write-Host "Press Enter to begin or Ctrl+C to cancel..." -ForegroundColor Yellow
-    Read-Host
-
-    return $options
-}
-
-function Get-InteractiveInput {
-    <#
-    .SYNOPSIS
-    Prompts for missing required parameters interactively.
-
-    .DESCRIPTION
-    If the user didn't specify required parameters, prompt for them
-    in a user-friendly way.
-
-    .PARAMETER InputFile
-    Current InputFile parameter value
-
-    .PARAMETER InputDirectory
-    Current InputDirectory parameter value
-
-    .PARAMETER OutputDirectory
-    Current OutputDirectory parameter value
-
-    .EXAMPLE
-    $params = Get-InteractiveInput -InputFile $InputFile -InputDirectory $InputDirectory
-    #>
-    param(
-        [string]$InputFile,
-        [string]$InputDirectory,
-        [string]$OutputDirectory
-    )
-
-    $needsInput = $false
-
-    # Check if we need input path
-    if ([string]::IsNullOrWhiteSpace($InputFile) -and [string]::IsNullOrWhiteSpace($InputDirectory)) {
-        $needsInput = $true
-    }
-
-    if (-not $needsInput) {
-        return @{
-            InputFile = $InputFile
-            InputDirectory = $InputDirectory
-            OutputDirectory = $OutputDirectory
-            Interactive = $false
-        }
-    }
-
-    # Show welcome message
-    Write-Host ""
-    Write-Host "╔═══════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "║                    🛡️  ANONYMOUSHOUND v0.2 BETA                 ║" -ForegroundColor Cyan
-    Write-Host "║             BloodHound Data Anonymization Tool                    ║" -ForegroundColor Cyan
-    Write-Host "╚═══════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "No input specified. Let's get started!" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "What would you like to do?" -ForegroundColor Cyan
-    Write-Host "  [1] Quick Start - Simple guided wizard (recommended for beginners)" -ForegroundColor White
-    Write-Host "  [2] Specify paths only (for experienced users)" -ForegroundColor White
-    Write-Host "  [3] Show help and exit" -ForegroundColor White
-    Write-Host ""
-
-    $choice = Read-Host "Enter your choice (1, 2, or 3)"
-
-    switch ($choice) {
-        "1" {
-            # Full interactive wizard
-            return Show-InteractiveMenu
-        }
-        "2" {
-            # Quick path entry
-            Write-Host ""
-            Write-Host "Enter BloodHound data directory path:" -ForegroundColor Cyan
-            $dir = Read-Host "Directory"
-            $dir = $dir.Trim('"').Trim("'")
-
-            if (-not (Test-Path $dir)) {
-                Write-Host "❌ Error: Directory not found: $dir" -ForegroundColor Red
-                exit 1
-            }
-
-            Write-Host ""
-            Write-Host "Enter output directory (press Enter for .\AnonymizedData):" -ForegroundColor Cyan
-            $out = Read-Host "Output"
-            if ([string]::IsNullOrWhiteSpace($out)) {
-                $out = ".\AnonymizedData"
-            }
-            $out = $out.Trim('"').Trim("'")
-
-            return @{
-                InputPath = $dir
-                OutputPath = $out
-                IsDirectory = $true
-                Interactive = $true
-            }
-        }
-        "3" {
-            # Show help
-            Write-Host ""
-            Get-Help $PSCommandPath -Detailed
-            exit 0
-        }
-        default {
-            Write-Host "Invalid choice. Exiting." -ForegroundColor Red
-            exit 1
-        }
-    }
-}
-
-function Test-InputValidation {
-    <#
-    .SYNOPSIS
-    Validates input parameters and provides helpful error messages.
-
-    .DESCRIPTION
-    Checks that input paths exist, are accessible, and contain valid data.
-    Provides actionable suggestions for common issues.
-
-    .PARAMETER InputPath
-    Path to validate (file or directory)
-
-    .PARAMETER IsDirectory
-    Whether the path should be a directory
-
-    .EXAMPLE
-    Test-InputValidation -InputPath "C:\Data" -IsDirectory $true
-    #>
-    param(
-        [Parameter(Mandatory)]
-        [string]$InputPath,
-
-        [bool]$IsDirectory = $true
-    )
-
-    # Check if path exists
-    if (-not (Test-Path $InputPath)) {
-        Write-Host ""
-        Write-Host "╔═══════════════════════════════════════════════════════════════════╗" -ForegroundColor Red
-        Write-Host "║  ❌ INPUT VALIDATION ERROR                                        ║" -ForegroundColor Red
-        Write-Host "╚═══════════════════════════════════════════════════════════════════╝" -ForegroundColor Red
-        Write-Host ""
-        Write-Host "Path not found: " -ForegroundColor Yellow -NoNewline
-        Write-Host "$InputPath" -ForegroundColor White
-        Write-Host ""
-        Write-Host "💡 Suggestions:" -ForegroundColor Cyan
-        Write-Host "  • Check that the path is spelled correctly" -ForegroundColor White
-        Write-Host "  • Verify the drive letter (C:\, D:\, etc.)" -ForegroundColor White
-        Write-Host "  • Make sure you have permission to access this location" -ForegroundColor White
-        Write-Host "  • Use Tab completion to auto-complete paths" -ForegroundColor White
-        if ($IsDirectory) {
-            Write-Host "  • Ensure this is a directory, not a file" -ForegroundColor White
-        } else {
-            Write-Host "  • Ensure this is a file, not a directory" -ForegroundColor White
-        }
-        Write-Host ""
-        return $false
-    }
-
-    # Check if it's the right type (file vs directory)
-    $item = Get-Item $InputPath
-    if ($IsDirectory -and -not $item.PSIsContainer) {
-        Write-Host ""
-        Write-Host "❌ Error: Expected a directory, but found a file" -ForegroundColor Red
-        Write-Host "   Path: $InputPath" -ForegroundColor Yellow
-        Write-Host ""
-        Write-Host "💡 Did you mean to use -InputFile instead of -InputDirectory?" -ForegroundColor Cyan
-        Write-Host ""
-        return $false
-    }
-    elseif (-not $IsDirectory -and $item.PSIsContainer) {
-        Write-Host ""
-        Write-Host "❌ Error: Expected a file, but found a directory" -ForegroundColor Red
-        Write-Host "   Path: $InputPath" -ForegroundColor Yellow
-        Write-Host ""
-        Write-Host "💡 Did you mean to use -InputDirectory instead of -InputFile?" -ForegroundColor Cyan
-        Write-Host ""
-        return $false
-    }
-
-    # Check if directory contains JSON files
-    if ($IsDirectory) {
-        $jsonFiles = Get-ChildItem -Path $InputPath -Filter "*.json" -ErrorAction SilentlyContinue
-        if ($jsonFiles.Count -eq 0) {
-            Write-Host ""
-            Write-Host "⚠️  WARNING: No JSON files found in directory" -ForegroundColor Yellow
-            Write-Host "   Path: $InputPath" -ForegroundColor Gray
-            Write-Host ""
-            Write-Host "💡 Expected files:" -ForegroundColor Cyan
-            Write-Host "  • *_users.json" -ForegroundColor White
-            Write-Host "  • *_groups.json" -ForegroundColor White
-            Write-Host "  • *_computers.json" -ForegroundColor White
-            Write-Host "  • *_domains.json" -ForegroundColor White
-            Write-Host "  • (and other BloodHound collection files)" -ForegroundColor Gray
-            Write-Host ""
-            Write-Host "Continue anyway? (y/n): " -ForegroundColor Yellow -NoNewline
-            $continue = Read-Host
-            if ($continue -ne "y" -and $continue -ne "Y") {
-                return $false
-            }
-        }
-
-        # Check for BloodHound-format files
-        $bhFiles = $jsonFiles | Where-Object {
-            $_.Name -match '_(users|groups|computers|domains|gpos|ous|containers|certtemplates|ntauthstores|aiacas|rootcas|enterprisecas)\.json$'
-        }
-
-        if ($bhFiles.Count -eq 0 -and $jsonFiles.Count -gt 0) {
-            Write-Host ""
-            Write-Host "⚠️  WARNING: JSON files found, but none match BloodHound format" -ForegroundColor Yellow
-            Write-Host "   Expected format: TIMESTAMP_TYPE.json (e.g., 20240101120000_users.json)" -ForegroundColor Gray
-            Write-Host ""
-            Write-Host "Found files:" -ForegroundColor Cyan
-            $jsonFiles | Select-Object -First 5 | ForEach-Object {
-                Write-Host "  • $($_.Name)" -ForegroundColor White
-            }
-            if ($jsonFiles.Count -gt 5) {
-                Write-Host "  • ... and $($jsonFiles.Count - 5) more" -ForegroundColor Gray
-            }
-            Write-Host ""
-            Write-Host "Continue anyway? (y/n): " -ForegroundColor Yellow -NoNewline
-            $continue = Read-Host
-            if ($continue -ne "y" -and $continue -ne "Y") {
-                return $false
-            }
-        }
-    }
-    else {
-        # Validate single file
-        if ($item.Extension -ne ".json") {
-            Write-Host ""
-            Write-Host "⚠️  WARNING: File does not have .json extension" -ForegroundColor Yellow
-            Write-Host "   File: $($item.Name)" -ForegroundColor Gray
-            Write-Host ""
-            Write-Host "Continue anyway? (y/n): " -ForegroundColor Yellow -NoNewline
-            $continue = Read-Host
-            if ($continue -ne "y" -and $continue -ne "Y") {
-                return $false
-            }
-        }
-
-        # Check if it looks like a BloodHound file
-        if ($item.Name -notmatch '_(users|groups|computers|domains|gpos|ous|containers|certtemplates|ntauthstores|aiacas|rootcas|enterprisecas)\.json$') {
-            Write-Host ""
-            Write-Host "⚠️  WARNING: File name doesn't match BloodHound format" -ForegroundColor Yellow
-            Write-Host "   Expected: TIMESTAMP_TYPE.json (e.g., 20240101120000_users.json)" -ForegroundColor Gray
-            Write-Host "   Found: $($item.Name)" -ForegroundColor White
-            Write-Host ""
-            Write-Host "Continue anyway? (y/n): " -ForegroundColor Yellow -NoNewline
-            $continue = Read-Host
-            if ($continue -ne "y" -and $continue -ne "Y") {
-                return $false
-            }
-        }
-    }
-
-    return $true
-}
-
-function Show-DryRunPreview {
-    <#
-    .SYNOPSIS
-    Shows a preview of what would be anonymized without making changes.
-
-    .DESCRIPTION
-    Displays a summary of files that would be processed and provides
-    examples of anonymization without writing any output files.
-
-    .PARAMETER InputPath
-    Path to preview
-
-    .PARAMETER IsDirectory
-    Whether processing a directory
-
-    .EXAMPLE
-    Show-DryRunPreview -InputPath "C:\Data" -IsDirectory $true
-    #>
-    param(
-        [Parameter(Mandatory)]
-        [string]$InputPath,
-
-        [bool]$IsDirectory = $true
-    )
-
-    Write-Host ""
-    Write-Host "╔═══════════════════════════════════════════════════════════════════╗" -ForegroundColor Magenta
-    Write-Host "║              👁️  DRY RUN MODE (Preview Only)                     ║" -ForegroundColor Magenta
-    Write-Host "╚═══════════════════════════════════════════════════════════════════╝" -ForegroundColor Magenta
-    Write-Host ""
-    Write-Host "This is a preview. No files will be modified or created." -ForegroundColor Yellow
-    Write-Host ""
-
-    if ($IsDirectory) {
-        $files = Get-ChildItem -Path $InputPath -Filter "*.json" | Where-Object {
-            $_.Name -match '_(users|groups|computers|domains|gpos|ous|containers|certtemplates|ntauthstores|aiacas|rootcas|enterprisecas)\.json$'
-        }
-
-        Write-Host "📂 Input Directory: " -ForegroundColor Cyan -NoNewline
-        Write-Host "$InputPath" -ForegroundColor White
-        Write-Host ""
-        Write-Host "Files that would be processed:" -ForegroundColor Cyan
-        Write-Host ""
-
-        $filesByType = $files | Group-Object {
-            if ($_.Name -match '_([a-z]+)\.json$') { $matches[1] } else { 'unknown' }
-        } | Sort-Object Name
-
-        foreach ($group in $filesByType) {
-            $typeName = $group.Name
-            $count = $group.Count
-            Write-Host "  $typeName.json" -ForegroundColor White -NoNewline
-            Write-Host " ($count file(s))" -ForegroundColor Gray
-        }
-
-        Write-Host ""
-        Write-Host "Total: " -ForegroundColor Cyan -NoNewline
-        Write-Host "$($files.Count) files" -ForegroundColor White
-
-        $totalSizeMB = [Math]::Round(($files | Measure-Object -Property Length -Sum).Sum / 1MB, 2)
-        Write-Host "Size:  " -ForegroundColor Cyan -NoNewline
-        Write-Host "$totalSizeMB MB" -ForegroundColor White
-    }
-    else {
-        $file = Get-Item $InputPath
-        Write-Host "📄 Input File: " -ForegroundColor Cyan -NoNewline
-        Write-Host "$($file.Name)" -ForegroundColor White
-        Write-Host "   Size: $([Math]::Round($file.Length / 1KB, 2)) KB" -ForegroundColor Gray
-    }
-
-    Write-Host ""
-    Write-Host "Anonymization Examples:" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "  Original Domain:    " -ForegroundColor Gray -NoNewline
-    Write-Host "CONTOSO.COM" -ForegroundColor White -NoNewline
-    Write-Host " → " -ForegroundColor DarkGray -NoNewline
-    Write-Host "DOMAIN1.LOCAL" -ForegroundColor Green
-
-    Write-Host "  Original User:      " -ForegroundColor Gray -NoNewline
-    Write-Host "john.doe@contoso.com" -ForegroundColor White -NoNewline
-    Write-Host " → " -ForegroundColor DarkGray -NoNewline
-    Write-Host "USR_A1B2C3@DOMAIN1.LOCAL" -ForegroundColor Green
-
-    Write-Host "  Original Computer:  " -ForegroundColor Gray -NoNewline
-    Write-Host "WKS-FINANCE-01" -ForegroundColor White -NoNewline
-    Write-Host " → " -ForegroundColor DarkGray -NoNewline
-    Write-Host "COMP_X7Y8Z9" -ForegroundColor Green
-
-    Write-Host "  Original Group:     " -ForegroundColor Gray -NoNewline
-    Write-Host "Domain Admins" -ForegroundColor White -NoNewline
-    Write-Host " → " -ForegroundColor DarkGray -NoNewline
-    Write-Host "GRP_D4E5F6" -ForegroundColor Green
-
-    Write-Host ""
-    Write-Host "Well-Known Objects (Preserved):" -ForegroundColor Cyan
-    Write-Host "  • Domain Admins, Enterprise Admins, Administrator" -ForegroundColor Gray
-    Write-Host "  • BUILTIN groups, Everyone, Authenticated Users" -ForegroundColor Gray
-    Write-Host "  • Common service accounts (MSSQLSERVER, etc.)" -ForegroundColor Gray
-
-    Write-Host ""
-    Write-Host "─────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
-    Write-Host ""
-    Write-Host "To proceed with anonymization, run without -WhatIf flag" -ForegroundColor Yellow
-    Write-Host ""
-}
-
-function Show-ProgressWithETA {
-    <#
-    .SYNOPSIS
-    Displays progress bar with ETA calculation for file processing.
-
-    .DESCRIPTION
-    Shows a visual progress indicator with estimated time remaining based on
-    current processing speed. Enhances user experience during long operations.
-
-    .PARAMETER Activity
-    The activity being performed (e.g., "Anonymizing BloodHound Data")
-
-    .PARAMETER Current
-    Current item being processed (1-based index)
-
-    .PARAMETER Total
-    Total number of items to process
-
-    .PARAMETER StartTime
-    DateTime when processing started
-
-    .PARAMETER CurrentFile
-    Name of the current file being processed (optional)
-
-    .EXAMPLE
-    Show-ProgressWithETA -Activity "Processing Files" -Current 5 -Total 20 -StartTime $start
-    #>
-    [CmdletBinding()]
-    param(
-        [string]$Activity = "Processing",
-        [int]$Current,
-        [int]$Total,
-        [datetime]$StartTime,
-        [string]$CurrentFile = ""
-    )
-
-    if ($Total -eq 0) { return }
-
-    $percent = [Math]::Round(($Current / $Total) * 100, 1)
-    $elapsed = (Get-Date) - $StartTime
-
-    # Calculate ETA
-    if ($Current -gt 0) {
-        $avgTimePerItem = $elapsed.TotalSeconds / $Current
-        $remainingItems = $Total - $Current
-        $etaSeconds = [Math]::Round($avgTimePerItem * $remainingItems)
-
-        # Format ETA nicely
-        if ($etaSeconds -lt 60) {
-            $etaString = "$etaSeconds seconds"
-        } elseif ($etaSeconds -lt 3600) {
-            $minutes = [Math]::Floor($etaSeconds / 60)
-            $seconds = $etaSeconds % 60
-            $etaString = "$minutes min $seconds sec"
-        } else {
-            $hours = [Math]::Floor($etaSeconds / 3600)
-            $minutes = [Math]::Floor(($etaSeconds % 3600) / 60)
-            $etaString = "$hours hr $minutes min"
-        }
-    } else {
-        $etaString = "Calculating..."
-    }
-
-    # Build status message
-    $statusMessage = "Processing $Current of $Total"
-    if ($CurrentFile) {
-        $statusMessage += " - $CurrentFile"
-    }
-    $statusMessage += " | ETA: $etaString"
-
-    Write-Progress -Activity $Activity `
-                   -Status $statusMessage `
-                   -PercentComplete $percent `
-                   -CurrentOperation "Elapsed: $($elapsed.ToString('hh\:mm\:ss'))"
 }
 
 function Get-OriginalDomainFromSid {
@@ -7749,8 +6872,7 @@ function Save-ComprehensiveMappingsHTML {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AnonymousHound - BloodHound Data Anonymization Report with GDPR compliance">
-    <title>BloodHound Anonymization Report - AnonymousHound</title>
+    <title>BloodHound Anonymization Report</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
@@ -7884,11 +7006,6 @@ function Save-ComprehensiveMappingsHTML {
             cursor: pointer;
             user-select: none;
             transition: background 0.3s;
-            width: 100%;
-            text-align: left;
-            border: none;
-            border-left: 4px solid #667eea;
-            font-family: inherit;
         }
 
         .section-header:hover {
@@ -7992,194 +7109,20 @@ function Save-ComprehensiveMappingsHTML {
         }
 
         .search-box input:focus {
-            outline: 3px solid #667eea;
-            outline-offset: 2px;
+            outline: none;
             border-color: #667eea;
             background: #2d2d44;
         }
 
-        /* WCAG 2.1: Focus visible for all interactive elements */
-        a:focus, button:focus, [tabindex]:focus {
-            outline: 3px solid #667eea;
-            outline-offset: 2px;
-        }
-
-        /* Skip to main content link - WCAG 2.1 Level A */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: #667eea;
-            color: white;
-            padding: 8px 16px;
-            text-decoration: none;
-            z-index: 1000;
-            border-radius: 0 0 8px 0;
-            font-weight: bold;
-        }
-
-        .skip-link:focus {
-            top: 0;
-        }
-
-        /* Screen reader only text - WCAG 2.1 */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
-        }
-
         .search-box input::placeholder {
-            color: #a0a0b8; /* Improved contrast from #8a8a9e */
+            color: #8a8a9e;
         }
 
         .arrow {
             font-family: monospace;
-            color: #8b9ff5; /* Improved contrast from #667eea */
+            color: #667eea;
             font-weight: bold;
             padding: 0 10px;
-        }
-
-        /* WCAG 2.1: Improved contrast for text elements */
-        .section-header h2 {
-            color: #f0f0f0 !important; /* Improved from #e0e0e0 */
-        }
-
-        /* Executive Summary Styles */
-        .executive-summary {
-            background: linear-gradient(135deg, #1a1a2e 0%, #252538 100%);
-            border: 2px solid #667eea;
-            border-radius: 15px;
-            padding: 30px;
-            margin: 30px 0;
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
-        }
-
-        .executive-summary h2 {
-            color: #8b9ff5;
-            font-size: 2em;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .executive-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin: 25px 0;
-        }
-
-        .executive-card {
-            background: #16213e;
-            border-left: 4px solid #667eea;
-            padding: 20px;
-            border-radius: 10px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .executive-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .executive-card h3 {
-            color: #8b9ff5;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            opacity: 0.9;
-        }
-
-        .executive-card .big-number {
-            font-size: 2.8em;
-            font-weight: bold;
-            color: #fff;
-            margin: 10px 0;
-        }
-
-        .executive-card .big-number.success {
-            color: #4ade80;
-        }
-
-        .executive-card .big-number.warning {
-            color: #fbbf24;
-        }
-
-        .executive-card .big-number.error {
-            color: #fca5a5;
-        }
-
-        .executive-card .subtitle {
-            color: #a0a0b8;
-            font-size: 0.95em;
-        }
-
-        .risk-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-            font-size: 1.1em;
-            gap: 8px;
-        }
-
-        .risk-badge.low {
-            background: rgba(74, 222, 128, 0.2);
-            color: #4ade80;
-            border: 2px solid #4ade80;
-        }
-
-        .risk-badge.medium {
-            background: rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-            border: 2px solid #fbbf24;
-        }
-
-        .risk-badge.high {
-            background: rgba(252, 165, 165, 0.2);
-            color: #fca5a5;
-            border: 2px solid #fca5a5;
-        }
-
-        .summary-highlights {
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .summary-highlights ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .summary-highlights li {
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #e0e0e0;
-        }
-
-        .summary-highlights li:last-child {
-            border-bottom: none;
-        }
-
-        .summary-highlights .icon {
-            font-size: 1.5em;
-            min-width: 30px;
-            text-align: center;
         }
 
         .preserved-item {
@@ -8365,215 +7308,39 @@ function Save-ComprehensiveMappingsHTML {
     </style>
 </head>
 <body>
-    <!-- WCAG 2.1: Skip to main content link -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-
     <div class="container">
-        <header role="banner">
-            <h1>
-                <span aria-hidden="true">🕵️🐕</span>
-                <span>AnonymousHound Report</span>
-            </h1>
+        <header>
+            <h1>🕵️🐕 AnonymousHound Report</h1>
             <p class="subtitle">BloodHound Data Anonymization Mappings</p>
-            <div class="timestamp" role="status" aria-live="polite">
-                <span class="sr-only">Report generated on: </span>
-                $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
-            </div>
+            <div class="timestamp">Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')</div>
         </header>
 
-        <nav role="navigation" aria-label="Report sections navigation">
+        <nav>
             <ul>
-                <li><a href="#executive-summary" aria-label="Navigate to Executive Summary section">Executive Summary</a></li>
-                <li><a href="#overview" aria-label="Navigate to Overview Dashboard section">Overview</a></li>
-                <li><a href="#compliance" aria-label="Navigate to GDPR and PII Compliance section">GDPR/PII Compliance</a></li>
-                <li><a href="#visualizations" aria-label="Navigate to Data Visualizations section">Data Visualizations</a></li>
-                <li><a href="#consistency" aria-label="Navigate to Consistency Checks section">Consistency Checks</a></li>
-                <li><a href="#mappings" aria-label="Navigate to Mappings section">Mappings</a></li>
-                <li><a href="#preserved" aria-label="Navigate to Preserved Items section">Preserved Items</a></li>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#compliance">GDPR/PII Compliance</a></li>
+                <li><a href="#visualizations">Data Visualizations</a></li>
+                <li><a href="#consistency">Consistency Checks</a></li>
+                <li><a href="#mappings">Mappings</a></li>
+                <li><a href="#preserved">Preserved Items</a></li>
             </ul>
         </nav>
 
-        <main id="main-content" role="main" class="content">
+        <div class="content">
 "@
 
-        # Calculate comprehensive statistics
+        # Add Statistics Dashboard
         $totalMappings = 0
         if ($script:DomainMapping) { $totalMappings += $script:DomainMapping.Count }
         if ($script:UserMapping) { $totalMappings += $script:UserMapping.Count }
         if ($script:GroupMapping) { $totalMappings += $script:GroupMapping.Count }
         if ($script:ComputerMapping) { $totalMappings += $script:ComputerMapping.Count }
         if ($script:OUMapping) { $totalMappings += $script:OUMapping.Count }
-        if ($script:CNMapping) { $totalMappings += $script:CNMapping.Count }
-        if ($script:GPOMapping) { $totalMappings += $script:GPOMapping.Count }
 
         $totalPreserved = 0
         if ($script:PreservedItems.Groups) { $totalPreserved += $script:PreservedItems.Groups.Count }
         if ($script:PreservedItems.Users) { $totalPreserved += $script:PreservedItems.Users.Count }
         if ($script:PreservedItems.CNs) { $totalPreserved += $script:PreservedItems.CNs.Count }
-
-        # Calculate success metrics
-        $totalObjects = $totalMappings + $totalPreserved
-        $successRate = if ($totalObjects -gt 0) { [math]::Round(($totalMappings / $totalObjects) * 100, 1) } else { 0 }
-
-        # Determine risk level based on consistency checks
-        $totalIssues = 0
-        $criticalIssues = 0
-        $warningIssues = 0
-        $checksPerformed = 0
-        $checksPassed = 0
-
-        if ($AllConsistencyResults) {
-            foreach ($check in $AllConsistencyResults.Values) {
-                $checksPerformed++
-                if ($check.TotalIssues) {
-                    $totalIssues += $check.TotalIssues
-                    foreach ($issue in $check.Issues) {
-                        if ($issue -match '^Critical:') {
-                            $criticalIssues++
-                        } elseif ($issue -match '^Warning:') {
-                            $warningIssues++
-                        }
-                    }
-                }
-                if ($check.IsConsistent) {
-                    $checksPassed++
-                }
-            }
-        }
-
-        # Determine risk badge
-        $riskLevel = "low"
-        $riskText = "LOW RISK"
-        $riskIcon = "✅"
-        if ($criticalIssues -gt 0) {
-            $riskLevel = "high"
-            $riskText = "HIGH RISK"
-            $riskIcon = "⚠️"
-        } elseif ($warningIssues -gt 3) {
-            $riskLevel = "medium"
-            $riskText = "MEDIUM RISK"
-            $riskIcon = "⚡"
-        }
-
-        # Add Executive Summary Section
-        $html += @"
-            <!-- Executive Summary Section -->
-            <section id="executive-summary" class="section">
-                <div class="executive-summary" role="region" aria-labelledby="exec-summary-title">
-                    <h2 id="exec-summary-title">
-                        <span aria-hidden="true">📋</span>
-                        <span>Executive Summary</span>
-                    </h2>
-
-                    <div class="executive-grid">
-                        <div class="executive-card">
-                            <h3>Anonymization Success Rate</h3>
-                            <div class="big-number success" aria-label="$successRate percent success rate">$successRate%</div>
-                            <div class="subtitle">$totalObjects total objects processed</div>
-                        </div>
-
-                        <div class="executive-card">
-                            <h3>Data Quality Assessment</h3>
-                            <div class="big-number $(if ($checksPassed -eq $checksPerformed) { 'success' } else { 'warning' })" aria-label="$checksPassed of $checksPerformed checks passed">$checksPassed/$checksPerformed</div>
-                            <div class="subtitle">Consistency checks passed</div>
-                        </div>
-
-                        <div class="executive-card">
-                            <h3>Issues Identified</h3>
-                            <div class="big-number $(if ($totalIssues -eq 0) { 'success' } elseif ($criticalIssues -gt 0) { 'error' } else { 'warning' })" aria-label="$totalIssues total issues found">$totalIssues</div>
-                            <div class="subtitle">$criticalIssues critical, $warningIssues warnings</div>
-                        </div>
-
-                        <div class="executive-card">
-                            <h3>Overall Risk Assessment</h3>
-                            <div style="margin: 15px 0;">
-                                <span class="risk-badge $riskLevel" role="status" aria-label="Risk level: $riskText">
-                                    <span aria-hidden="true">$riskIcon</span>
-                                    <span>$riskText</span>
-                                </span>
-                            </div>
-                            <div class="subtitle">Based on consistency analysis</div>
-                        </div>
-                    </div>
-
-                    <div class="summary-highlights">
-                        <h3 style="color: #8b9ff5; margin-bottom: 15px; font-size: 1.2em;">Key Highlights</h3>
-                        <ul role="list">
-                            <li>
-                                <span class="icon" aria-hidden="true">🔐</span>
-                                <span><strong>$($script:UserMapping.Count) users</strong> anonymized with cryptographically random identifiers</span>
-                            </li>
-                            <li>
-                                <span class="icon" aria-hidden="true">👥</span>
-                                <span><strong>$($script:GroupMapping.Count) groups</strong> renamed to prevent organizational identification</span>
-                            </li>
-                            <li>
-                                <span class="icon" aria-hidden="true">💻</span>
-                                <span><strong>$($script:ComputerMapping.Count) computers</strong> obfuscated while maintaining DC patterns</span>
-                            </li>
-                            <li>
-                                <span class="icon" aria-hidden="true">🌐</span>
-                                <span><strong>$($script:DomainMapping.Count) domains</strong> mapped to generic identifiers (DOMAIN1.LOCAL, etc.)</span>
-                            </li>
-                            <li>
-                                <span class="icon" aria-hidden="true">🛡️</span>
-                                <span><strong>$totalPreserved well-known objects</strong> preserved for BloodHound analysis accuracy</span>
-                            </li>
-                            <li>
-                                <span class="icon" aria-hidden="true">✅</span>
-                                <span><strong>GDPR & CCPA compliant</strong> - All PII systematically removed</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div style="margin-top: 25px; padding: 20px; background: rgba(102, 126, 234, 0.1); border-left: 4px solid #667eea; border-radius: 8px;">
-                        <h4 style="color: #8b9ff5; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                            <span aria-hidden="true">ℹ️</span>
-                            <span>Recommended Actions</span>
-                        </h4>
-"@
-
-        if ($criticalIssues -gt 0) {
-            $html += @"
-                        <p style="color: #fca5a5; line-height: 1.6; margin-bottom: 10px;">
-                            <strong>⚠️ ATTENTION REQUIRED:</strong> $criticalIssues critical issue(s) detected.
-                            Review the Consistency Checks section before sharing this data.
-                        </p>
-"@
-        }
-
-        if ($warningIssues -gt 0) {
-            $html += @"
-                        <p style="color: #fbbf24; line-height: 1.6; margin-bottom: 10px;">
-                            <strong>⚡ REVIEW RECOMMENDED:</strong> $warningIssues warning(s) found.
-                            These may indicate incomplete data or external domain references.
-                        </p>
-"@
-        }
-
-        if ($totalIssues -eq 0) {
-            $html += @"
-                        <p style="color: #4ade80; line-height: 1.6;">
-                            <strong>✅ ALL CLEAR:</strong> No issues detected. The anonymized data is ready for sharing.
-                            Remember to keep the mapping files confidential.
-                        </p>
-"@
-        } else {
-            $html += @"
-                        <p style="color: #a0a0b8; line-height: 1.6;">
-                            1. Review the <a href="#consistency" style="color: #8b9ff5; text-decoration: underline;">Consistency Checks</a> section<br>
-                            2. Verify all critical issues are resolved or understood<br>
-                            3. Keep the anonymization mapping file in a secure location<br>
-                            4. Only share the anonymized JSON files, never the mappings
-                        </p>
-"@
-        }
-
-        $html += @"
-                    </div>
-                </div>
-            </section>
-"@
 
         $html += @"
             <section id="overview" class="section">
@@ -8703,42 +7470,33 @@ function Save-ComprehensiveMappingsHTML {
             </section>
 
             <section id="visualizations" class="section">
-                <button class="section-header"
-                        onclick="toggleSection(this)"
-                        onkeydown="handleSectionKeyPress(event, this)"
-                        aria-expanded="true"
-                        aria-controls="visualizations-content"
-                        tabindex="0">
-                    <h2>
-                        <span class="emoji" aria-hidden="true">📊</span>
-                        <span>Data Visualizations</span>
-                        <span class="toggle" aria-hidden="true">▼</span>
-                    </h2>
-                </button>
-                <div id="visualizations-content" class="section-content" role="region" aria-labelledby="visualizations"
+                <div class="section-header" onclick="toggleSection(this)">
+                    <h2><span class="emoji">📊</span>Data Visualizations <span class="toggle">▼</span></h2>
+                </div>
+                <div class="section-content">
                     <p style="color: #6c757d; margin-bottom: 25px; line-height: 1.6;">
                         Visual breakdown of anonymization statistics and object type distribution:
                     </p>
 
                     <div class="chart-grid">
                         <div class="chart-wrapper">
-                            <h4 id="objectTypeChart-title">Object Type Distribution</h4>
-                            <canvas id="objectTypeChart" role="img" aria-labelledby="objectTypeChart-title" aria-label="Doughnut chart showing distribution of anonymized object types including users, groups, computers, domains, and other categories"></canvas>
+                            <h4>Object Type Distribution</h4>
+                            <canvas id="objectTypeChart"></canvas>
                         </div>
                         <div class="chart-wrapper">
-                            <h4 id="anonymizedVsPreservedChart-title">Anonymized vs Preserved Objects</h4>
-                            <canvas id="anonymizedVsPreservedChart" role="img" aria-labelledby="anonymizedVsPreservedChart-title" aria-label="Pie chart comparing the number of anonymized objects versus preserved well-known objects"></canvas>
+                            <h4>Anonymized vs Preserved Objects</h4>
+                            <canvas id="anonymizedVsPreservedChart"></canvas>
                         </div>
                     </div>
 
                     <div class="chart-grid">
                         <div class="chart-wrapper">
-                            <h4 id="consistencyChart-title">Consistency Check Results</h4>
-                            <canvas id="consistencyChart" role="img" aria-labelledby="consistencyChart-title" aria-label="Doughnut chart displaying consistency check results showing passed and failed checks"></canvas>
+                            <h4>Consistency Check Results</h4>
+                            <canvas id="consistencyChart"></canvas>
                         </div>
                         <div class="chart-wrapper">
-                            <h4 id="topObjectsChart-title">Top 5 Object Types by Volume</h4>
-                            <canvas id="topObjectsChart" role="img" aria-labelledby="topObjectsChart-title" aria-label="Horizontal bar chart showing the top 5 object types by count"></canvas>
+                            <h4>Top 5 Object Types by Volume</h4>
+                            <canvas id="topObjectsChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -8749,18 +7507,9 @@ function Save-ComprehensiveMappingsHTML {
         if ($AllConsistencyResults) {
             $html += @"
             <section id="consistency" class="section">
-                <button class="section-header"
-                        onclick="toggleSection(this)"
-                        onkeydown="handleSectionKeyPress(event, this)"
-                        aria-expanded="true"
-                        aria-controls="consistency-content"
-                        tabindex="0">
-                    <h2>
-                        <span class="emoji" aria-hidden="true">✓</span>
-                        <span>Consistency Checks</span>
-                        <span class="toggle" aria-hidden="true">▼</span>
-                    </h2>
-                </button>
+                <div class="section-header" onclick="toggleSection(this)">
+                    <h2><span class="emoji">✓</span>Consistency Checks <span class="toggle">▼</span></h2>
+                </div>
                 <div class="section-content">
 "@
 
@@ -8797,25 +7546,14 @@ function Save-ComprehensiveMappingsHTML {
         if ($script:DomainMapping -and $script:DomainMapping.Count -gt 0) {
             $html += @"
             <section id="domains" class="section">
-                <button class="section-header"
-                        onclick="toggleSection(this)"
-                        onkeydown="handleSectionKeyPress(event, this)"
-                        aria-expanded="true"
-                        aria-controls="domains-content"
-                        tabindex="0">
-                    <h2>
-                        <span class="emoji" aria-hidden="true">🌐</span>
-                        <span>Domain Mappings</span>
-                        <span class="toggle" aria-hidden="true">▼</span>
-                    </h2>
-                </button>
-                <div id="domains-content" class="section-content" role="region" aria-labelledby="domains">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <h2><span class="emoji">🌐</span>Domain Mappings <span class="toggle">▼</span></h2>
+                </div>
+                <div class="section-content">
                     <div class="search-box">
-                        <label for="domain-search" class="sr-only">Search domain mappings</label>
-                        <input id="domain-search" type="text" placeholder="🔍 Search domain mappings..." onkeyup="filterTable(this, 'domain-table')" aria-label="Search domain mappings">
+                        <input type="text" placeholder="🔍 Search domain mappings..." onkeyup="filterTable(this, 'domain-table')">
                     </div>
-                    <table id="domain-table" aria-label="Domain mappings table">
-                        <caption class="sr-only">Table showing original domain names mapped to anonymized domain names</caption>
+                    <table id="domain-table">
                         <thead>
                             <tr>
                                 <th>Original Domain</th>
@@ -8848,25 +7586,14 @@ function Save-ComprehensiveMappingsHTML {
         if ($script:UserMapping -and $script:UserMapping.Count -gt 0) {
             $html += @"
             <section id="users" class="section">
-                <button class="section-header collapsed"
-                        onclick="toggleSection(this)"
-                        onkeydown="handleSectionKeyPress(event, this)"
-                        aria-expanded="false"
-                        aria-controls="users-content"
-                        tabindex="0">
-                    <h2>
-                        <span class="emoji" aria-hidden="true">👤</span>
-                        <span>User Mappings ($($script:UserMapping.Count))</span>
-                        <span class="toggle" aria-hidden="true">▼</span>
-                    </h2>
-                </button>
-                <div id="users-content" class="section-content collapsed" role="region" aria-labelledby="users">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <h2><span class="emoji">👤</span>User Mappings ($($script:UserMapping.Count)) <span class="toggle">▼</span></h2>
+                </div>
+                <div class="section-content collapsed">
                     <div class="search-box">
-                        <label for="user-search" class="sr-only">Search user mappings</label>
-                        <input id="user-search" type="text" placeholder="🔍 Search user mappings..." onkeyup="filterTable(this, 'user-table')" aria-label="Search user mappings">
+                        <input type="text" placeholder="🔍 Search user mappings..." onkeyup="filterTable(this, 'user-table')">
                     </div>
-                    <table id="user-table" aria-label="User mappings table">
-                        <caption class="sr-only">Table showing original user names mapped to anonymized user identifiers</caption>
+                    <table id="user-table">
                         <thead>
                             <tr>
                                 <th>Original sAMAccountName</th>
@@ -8909,19 +7636,10 @@ function Save-ComprehensiveMappingsHTML {
         if ($script:PreservedItems.Groups -and $script:PreservedItems.Groups.Count -gt 0) {
             $html += @"
             <section id="preserved" class="section">
-                <button class="section-header collapsed"
-                        onclick="toggleSection(this)"
-                        onkeydown="handleSectionKeyPress(event, this)"
-                        aria-expanded="false"
-                        aria-controls="preserved-content"
-                        tabindex="0">
-                    <h2>
-                        <span class="emoji" aria-hidden="true">🛡️</span>
-                        <span>Preserved Well-Known Items</span>
-                        <span class="toggle" aria-hidden="true">▼</span>
-                    </h2>
-                </button>
-                <div id="preserved-content" class="section-content collapsed" role="region" aria-labelledby="preserved"
+                <div class="section-header" onclick="toggleSection(this)">
+                    <h2><span class="emoji">🛡️</span>Preserved Well-Known Items <span class="toggle">▼</span></h2>
+                </div>
+                <div class="section-content collapsed">
                     <h3>Preserved Groups</h3>
                     <table>
                         <thead>
@@ -8952,37 +7670,19 @@ function Save-ComprehensiveMappingsHTML {
 
         # Close HTML
         $html += @"
-        </main>
+        </div>
 
-        <footer role="contentinfo">
-            <p>Generated by <strong>AnonymousHound v0.2 BETA</strong> - BloodHound Data Anonymization Tool</p>
-            <p style="margin-top: 10px; opacity: 0.8;">
-                <span aria-hidden="true">⚠️</span>
-                <span>Keep this report confidential - it contains the anonymization mapping</span>
-            </p>
+        <footer>
+            <p>Generated by <strong>AnonymousHound</strong> - BloodHound Data Anonymization Tool</p>
+            <p style="margin-top: 10px; opacity: 0.8;">⚠️ Keep this report confidential - it contains the anonymization mapping</p>
         </footer>
     </div>
 
     <script>
-        // WCAG 2.1: Accessible toggle function with ARIA updates
         function toggleSection(header) {
             const content = header.nextElementSibling;
-            const isCollapsed = content.classList.contains('collapsed');
-
             content.classList.toggle('collapsed');
             header.classList.toggle('collapsed');
-
-            // Update ARIA attribute
-            header.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
-        }
-
-        // WCAG 2.1: Keyboard navigation support
-        function handleSectionKeyPress(event, header) {
-            // Enter or Space key
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                toggleSection(header);
-            }
         }
 
         function filterTable(input, tableId) {
@@ -9299,32 +7999,18 @@ function New-OutputZip {
 
         Write-Host ""
 
-        # Create ZIP archive (ONLY anonymized JSON files - NOT the mapping file!)
+        # Create ZIP archive
         $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
         $zipFileName = "AnonymizedData_$timestamp.zip"
         $zipFilePath = Join-Path $OutputPath $zipFileName
 
-        Write-Host "📦 Creating ZIP archive (anonymized data only)..." -ForegroundColor Yellow
-        Write-Host "   ⚠️  Mapping file excluded for security" -ForegroundColor Yellow
+        Write-Host "📦 Creating ZIP archive..." -ForegroundColor Yellow
 
-        # Use .NET compression and add files selectively
+        # Use .NET compression (works on PowerShell 5.1+)
         Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($anonymizedDataFolder, $zipFilePath, 'Optimal', $false)
 
-        # Create empty ZIP file
-        $zip = [System.IO.Compression.ZipFile]::Open($zipFilePath, 'Create')
-
-        try {
-            # Add only the anonymized JSON files (exclude mapping and error log)
-            $filesToZip = Get-ChildItem -Path $anonymizedDataFolder -Filter "ANONYMIZED_*.json" -File
-            foreach ($file in $filesToZip) {
-                $entryName = $file.Name
-                [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $file.FullName, $entryName, 'Optimal') | Out-Null
-                Write-Host "   ✓ $entryName" -ForegroundColor Gray
-            }
-        }
-        finally {
-            $zip.Dispose()
-        }
+        Write-Host "   ✓ $zipFileName" -ForegroundColor Gray
 
         $zipSize = (Get-Item $zipFilePath).Length
         $zipSizeMB = [math]::Round($zipSize / 1MB, 2)
@@ -9338,7 +8024,7 @@ function New-OutputZip {
         return @{
             Folder = $anonymizedDataFolder
             ZipFile = $zipFilePath
-            FileCount = $anonymizedFiles.Count  # Only JSON files, not mapping
+            FileCount = ($anonymizedFiles.Count + 1) # +1 for mapping file
         }
     }
     catch {
@@ -9351,75 +8037,8 @@ function New-OutputZip {
 
 #region Main Execution
 
-# ============================================================================
-# INTERACTIVE MODE: Check if parameters are missing and prompt user
-# ============================================================================
-$interactiveParams = Get-InteractiveInput -InputFile $InputFile `
-                                          -InputDirectory $InputDirectory `
-                                          -OutputDirectory $OutputDirectory
-
-if ($interactiveParams.Interactive -or $interactiveParams.InputPath) {
-    # User went through interactive mode, apply the selections
-    if ($interactiveParams.IsDirectory) {
-        $InputDirectory = $interactiveParams.InputPath
-        $InputFile = $null
-    } else {
-        $InputFile = $interactiveParams.InputPath
-        $InputDirectory = $null
-    }
-
-    if ($interactiveParams.OutputPath) {
-        $OutputDirectory = $interactiveParams.OutputPath
-    }
-
-    if ($interactiveParams.PreserveHostnames) {
-        $PreserveHostnames = $true
-    }
-
-    if ($interactiveParams.PreserveOSVersions) {
-        $PreserveOSVersions = $true
-    }
-
-    if ($interactiveParams.ContainsKey('GenerateHtmlReport')) {
-        $GenerateHtmlReport = $interactiveParams.GenerateHtmlReport
-    }
-}
-
-Write-Host "`nBloodHound Data Anonymization Script v0.2 BETA" -ForegroundColor Cyan
-Write-Host "================================================" -ForegroundColor Cyan
-
-# ============================================================================
-# INPUT VALIDATION
-# ============================================================================
-if ($InputDirectory) {
-    $validationResult = Test-InputValidation -InputPath $InputDirectory -IsDirectory $true
-    if (-not $validationResult) {
-        Write-ScriptLog "Input validation failed for directory: $InputDirectory" -Level Error
-        exit 1
-    }
-}
-elseif ($InputFile) {
-    $validationResult = Test-InputValidation -InputPath $InputFile -IsDirectory $false
-    if (-not $validationResult) {
-        Write-ScriptLog "Input validation failed for file: $InputFile" -Level Error
-        exit 1
-    }
-}
-
-# ============================================================================
-# DRY RUN MODE (WhatIf)
-# ============================================================================
-if ($WhatIfPreference) {
-    if ($InputDirectory) {
-        Show-DryRunPreview -InputPath $InputDirectory -IsDirectory $true
-    }
-    elseif ($InputFile) {
-        Show-DryRunPreview -InputPath $InputFile -IsDirectory $false
-    }
-
-    Write-Host "Dry run complete. Use without -WhatIf to perform anonymization." -ForegroundColor Green
-    exit 0
-}
+Write-Host "`nBloodHound Data Anonymization Script v10 - COMPREHENSIVE FIX" -ForegroundColor Cyan
+Write-Host "=============================================================" -ForegroundColor Cyan
 
 # Create output directory if it doesn't exist
 if (-not (Test-Path $OutputDirectory)) {
@@ -9442,44 +8061,6 @@ Import-DomainMappings
 
 # Initialize domain counter based on existing mappings (if loaded from file)
 $script:domainCounter = $script:DomainMapping.Count
-
-# Track processing start time for performance metrics
-$scriptStartTime = Get-Date
-
-# Performance metrics tracking
-$script:PerformanceMetrics = @{
-    StartTime = $scriptStartTime
-    FileProcessingTimes = @{}
-    TotalBytesProcessed = 0
-    OptimizationsApplied = @()
-}
-
-# ============================================================================
-# PERFORMANCE OPTIMIZATION: Parallel Processing Setup
-# ============================================================================
-
-# Determine optimal throttle limit if not specified
-if ($EnableParallel) {
-    if ($ThrottleLimit -eq 0) {
-        # Auto-detect: Use number of logical processors, capped at 8
-        $cpuCount = (Get-CimInstance -ClassName Win32_ComputerSystem).NumberOfLogicalProcessors
-        $ThrottleLimit = [Math]::Min($cpuCount, 8)
-        if ($ThrottleLimit -lt 2) { $ThrottleLimit = 4 } # Minimum 4 for reasonable parallelism
-    }
-
-    # Check PowerShell version for parallel support
-    if ($PSVersionTable.PSVersion.Major -lt 7) {
-        Write-Host "`n⚠️  WARNING: Parallel processing requires PowerShell 7+" -ForegroundColor Yellow
-        Write-Host "   Current version: PowerShell $($PSVersionTable.PSVersion)" -ForegroundColor Yellow
-        Write-Host "   Falling back to sequential processing..." -ForegroundColor Yellow
-        Write-Host "   TIP: Install PowerShell 7+ for 2-4x faster performance`n" -ForegroundColor Cyan
-        $EnableParallel = $false
-    } else {
-        Write-Host "`n⚡ Parallel Processing ENABLED" -ForegroundColor Green
-        Write-Host "   Threads: $ThrottleLimit" -ForegroundColor White
-        Write-Host "   Expected speedup: 2-4x faster`n" -ForegroundColor Cyan
-    }
-}
 
 # Begin file processing
 try {
@@ -9574,11 +8155,6 @@ try {
 
         Write-ScriptLog "Found $($collections.Count) collection(s) with $($allFiles.Count) total files" -Level Success
 
-        # Optimize hashtable capacity based on dataset size
-        $estimatedCapacity = Optimize-HashtableCapacity -Files $allFiles
-        $script:PerformanceMetrics.OptimizationsApplied += "Hashtable pre-allocation (estimated: $estimatedCapacity objects)"
-        $script:PerformanceMetrics.TotalBytesProcessed = ($allFiles | Measure-Object -Property Length -Sum).Sum
-
         # Display collections found
         foreach ($collectionKey in ($collections.Keys | Sort-Object)) {
             $fileCount = $collections[$collectionKey].Count
@@ -9608,31 +8184,8 @@ try {
             }
             Write-Host "═══════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
 
-            # Track progress
-            $collectionStartTime = Get-Date
-            $fileIndex = 0
-
-            # ====================================================================
-            # PERFORMANCE MODE SELECTION: Parallel vs Sequential
-            # ====================================================================
-
-            # Check if parallel processing is requested and show warning
-            if ($EnableParallel -and $files.Count -gt 3) {
-                Write-Host "   ⚠️  Parallel mode not yet supported (shared state complexity)" -ForegroundColor Yellow
-                Write-Host "   Using optimized sequential processing with memory enhancements..." -ForegroundColor Cyan
-            }
-
-            # OPTIMIZED SEQUENTIAL PROCESSING with memory improvements
             foreach ($file in $files) {
-                $fileIndex++
                 $fileType = Get-FileTypeFromName $file.Name
-
-                # Show progress bar with ETA
-                Show-ProgressWithETA -Activity "Anonymizing Collection: $collectionKey" `
-                                     -Current $fileIndex `
-                                     -Total $files.Count `
-                                     -StartTime $collectionStartTime `
-                                     -CurrentFile $file.Name
 
                 # Preserve the timestamp in the output filename to keep collections separate
                 if ($collectionKey -eq 'default') {
@@ -9660,9 +8213,6 @@ try {
                     'enterprisecas' { Invoke-EnterpriseCAsFileProcessing -FilePath $file.FullName -OutputPath $outputPath }
                 }
             }
-
-            # Clear progress bar
-            Write-Progress -Activity "Anonymizing Collection: $collectionKey" -Completed
 
             Write-Host ""
             Write-Host "✓ Collection $collectionKey processed" -ForegroundColor Green
@@ -10051,79 +8601,34 @@ try {
     Write-Host "📁 Output Locations:" -ForegroundColor Yellow
     if ($organizedOutput) {
         Write-Host "   Folder: $($organizedOutput.Folder)" -ForegroundColor White
-        Write-Host "          Contains: $($organizedOutput.FileCount) JSON files + mapping file + HTML report" -ForegroundColor DarkGray
-        Write-Host ""
         Write-Host "   ZIP Archive: $($organizedOutput.ZipFile)" -ForegroundColor White
-        Write-Host "          Contains: $($organizedOutput.FileCount) JSON files only (safe to share!)" -ForegroundColor Green
-        Write-Host "          ⚠️  Mapping file NOT included in ZIP for security" -ForegroundColor Yellow
+        Write-Host "   Files: $($organizedOutput.FileCount) anonymized files + mapping" -ForegroundColor White
         if ($htmlReportPath) {
-            Write-Host ""
             Write-Host "   HTML Report: $htmlReportPath" -ForegroundColor White
-            Write-Host "          Open in browser for interactive view" -ForegroundColor DarkGray
+            Write-Host "   (Open in browser for interactive view - not included in ZIP)" -ForegroundColor DarkGray
         }
     } else {
         Write-Host "   Directory: $OutputDirectory" -ForegroundColor White
     }
 
     Write-Host ""
-
-    # Display comprehensive summary with visual formatting
-    $processingDuration = (Get-Date) - $scriptStartTime
-    $summaryStats = @{
-        Users = $script:UserMapping.Count
-        Groups = $script:GroupMapping.Count
-        Computers = $script:ComputerMapping.Count
-        Domains = $script:DomainMapping.Count
-        CNs = $script:CNMapping.Count
-        CNsPreserved = if ($script:PreservedItems.CNs) { $script:PreservedItems.CNs.Count } else { 0 }
-    }
-
-    Show-AnonymizationSummary -Statistics $summaryStats `
-                              -Duration $processingDuration `
-                              -OutputPath $(if ($organizedOutput) { $organizedOutput.Folder } else { $OutputDirectory }) `
-                              -ZipPath $(if ($organizedOutput) { $organizedOutput.ZipFile } else { $null })
-
-    # Display performance metrics if optimizations were applied
-    if ($script:PerformanceMetrics.OptimizationsApplied.Count -gt 0) {
-        Write-Host "⚡ Performance Optimizations Applied:" -ForegroundColor Green
-        foreach ($optimization in $script:PerformanceMetrics.OptimizationsApplied) {
-            Write-Host "   • $optimization" -ForegroundColor Gray
+    Write-Host "🎉 Ready to share! Your anonymized BloodHound data is in:" -ForegroundColor Green
+    if ($organizedOutput) {
+        Write-Host "   📦 ZIP Archive: $($organizedOutput.ZipFile)" -ForegroundColor Cyan
+        if ($htmlReportPath) {
+            Write-Host "   📄 HTML Report: $htmlReportPath (local viewing)" -ForegroundColor Cyan
         }
-
-        # Calculate throughput
-        $totalMB = $script:PerformanceMetrics.TotalBytesProcessed / 1MB
-        $throughputMBps = if ($processingDuration.TotalSeconds -gt 0) {
-            [Math]::Round($totalMB / $processingDuration.TotalSeconds, 2)
-        } else { 0 }
-
-        Write-Host "   • Throughput: $throughputMBps MB/s" -ForegroundColor Gray
-        Write-Host ""
     }
-
-    if ($htmlReportPath) {
-        Write-Host "📊 Interactive HTML Report: " -NoNewline -ForegroundColor Cyan
-        Write-Host "$htmlReportPath" -ForegroundColor White
-        Write-Host ""
-    }
+    Write-Host ""
+    Write-Host "⚠️  IMPORTANT: Keep the mapping files private - they contain the key" -ForegroundColor Yellow
+    Write-Host "   to reverse the anonymization!" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "💡 TIP: Open the HTML report in your browser for an interactive view" -ForegroundColor DarkGray
+    Write-Host "   of all mappings and consistency checks!" -ForegroundColor DarkGray
+    Write-Host ""
 }
 catch {
     # Handle any fatal errors that occur during processing
-    $processingDuration = (Get-Date) - $scriptStartTime
-
-    Write-ErrorWithSuggestion -ErrorRecord $_ `
-                              -Context "Fatal error during BloodHound data processing" `
-                              -Suggestions @(
-                                  "Check that input files are valid BloodHound JSON format",
-                                  "Verify you have write permissions to the output directory",
-                                  "Ensure sufficient disk space is available",
-                                  "Review the error log at: $OutputDirectory\anonymization_errors.log",
-                                  "Try processing with -Verbose flag for detailed logging"
-                              )
-
-    Write-Host "⏱️  Processing duration before error: " -NoNewline -ForegroundColor Yellow
-    Write-Host "$($processingDuration.ToString('mm\:ss'))" -ForegroundColor White
-    Write-Host ""
-
     Write-ScriptLog "Fatal error during processing: $_" -Level Error
     Save-ErrorLog -OutputPath $OutputDirectory
     exit 1

@@ -1,0 +1,190 @@
+{
+  "data": [
+    {
+      "Properties": {
+        "domain": "DOMAIN2.LOCAL",
+        "name": "DEFAULT DOMAIN POLICY@DOMAIN2.LOCAL",
+        "distinguishedname": "CN={B8842F4B-DA13-4294-9808-BEE3E76117C6},CN=POLICIES,CN=SYSTEM,DC=DOMAIN2,DC=LOCAL",
+        "domainsid": "S-1-5-21-4148504411-878201850-2093980476",
+        "isaclprotected": true,
+        "description": null,
+        "whencreated": 1656555663,
+        "gpcpath": "\\\\DOMAIN2.LOCAL\\SYSVOL\\DOMAIN2.LOCAL\\POLICIES\\{B8842F4B-DA13-4294-9808-BEE3E76117C6}"
+      },
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        }
+      ],
+      "ObjectIdentifier": "5FC61405-A110-4B41-A623-9BD87103AA21",
+      "IsDeleted": false,
+      "IsACLProtected": true,
+      "ContainedBy": null
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN2.LOCAL",
+        "name": "DEFAULT DOMAIN CONTROLLERS POLICY@DOMAIN2.LOCAL",
+        "distinguishedname": "CN={2F3DD875-4516-48D3-95E0-86C7081CC601},CN=POLICIES,CN=SYSTEM,DC=DOMAIN2,DC=LOCAL",
+        "domainsid": "S-1-5-21-4148504411-878201850-2093980476",
+        "isaclprotected": true,
+        "description": null,
+        "whencreated": 1656555663,
+        "gpcpath": "\\\\DOMAIN2.LOCAL\\SYSVOL\\DOMAIN2.LOCAL\\POLICIES\\{2F3DD875-4516-48D3-95E0-86C7081CC601}"
+      },
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        }
+      ],
+      "ObjectIdentifier": "3AF45C2B-E106-4AA7-946C-63400064774D",
+      "IsDeleted": false,
+      "IsACLProtected": true,
+      "ContainedBy": null
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN2.LOCAL",
+        "name": "GPO_E020A86F@DOMAIN2.LOCAL",
+        "distinguishedname": "CN={48C95621-A9BB-440A-9047-EA9BD3226D34},CN=POLICIES,CN=SYSTEM,DC=DOMAIN2,DC=LOCAL",
+        "domainsid": "S-1-5-21-4148504411-878201850-2093980476",
+        "isaclprotected": true,
+        "description": null,
+        "whencreated": 1670460458,
+        "gpcpath": "\\\\DOMAIN2.LOCAL\\SYSVOL\\DOMAIN2.LOCAL\\POLICIES\\{48C95621-A9BB-440A-9047-EA9BD3226D34}"
+      },
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-4148504411-878201850-2093980476-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        }
+      ],
+      "ObjectIdentifier": "A93A3385-0120-44AB-84A6-5678F14B8606",
+      "IsDeleted": false,
+      "IsACLProtected": true,
+      "ContainedBy": null
+    }
+  ],
+  "meta": {
+    "methods": 521215,
+    "type": "gpos",
+    "count": 3,
+    "version": 6
+  }
+}

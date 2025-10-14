@@ -1,0 +1,77 @@
+{
+  "data": [
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "NTAUTHCERTIFICATES@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=NTAUTHCERTIFICATES,CN=PUBLIC KEY SERVICES,CN=SERVICES,CN=CONFIGURATION,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "isaclprotected": false,
+        "certthumbprints": [
+          "24F903316A17106D976906F9186A2573010ECBC1",
+          "B7A09903C6B38BFB2378D94A6BA5BB48CA2431C6"
+        ],
+        "description": null,
+        "whencreated": 1683819999
+      },
+      "DomainSID": "S-1-5-21-1809690782-1515124380-3839109947",
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "0744E81A-D5D8-455B-8678-74559F98E0B9",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "52FA9ED3-BC17-4F5C-A315-0C75DB285B2F",
+        "ObjectType": "Container"
+      }
+    }
+  ],
+  "meta": {
+    "methods": 521215,
+    "type": "ntauthstores",
+    "count": 1,
+    "version": 6
+  }
+}

@@ -1,0 +1,884 @@
+{
+  "data": [
+    {
+      "GPOChanges": {
+        "LocalAdmins": [],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": []
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "USERS@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=USERS,OU=TIER1,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1664356125,
+        "blocksinheritance": false
+      },
+      "Links": [],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "3E0825C0-9F40-47A1-AEA1-47244BB4C5C7",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "480475F6-815A-4805-A9A2-47259DF1AC74",
+        "ObjectType": "OU"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": []
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "OU_A29DAF@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=OU_A29DAF,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1678280527,
+        "blocksinheritance": false
+      },
+      "Links": [],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "0DE6C5CD-7614-46CD-B941-BCAEBED26E4A",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354",
+        "ObjectType": "Domain"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": []
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "SERVICEACCOUNTS@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=SERVICEACCOUNTS,OU=TIER0,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1664347229,
+        "blocksinheritance": false
+      },
+      "Links": [],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "01C4A056-78D3-47AE-B21F-004AADDC0D69",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "5881D602-F65F-4131-BD12-EF9DFB1551A3",
+        "ObjectType": "OU"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": []
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "GROUPS@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=GROUPS,OU=TIER0,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1664350452,
+        "blocksinheritance": false
+      },
+      "Links": [],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "BCF6B230-5C52-41A0-A1AF-50A2182E6237",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "5881D602-F65F-4131-BD12-EF9DFB1551A3",
+        "ObjectType": "OU"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": []
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "COMPUTERS@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=COMPUTERS,OU=TIER0,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1664350495,
+        "blocksinheritance": false
+      },
+      "Links": [],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "9FFD5E0B-2C20-4891-9FBF-780FB1A2E47B",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "5881D602-F65F-4131-BD12-EF9DFB1551A3",
+        "ObjectType": "OU"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": []
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "GROUPS@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=GROUPS,OU=TIER1,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1664356091,
+        "blocksinheritance": false
+      },
+      "Links": [],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "BDF807CE-9EFE-4E2E-AC9E-BDE29AC1D78B",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "480475F6-815A-4805-A9A2-47259DF1AC74",
+        "ObjectType": "OU"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": []
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "TIER1@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=TIER1,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1664356080,
+        "blocksinheritance": false
+      },
+      "Links": [],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "480475F6-815A-4805-A9A2-47259DF1AC74",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354",
+        "ObjectType": "Domain"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": []
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "USERS@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=USERS,OU=TIER0,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1665132785,
+        "blocksinheritance": false
+      },
+      "Links": [
+        {
+          "IsEnforced": false,
+          "GUID": "F8B5A950-EF2F-41D7-8D08-D93305F61FF5"
+        }
+      ],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "4B63B352-E825-473D-9111-B07CF7CC1FF9",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "5881D602-F65F-4131-BD12-EF9DFB1551A3",
+        "ObjectType": "OU"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": [
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2101",
+            "ObjectType": "Computer"
+          },
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2148",
+            "ObjectType": "Computer"
+          },
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2149",
+            "ObjectType": "Computer"
+          },
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2161",
+            "ObjectType": "Computer"
+          },
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2162",
+            "ObjectType": "Computer"
+          },
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2163",
+            "ObjectType": "Computer"
+          }
+        ]
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "TIER0@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=TIER0,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1664347200,
+        "blocksinheritance": true
+      },
+      "Links": [],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "5881D602-F65F-4131-BD12-EF9DFB1551A3",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354",
+        "ObjectType": "Domain"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": [
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2101",
+            "ObjectType": "Computer"
+          }
+        ]
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "OU_B05945@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=OU_B05945,OU=COMPUTERS,OU=TIER0,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1664351824,
+        "blocksinheritance": false
+      },
+      "Links": [
+        {
+          "IsEnforced": false,
+          "GUID": "4226B66E-F25B-45DC-A8EA-2A6431F7A631"
+        }
+      ],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-2110",
+          "PrincipalType": "User",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "66449E17-B57B-4121-AA7F-5B3262B9CEA5",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "9FFD5E0B-2C20-4891-9FBF-780FB1A2E47B",
+        "ObjectType": "OU"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2173",
+            "ObjectType": "User"
+          }
+        ],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": [
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2174",
+            "ObjectType": "Computer"
+          }
+        ]
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "WORKSTATIONS@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=WORKSTATIONS,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1681261744,
+        "blocksinheritance": false
+      },
+      "Links": [
+        {
+          "IsEnforced": false,
+          "GUID": "9DE255CB-950F-498D-AAF0-B3D2C09CEF80"
+        }
+      ],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "95BE69AE-1226-452E-A5EF-B906D5AE17AD",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354",
+        "ObjectType": "Domain"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-513",
+            "ObjectType": "Group"
+          },
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2111",
+            "ObjectType": "Group"
+          }
+        ],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": [
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2124",
+            "ObjectType": "Computer"
+          },
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2171",
+            "ObjectType": "Computer"
+          },
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2177",
+            "ObjectType": "Computer"
+          },
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2190",
+            "ObjectType": "Computer"
+          }
+        ]
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "COMPUTERS@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=COMPUTERS,OU=TIER1,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1664356101,
+        "blocksinheritance": false
+      },
+      "Links": [
+        {
+          "IsEnforced": false,
+          "GUID": "0938DF8E-44CB-4696-BAAB-2637DC00DA8E"
+        },
+        {
+          "IsEnforced": false,
+          "GUID": "A9A7A1B8-DD05-4A24-BD60-78B4DF302BE2"
+        },
+        {
+          "IsEnforced": false,
+          "GUID": "EF96C446-0C45-4999-B069-4E24381EA08A"
+        }
+      ],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-2189",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "31CA6B15-EDC2-4EB9-97FC-AFCB65F99F98",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "480475F6-815A-4805-A9A2-47259DF1AC74",
+        "ObjectType": "OU"
+      }
+    },
+    {
+      "GPOChanges": {
+        "LocalAdmins": [],
+        "RemoteDesktopUsers": [],
+        "DcomUsers": [],
+        "PSRemoteUsers": [],
+        "AffectedComputers": [
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2150",
+            "ObjectType": "Computer"
+          },
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-2182",
+            "ObjectType": "Computer"
+          },
+          {
+            "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354-1000",
+            "ObjectType": "Computer"
+          }
+        ]
+      },
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "DOMAIN CONTROLLERS@DOMAIN1.LOCAL",
+        "distinguishedname": "OU=DOMAIN CONTROLLERS,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": "Default container for domain controllers",
+        "whencreated": 1653361617,
+        "blocksinheritance": false
+      },
+      "Links": [
+        {
+          "IsEnforced": false,
+          "GUID": "7A01EA33-4837-4F95-9FF7-F06851E76E2F"
+        },
+        {
+          "IsEnforced": false,
+          "GUID": "569DBC42-95F1-4BC2-BF40-A538F3E51EE3"
+        },
+        {
+          "IsEnforced": false,
+          "GUID": "C8376CC4-F539-427C-A1CF-1F8E0A194D63"
+        },
+        {
+          "IsEnforced": false,
+          "GUID": "31D17057-573B-4DDC-A8C7-7F5E1F7EB2D2"
+        },
+        {
+          "IsEnforced": false,
+          "GUID": "836C7FF3-E16F-4B7C-98D0-40E4FA623BAD"
+        },
+        {
+          "IsEnforced": false,
+          "GUID": "98F82EDF-191B-421A-8A34-6F17868222E5"
+        },
+        {
+          "IsEnforced": false,
+          "GUID": "852C70CF-3249-4E43-A5D1-78D45CE5B406"
+        }
+      ],
+      "ChildObjects": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "F81534A2-4A80-4BD6-BB0A-346DC66C4977",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "S-1-5-21-1940134870-3096912709-3221846354",
+        "ObjectType": "Domain"
+      }
+    }
+  ],
+  "meta": {
+    "methods": 521215,
+    "type": "ous",
+    "count": 13,
+    "version": 6
+  }
+}

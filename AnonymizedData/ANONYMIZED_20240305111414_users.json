@@ -1,0 +1,5003 @@
+{
+  "data": [
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_12BEF55F@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_12BEF55F,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_12BEF55F",
+        "isaclprotected": true,
+        "description": null,
+        "whencreated": 1683454026,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1683480084,
+        "lastlogontimestamp": 1683479367,
+        "pwdlastset": 1683479226,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_12BEF55F",
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": true,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1119",
+      "IsDeleted": false,
+      "IsACLProtected": true,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_32C33F49@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_32C33F49,CN=CN_761B40,CN=MICROSOFT EXCHANGE SYSTEM OBJECTS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_32C33F49",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685415598,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1685440798,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_32C33F49",
+        "email": "email_A94059@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1123",
+          "PrincipalType": "Computer",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1157",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "40B6BB19-C1FD-460C-A3B1-5A7B117F8F17",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_F4D2BAD4@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_F4D2BAD4,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_F4D2BAD4",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1707360605,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": 1707389545,
+        "pwdlastset": 1707389405,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_F4D2BAD4",
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1174",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "ADMINISTRATOR@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=ADMINISTRATOR,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "Administrator",
+        "isaclprotected": true,
+        "description": "Built-in account for administering the computer/domain",
+        "whencreated": 1668394808,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1702922830,
+        "lastlogontimestamp": 1702922830,
+        "pwdlastset": 1676466845,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": null,
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": true,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-500",
+      "IsDeleted": false,
+      "IsACLProtected": true,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_80E92D8F@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_80E92D8F,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_80E92D8F",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1708935530,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1708968622,
+        "lastlogontimestamp": 1708968581,
+        "pwdlastset": 1708967587,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_80E92D8F",
+        "email": "email_9755A0@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1182",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_C011D4FB@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_C011D4FB,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_C011D4FB",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1707444411,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1708622588,
+        "lastlogontimestamp": 1707987898,
+        "pwdlastset": 1707473211,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_C011D4FB",
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1175",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_53ED5229@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_53ED5229,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_53ED5229",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1708471377,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1708500177,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_53ED5229",
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1179",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_A037F8A4@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_A037F8A4,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_A037F8A4",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1707282629,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1708371312,
+        "lastlogontimestamp": 1708371241,
+        "pwdlastset": 1707311429,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_A037F8A4",
+        "email": "email_739468@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1171",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_097FBADE@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_097FBADE,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_097FBADE",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685414753,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 0,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_097FBADE",
+        "email": "email_32D1CF@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1144",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_B7B91F51@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_B7B91F51,CN=CN_A106E3,CN=MICROSOFT EXCHANGE SYSTEM OBJECTS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_B7B91F51",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685415608,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1685440808,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_B7B91F51",
+        "email": "email_83154A@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1123",
+          "PrincipalType": "Computer",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1158",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "40B6BB19-C1FD-460C-A3B1-5A7B117F8F17",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_F842A0E1@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_F842A0E1,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_F842A0E1",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1708935615,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1708970684,
+        "lastlogontimestamp": 1708970512,
+        "pwdlastset": 1708964415,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_F842A0E1",
+        "email": "email_167468@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1184",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_A47058AF@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_A47058AF,CN=CN_215F0A,CN=MICROSOFT EXCHANGE SYSTEM OBJECTS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_A47058AF",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685415649,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1685440849,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_A47058AF",
+        "email": "email_A22C25@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1123",
+          "PrincipalType": "Computer",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1162",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "40B6BB19-C1FD-460C-A3B1-5A7B117F8F17",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_441102A7@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_441102A7,CN=CN_68985F,CN=MICROSOFT EXCHANGE SYSTEM OBJECTS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_441102A7",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685415670,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1685440870,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_441102A7",
+        "email": "email_F69FCE@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1123",
+          "PrincipalType": "Computer",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1164",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "40B6BB19-C1FD-460C-A3B1-5A7B117F8F17",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_6AF4E593@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_6AF4E593,CN=CN_5467A2,CN=MICROSOFT EXCHANGE SYSTEM OBJECTS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_6AF4E593",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685415587,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1685440787,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_6AF4E593",
+        "email": "email_98C359@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1123",
+          "PrincipalType": "Computer",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1156",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "40B6BB19-C1FD-460C-A3B1-5A7B117F8F17",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_0760FB1D@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_0760FB1D,CN=CN_B40A33,CN=MICROSOFT EXCHANGE SYSTEM OBJECTS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_0760FB1D",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685415618,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1685440818,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_0760FB1D",
+        "email": "email_CDB460@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1123",
+          "PrincipalType": "Computer",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1159",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "40B6BB19-C1FD-460C-A3B1-5A7B117F8F17",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_BE494733@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_BE494733,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_BE494733",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685414753,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 0,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_BE494733",
+        "email": "email_A55767@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1149",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_5D2ECC9B@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_5D2ECC9B,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_5D2ECC9B",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685414753,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 0,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_5D2ECC9B",
+        "email": "email_FFD49D@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1151",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_5DAF0696@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_5DAF0696,OU=OU_18B776,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_5DAF0696",
+        "isaclprotected": true,
+        "description": null,
+        "whencreated": 1683440403,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1709665909,
+        "lastlogontimestamp": 1709304002,
+        "pwdlastset": 1683465603,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_5DAF0696",
+        "email": "email_848FF6@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": true,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1113",
+      "IsDeleted": false,
+      "IsACLProtected": true,
+      "ContainedBy": {
+        "ObjectIdentifier": "E721887C-552A-4FD0-B9B2-CA1CD77B5A50",
+        "ObjectType": "OU"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_5B4A0D36@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_5B4A0D36,CN=CN_C8FD55,CN=MICROSOFT EXCHANGE SYSTEM OBJECTS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_5B4A0D36",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685415659,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1685440859,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_5B4A0D36",
+        "email": "email_2354E5@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1123",
+          "PrincipalType": "Computer",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1163",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "40B6BB19-C1FD-460C-A3B1-5A7B117F8F17",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_FBEAD4C8@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_FBEAD4C8,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_FBEAD4C8",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685414753,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 0,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_FBEAD4C8",
+        "email": "email_103978@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1150",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_69CA1B07@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_69CA1B07,OU=OU_18B776,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_69CA1B07",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1697499985,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1708330483,
+        "lastlogontimestamp": 1708257658,
+        "pwdlastset": 1697525185,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_69CA1B07",
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1168",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "E721887C-552A-4FD0-B9B2-CA1CD77B5A50",
+        "ObjectType": "OU"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "GUEST@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=GUEST,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "Guest",
+        "isaclprotected": false,
+        "description": "Built-in account for guest access to the computer/domain",
+        "whencreated": 1668394808,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": true,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 0,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": null,
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-514",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-501",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_7CC851D5@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_7CC851D5,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_7CC851D5",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685414753,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 0,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_7CC851D5",
+        "email": "email_EDB5DD@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1145",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_C59E5EF7@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_C59E5EF7,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_C59E5EF7",
+        "isaclprotected": true,
+        "description": null,
+        "whencreated": 1668409698,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1669562727,
+        "lastlogontimestamp": 1669403383,
+        "pwdlastset": 1668438498,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_C59E5EF7",
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": true,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1104",
+      "IsDeleted": false,
+      "IsACLProtected": true,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_42562FE9@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_42562FE9,CN=CN_BD9FE1,CN=MICROSOFT EXCHANGE SYSTEM OBJECTS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_42562FE9",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685415554,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1709216526,
+        "lastlogontimestamp": 1709216399,
+        "pwdlastset": 1709216393,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_42562FE9",
+        "email": "email_59527E@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1123",
+          "PrincipalType": "Computer",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1154",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "40B6BB19-C1FD-460C-A3B1-5A7B117F8F17",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_0CCD1165@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_0CCD1165,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_0CCD1165",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1693539214,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1707402371,
+        "lastlogontimestamp": 1707330477,
+        "pwdlastset": 1693564414,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_0CCD1165",
+        "email": "email_C28627@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1166",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_B0180BD9@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_B0180BD9,CN=CN_D180CE,CN=MICROSOFT EXCHANGE SYSTEM OBJECTS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_B0180BD9",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685415639,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1685440839,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_B0180BD9",
+        "email": "email_82ECB5@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1123",
+          "PrincipalType": "Computer",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1161",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "40B6BB19-C1FD-460C-A3B1-5A7B117F8F17",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_F9CA4A7E@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_F9CA4A7E,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_F9CA4A7E",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685414753,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 0,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_F9CA4A7E",
+        "email": "email_C90B85@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1146",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_71BB70AC@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_71BB70AC,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_71BB70AC",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1683441184,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1683466384,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": null,
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1112",
+          "PrincipalType": "Computer",
+          "RightName": "ForceChangePassword",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1116",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_ED707F17@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_ED707F17,CN=CN_7402F9,CN=MICROSOFT EXCHANGE SYSTEM OBJECTS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_ED707F17",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685415576,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1709216424,
+        "lastlogontimestamp": 1709216400,
+        "pwdlastset": 1709216393,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_ED707F17",
+        "email": "email_0F8C37@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1123",
+          "PrincipalType": "Computer",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1155",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "40B6BB19-C1FD-460C-A3B1-5A7B117F8F17",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_94ACD801@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_94ACD801,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_94ACD801",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685414753,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 0,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_94ACD801",
+        "email": "email_2F97EB@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1152",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_399A6575@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_399A6575,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_399A6575",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685414752,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": true,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 0,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": null,
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1143",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_776F8603@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_776F8603,CN=CN_DCEEDD,CN=MICROSOFT EXCHANGE SYSTEM OBJECTS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_776F8603",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685415628,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1685440829,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_776F8603",
+        "email": "email_56587F@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1123",
+          "PrincipalType": "Computer",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1138",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1160",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "40B6BB19-C1FD-460C-A3B1-5A7B117F8F17",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_2A63CED2@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_2A63CED2,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_2A63CED2",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685414753,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 0,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_2A63CED2",
+        "email": "email_64D61D@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1147",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_F7D9974A@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_F7D9974A,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_F7D9974A",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1685414753,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 0,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_F7D9974A",
+        "email": "email_EB4DAE@domain4.local",
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1124",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1148",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_FC119BF1@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_FC119BF1,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_FC119BF1",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1708935647,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1708981041,
+        "lastlogontimestamp": 1708977468,
+        "pwdlastset": 1708964447,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_FC119BF1",
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1185",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_47148371@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_47148371,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_47148371",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1708935568,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": true,
+        "trustedtoauth": false,
+        "lastlogon": 1708969596,
+        "lastlogontimestamp": 1708969596,
+        "pwdlastset": 1708981206,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_47148371",
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1185",
+          "PrincipalType": "User",
+          "RightName": "ForceChangePassword",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1183",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "KRBTGT@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=KRBTGT,CN=USERS,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "krbtgt",
+        "isaclprotected": true,
+        "description": "Key Distribution Center Service Account",
+        "whencreated": 1668394831,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": false,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 0,
+        "lastlogontimestamp": -1,
+        "pwdlastset": 1668423631,
+        "serviceprincipalnames": [
+          "kadmin/HST_D36AFF"
+        ],
+        "hasspn": true,
+        "displayname": null,
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": true,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": false
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-502",
+      "IsDeleted": false,
+      "IsACLProtected": true,
+      "ContainedBy": {
+        "ObjectIdentifier": "74494BB2-58FD-4179-8CA8-376B5D7EF2F7",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "name": "USER_2F9D4481@DOMAIN4.LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "domain": "DOMAIN4.LOCAL",
+        "reconcile": false
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": null,
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [],
+      "ObjectIdentifier": "DOMAIN4.LOCAL-S-1-5-20",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": null
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "USER_FC52EE69@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=USER_FC52EE69,OU=OU_18B776,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "samaccountname": "USR_FC52EE69",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1107164693,
+        "sensitive": false,
+        "dontreqpreauth": false,
+        "passwordnotreqd": false,
+        "unconstraineddelegation": false,
+        "pwdneverexpires": true,
+        "enabled": false,
+        "trustedtoauth": false,
+        "lastlogon": 1221657838,
+        "lastlogontimestamp": 1221657838,
+        "pwdlastset": 1117877458,
+        "serviceprincipalnames": [],
+        "hasspn": false,
+        "displayname": "Display_FC52EE69",
+        "email": null,
+        "title": null,
+        "homedirectory": null,
+        "userpassword": null,
+        "unixpassword": null,
+        "unicodepassword": null,
+        "sfupassword": null,
+        "logonscript": null,
+        "admincount": false,
+        "sidhistory": []
+      },
+      "AllowedToDelegate": [],
+      "PrimaryGroupSID": "S-1-5-21-3702535222-3822678775-2090119576-513",
+      "HasSIDHistory": [],
+      "SPNTargets": [],
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-548",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "ForceChangePassword",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-526",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-527",
+          "PrincipalType": "Group",
+          "RightName": "AddKeyCredentialLink",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1141",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "AllExtendedRights",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericWrite",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "S-1-5-21-1809690782-1515124380-3839109947-1189",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "E721887C-552A-4FD0-B9B2-CA1CD77B5A50",
+        "ObjectType": "OU"
+      }
+    }
+  ],
+  "meta": {
+    "methods": 521215,
+    "type": "users",
+    "count": 40,
+    "version": 6
+  }
+}

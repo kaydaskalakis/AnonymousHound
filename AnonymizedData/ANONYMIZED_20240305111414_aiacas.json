@@ -1,0 +1,165 @@
+{
+  "data": [
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "AIACA_C2823BDA@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=AIACA_C2823BDA,CN=AIA,CN=PUBLIC KEY SERVICES,CN=SERVICES,CN=CONFIGURATION,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1683819999,
+        "crosscertificatepair": [],
+        "hascrosscertificatepair": false,
+        "certthumbprint": "B7A09903C6B38BFB2378D94A6BA5BB48CA2431C6",
+        "certname": "B7A09903C6B38BFB2378D94A6BA5BB48CA2431C6",
+        "certchain": [
+          "B7A09903C6B38BFB2378D94A6BA5BB48CA2431C6"
+        ],
+        "hasbasicconstraints": false,
+        "basicconstraintpathlength": 0
+      },
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1120",
+          "PrincipalType": "Computer",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "8922D006-C4AB-489A-8B64-3563BBAF1F72",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "4B5E6835-949A-4A08-AB9E-CCAB631B0DD9",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN4.LOCAL",
+        "name": "AIACA_E41B16C9@DOMAIN4.LOCAL",
+        "distinguishedname": "CN=AIACA_E41B16C9,CN=AIA,CN=PUBLIC KEY SERVICES,CN=SERVICES,CN=CONFIGURATION,DC=DOMAIN4,DC=LOCAL",
+        "domainsid": "S-1-5-21-1809690782-1515124380-3839109947",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1699345952,
+        "crosscertificatepair": [],
+        "hascrosscertificatepair": false,
+        "certthumbprint": "24F903316A17106D976906F9186A2573010ECBC1",
+        "certname": "24F903316A17106D976906F9186A2573010ECBC1",
+        "certchain": [
+          "24F903316A17106D976906F9186A2573010ECBC1",
+          "B7A09903C6B38BFB2378D94A6BA5BB48CA2431C6"
+        ],
+        "hasbasicconstraints": false,
+        "basicconstraintpathlength": 0
+      },
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN4.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-1169",
+          "PrincipalType": "Computer",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1809690782-1515124380-3839109947-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "D87B95CA-BF1E-4C1B-9E13-CCFFAAAE272B",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "4B5E6835-949A-4A08-AB9E-CCAB631B0DD9",
+        "ObjectType": "Container"
+      }
+    }
+  ],
+  "meta": {
+    "methods": 521215,
+    "type": "aiacas",
+    "count": 2,
+    "version": 6
+  }
+}

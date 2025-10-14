@@ -1,0 +1,338 @@
+{
+  "data": [
+    {
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "CA_EF7223E8@DOMAIN1.LOCAL",
+        "distinguishedname": "CN=CA_EF7223E8,CN=CERTIFICATION AUTHORITIES,CN=PUBLIC KEY SERVICES,CN=SERVICES,CN=CONFIGURATION,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1695941525,
+        "certthumbprint": "CDF05707FB78308638FA30F7B3483CCBB3632882",
+        "certname": "CDF05707FB78308638FA30F7B3483CCBB3632882",
+        "certchain": [
+          "CDF05707FB78308638FA30F7B3483CCBB3632882"
+        ],
+        "hasbasicconstraints": false,
+        "basicconstraintpathlength": 0
+      },
+      "DomainSID": "S-1-5-21-1940134870-3096912709-3221846354",
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-2201",
+          "PrincipalType": "User",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-517",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-2201",
+          "PrincipalType": "User",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "AA2672DB-0E92-40E4-A1BE-AF047DD0B972",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "336319D5-C0B2-4CA5-9EAE-EC247DF6A1E2",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "DOMAIN1-DC01-CA@DOMAIN1.LOCAL",
+        "distinguishedname": "CN=DOMAIN1-DC01-CA,CN=CERTIFICATION AUTHORITIES,CN=PUBLIC KEY SERVICES,CN=SERVICES,CN=CONFIGURATION,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1683986131,
+        "certthumbprint": "DB420806F66A567A3C9E886C6A14040E70B342C2",
+        "certname": "DB420806F66A567A3C9E886C6A14040E70B342C2",
+        "certchain": [
+          "DB420806F66A567A3C9E886C6A14040E70B342C2"
+        ],
+        "hasbasicconstraints": false,
+        "basicconstraintpathlength": 0
+      },
+      "DomainSID": "S-1-5-21-1940134870-3096912709-3221846354",
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-517",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-2201",
+          "PrincipalType": "User",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "8E6DF877-1463-4A1D-87AE-65D7620B7DE2",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "336319D5-C0B2-4CA5-9EAE-EC247DF6A1E2",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "CA_BBB70C6C@DOMAIN1.LOCAL",
+        "distinguishedname": "CN=CA_BBB70C6C,CN=CERTIFICATION AUTHORITIES,CN=PUBLIC KEY SERVICES,CN=SERVICES,CN=CONFIGURATION,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1695942392,
+        "certthumbprint": "7D1625F4EA73D3AA32EEDFEDDC4431807837F935",
+        "certname": "7D1625F4EA73D3AA32EEDFEDDC4431807837F935",
+        "certchain": [
+          "7D1625F4EA73D3AA32EEDFEDDC4431807837F935"
+        ],
+        "hasbasicconstraints": false,
+        "basicconstraintpathlength": 0
+      },
+      "DomainSID": "S-1-5-21-1940134870-3096912709-3221846354",
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-2201",
+          "PrincipalType": "User",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-517",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-2201",
+          "PrincipalType": "User",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "501CC0C3-74B0-42B8-A445-72D33F7AD02F",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "336319D5-C0B2-4CA5-9EAE-EC247DF6A1E2",
+        "ObjectType": "Container"
+      }
+    },
+    {
+      "Properties": {
+        "domain": "DOMAIN1.LOCAL",
+        "name": "CA_6DA11640@DOMAIN1.LOCAL",
+        "distinguishedname": "CN=CA_6DA11640,CN=CERTIFICATION AUTHORITIES,CN=PUBLIC KEY SERVICES,CN=SERVICES,CN=CONFIGURATION,DC=DOMAIN1,DC=LOCAL",
+        "domainsid": "S-1-5-21-1940134870-3096912709-3221846354",
+        "isaclprotected": false,
+        "description": null,
+        "whencreated": 1695941362,
+        "certthumbprint": "A34F46BCCB7C9381401041B5C5943AC664763374",
+        "certname": "A34F46BCCB7C9381401041B5C5943AC664763374",
+        "certchain": [
+          "A34F46BCCB7C9381401041B5C5943AC664763374"
+        ],
+        "hasbasicconstraints": false,
+        "basicconstraintpathlength": 0
+      },
+      "DomainSID": "S-1-5-21-1940134870-3096912709-3221846354",
+      "Aces": [
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-2201",
+          "PrincipalType": "User",
+          "RightName": "Owns",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "DOMAIN1.LOCAL-S-1-5-32-544",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-517",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": false
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-2201",
+          "PrincipalType": "User",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-519",
+          "PrincipalType": "Group",
+          "RightName": "GenericAll",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteDacl",
+          "IsInherited": true
+        },
+        {
+          "PrincipalSID": "S-1-5-21-1940134870-3096912709-3221846354-512",
+          "PrincipalType": "Group",
+          "RightName": "WriteOwner",
+          "IsInherited": true
+        }
+      ],
+      "ObjectIdentifier": "788A3199-A72B-4A82-9E67-D6395F92D085",
+      "IsDeleted": false,
+      "IsACLProtected": false,
+      "ContainedBy": {
+        "ObjectIdentifier": "336319D5-C0B2-4CA5-9EAE-EC247DF6A1E2",
+        "ObjectType": "Container"
+      }
+    }
+  ],
+  "meta": {
+    "methods": 521215,
+    "type": "rootcas",
+    "count": 4,
+    "version": 6
+  }
+}
