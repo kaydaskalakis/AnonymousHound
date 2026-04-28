@@ -157,6 +157,14 @@ Specify input and output directories directly:
 
 **Perfect for:** Experienced users, automation, scripting
 
+Need to scrub a GitHound export instead? Auto-discovery now finds `githound.json`, or target it explicitly:
+
+```powershell
+.\AnonymousHound.ps1 -InputFile ".\githound.json" -OutputDirectory ".\Anonymized"
+```
+
+**Perfect for:** GitHub graph collections, GitHound datasets, CI pipelines
+
 #### 3. Safe: Preview First (Dry-Run Mode)
 
 See what will happen without making any changes:
@@ -279,6 +287,14 @@ Well-Known Objects (Preserved):
 
 #### 4. Enhanced Visual Feedback
 
+#### 5. GitHound Graph Support (NEW)
+
+AnonymousHound now recognizes GitHound exports (`githound.json`) automatically:
+
+- Auto-discovery lists directories with GitHound data alongside classic BloodHound collections.
+- Every GitHub node type (users, orgs, teams, repositories, branches, workflows, environments, roles) is anonymized using consistent alias tables.
+- Edges remain unchanged so GitHub attack paths and permission relationships stay analyzable.
+
 **NEW:** Beautiful, color-coded output with icons:
 
 - **Borders** (═, ║, ╔, ╗, ╚, ╝) for sections
@@ -295,7 +311,8 @@ Well-Known Objects (Preserved):
 ```text
 ⚡ Performance Optimizations Applied:
    • Hashtable pre-allocation (estimated: 2,500 objects)
-   • Throughput: 3.45 MB/s
+   • Throughput (input bytes): 3.45 MB/s
+   • Throughput (records): 12470 objects (~692.8 objects/sec)
 ```
 
 **Impact:** 10-20% performance improvement for large datasets
@@ -316,13 +333,14 @@ Well-Known Objects (Preserved):
 ```text
 ⚡ Performance Optimizations Applied:
    • Hashtable pre-allocation (estimated: 1,247 objects)
-   • Throughput: 2.34 MB/s
+   • Throughput (input bytes): 2.34 MB/s
+   • Throughput (records): 6235 objects (~346.4 objects/sec)
 ```
 
 **Metrics tracked:**
 - Total processing duration
-- Bytes processed
-- Throughput (MB/s)
+- Bytes processed (directory batches)
+- Throughput (MB/s) and objects/sec when applicable
 - Optimizations applied
 
 #### 4. Progress Indicators with ETA
@@ -463,7 +481,7 @@ All documentation consolidated into README.md:
 
 #### Workflow 1: Absolute Beginner
 
-**Goal:** Anonymize BloodHound data with no prior knowledge
+**Goal:** Anonymize BloodHound/GitHound data with no prior knowledge
 
 **Steps:**
 1. Run: `.\AnonymousHound.ps1`
@@ -501,7 +519,7 @@ All documentation consolidated into README.md:
 ```text
 Step 1: Select Input
 ────────────────────
-  [1] Process a directory of BloodHound JSON files (recommended)
+  [1] Process a directory of BloodHound/GitHound JSON files (recommended)
   [2] Process a single JSON file
 
 Enter your choice (1 or 2): 1
@@ -510,7 +528,7 @@ Enter your choice (1 or 2): 1
 #### Step 2: Specify Input Path
 
 ```text
-Enter the path to your BloodHound data directory:
+Enter the path to your BloodHound/GitHound data directory:
 (Example: C:\BloodHoundData or drag-and-drop folder here)
 Directory path: C:\MyData
 ```
@@ -562,12 +580,16 @@ Press Enter to begin or Ctrl+C to cancel...
 
 ### Performance Benchmarks
 
-| Dataset Size | Objects | Processing Time | Throughput |
-|-------------|---------|-----------------|------------|
-| Small (<100MB) | <5,000 | <30 seconds | 3-5 MB/s |
-| Medium (100MB-500MB) | 5,000-25,000 | 1-5 minutes | 2-4 MB/s |
-| Large (500MB-1GB) | 25,000-50,000 | 5-15 minutes | 1-3 MB/s |
-| Very Large (>1GB) | 50,000+ | 15-60 minutes | 0.5-2 MB/s |
+Throughput depends heavily on disk speed, CPU, and average record size. Recent builds add **linear-time output buffering** (`List[object]` instead of repeated array concatenation), **deep copies without JSON round-trips** (`FastClone`), and **`System.Text.Json` UTF-8 serialization** (`FastJsonWriter`) for writes—these typically dominate runtime on million-record exports.
+
+| Dataset Size | Objects | Processing Time | Throughput (rough) |
+|-------------|---------|-----------------|---------------------|
+| Small (<100MB) | <5,000 | <30 seconds | ~3–8 MB/s input *and* hundreds–few thousand objects/sec |
+| Medium (100MB–500MB) | 5,000–25,000 | 1–5 minutes | ~2–4 MB/s input |
+| Large (500MB–1GB) | 25,000–50,000 | 5–15 minutes | ~1–3 MB/s input |
+| Very Large (>1GB) | 50,000+ | 15–60 minutes | ~0.5–2 MB/s input |
+
+Use the summary line **Throughput (records)** (objects/sec) after each run for apples-to-apples comparisons on your hardware.
 
 ### Memory Usage
 
@@ -580,18 +602,16 @@ Press Enter to begin or Ctrl+C to cancel...
 
 ### Optimizations Applied
 
-1. **Hashtable Pre-Allocation** - Estimates object count and pre-allocates memory (10-20% speedup)
-2. **Smart JSON Parsing** - Uses optimal parser based on file size (30-40% memory reduction)
-3. **Progress with ETA** - Real-time estimates help manage expectations
-4. **Performance Metrics** - Tracks throughput and optimization effectiveness
+1. **Hashtable capacity hint** — Directory mode estimates collection size from total JSON bytes (informational pre-allocation hint).
+2. **Smart JSON parsing** — Larger inputs use `System.Text.Json` for deserialization where beneficial; smaller files stay on `ConvertFrom-Json`.
+3. **Linear output buffering** — Per-file processors append anonymized rows via `List[object]` then `ToArray()` (avoids quadratic array growth).
+4. **Fast deep clone** — `Copy-ObjectDeep` uses embedded `FastClone` (PSObject walk); JSON round-trip is fallback only.
+5. **Fast JSON writer** — `ConvertTo-SafeJson` uses `FastJsonWriter` (`System.Text.Json`, indented UTF-8); `ConvertTo-Json` is fallback only.
+6. **Performance metrics** — Reports input MB/s (directory mode), total records processed, and **objects/sec** for the whole run.
 
-### Future Enhancements
+### Parallel processing (`-EnableParallel`)
 
-**Parallel Processing** (Future Work):
-- File-level parallelism for datasets with 20+ files
-- Requires thread-safe hashtable architecture
-- Estimated 2-4x speedup on multi-core CPUs
-- Currently not implemented due to shared state complexity
+Anonymous aliases must stay **consistent across every JSON file in the same SharpHound/Azure collection**. Parallel workers do not currently share live mapping tables safely with PowerShell’s parallel APIs, so **processing remains sequential per collection**. The `-EnableParallel` / `-ThrottleLimit` switches are reserved for a future thread-safe architecture; enabling them prints an informational note only—the clone/write/list optimizations above always apply regardless.
 
 ---
 
@@ -767,7 +787,7 @@ After processing completes, AnonymousHound generates a comprehensive HTML report
 
 ---
 
-## Supported BloodHound File Types
+## Supported BloodHound / GitHound / AzureHound File Types
 
 - ✅ users.json
 - ✅ groups.json
@@ -781,6 +801,19 @@ After processing completes, AnonymousHound generates a comprehensive HTML report
 - ✅ aiacas.json (AD CS)
 - ✅ rootcas.json (AD CS)
 - ✅ enterprisecas.json (AD CS)
+- ✅ issuancepolicies.json (AD CS — SharpHound CE 2024+)
+- ✅ githound.json (GitHound export)
+  - GHOrganization / GHUser / GHTeam
+  - GHRepository / GHBranch / GHWorkflow / GHEnvironment
+  - GHTeamRole / GHOrgRole / GHRepoRole
+- ✅ azurehound*.json (AzureHound CE single-file export, e.g. `azurehound.json`, `azurehound-ce.json`)
+  - AZTenant / AZUser / AZGroup / AZApp / AZServicePrincipal / AZDevice
+  - AZSubscription / AZResourceGroup / AZManagementGroup
+  - AZKeyVault / AZAutomationAccount / AZContainerRegistry / AZFunctionApp / AZLogicApp / AZManagedCluster / AZVM / AZVMScaleSet / AZWebApp
+  - AZRole (built-in roles preserved; custom roles aliased)
+  - AZFederatedIdentityCredential (subject + name aliased)
+  - All `*Owner` / `*RoleAssignment` / `*UserAccessAdmin` / `*Contributor` / `AZGroupMember` relationship kinds (object IDs preserved, embedded principal records and resource paths consistently aliased)
+  - See [`ANONYMIZATION_PLAN_AZURE.md`](ANONYMIZATION_PLAN_AZURE.md) for the full PII vs preserve field matrix.
 
 ---
 

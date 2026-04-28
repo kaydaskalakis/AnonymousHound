@@ -60,6 +60,7 @@
 # - Processes 12 BloodHound data types:
 #   * Core: users, groups, computers, domains, gpos, ous
 #   * PKI: containers, certtemplates, ntauthstores, aiacas, rootcas, enterprisecas
+# - Extends anonymization to GitHound graph exports (nodes/edges for GitHub org data)
 # - Maintains consistent domain and OU mappings across all file types
 # - Preserves well-known security principals and structure
 # - Ensures DN consistency: leaf CN/OU components match object names across all types
@@ -83,6 +84,8 @@
 #
 # Process single file with specified output:
 #   .\AnonymousHound.ps1 -InputFile "C:\BH\users.json" -OutputDirectory "C:\BH\Output"
+# Process GitHound export:
+#   .\AnonymousHound.ps1 -InputFile ".\githound.json" -OutputDirectory ".\Anonymized"
 #
 # Use existing domain mappings:
 #   .\AnonymousHound.ps1 -InputDirectory "C:\BH\Data" -OutputDirectory "C:\BH\Out" -DomainMappingFile "C:\BH\mappings.txt"
@@ -130,14 +133,12 @@ param(
     # Useful when OS versions are relevant to the analysis
     [switch]$PreserveOSVersions,
 
-    # Optional: Enable parallel processing for faster performance (FUTURE FEATURE)
-    # Currently shows a warning and uses optimized sequential processing
-    # Note: Parallel mode requires architecture changes for thread-safe hashtable access
-    # Sequential mode includes memory optimizations: hashtable pre-allocation, throughput metrics
+    # Optional: Reserved for future file-level parallelism (requires thread-safe shared alias maps).
+    # Processing stays sequential within each collection so mappings stay consistent; other
+    # throughput work (FastClone, System.Text.Json writer, list-based buffers) always applies.
     [switch]$EnableParallel,
 
-    # Optional: Number of parallel threads (reserved for future parallel implementation)
-    # Currently not used; falls back to optimized sequential processing
+    # Reserved with -EnableParallel for a future parallel pipeline (currently unused).
     [ValidateRange(1, 16)]
     [int]$ThrottleLimit = 0
 )
@@ -158,6 +159,58 @@ $script:ANONYMIZED_PREFIX_GPO = "GPO_"            # Group Policy Objects
 $script:ANONYMIZED_PREFIX_EMAIL = "email_"        # Email addresses
 $script:ANONYMIZED_PREFIX_DISPLAY = "Display_"    # Display names
 $script:ANONYMIZED_PREFIX_SVC = "SVC_"            # Service accounts
+$script:ANONYMIZED_PREFIX_GHUSER = "GHUSR_"       # GitHub users
+$script:ANONYMIZED_PREFIX_GHORG = "GHORG_"        # GitHub organizations
+$script:ANONYMIZED_PREFIX_GHTEAM = "GHTEAM_"      # GitHub teams
+$script:ANONYMIZED_PREFIX_GHREPO = "GHREPO_"      # GitHub repositories
+$script:ANONYMIZED_PREFIX_GHBRANCH = "GHBRANCH_"  # GitHub branches
+$script:ANONYMIZED_PREFIX_GHWORKFLOW = "GHWORKFLOW_" # GitHub workflows
+$script:ANONYMIZED_PREFIX_GHENV = "GHENV_"        # GitHub environments
+$script:ANONYMIZED_PREFIX_AZTENANT = "AZTENANT_"  # AzureHound tenant display names
+$script:ANONYMIZED_PREFIX_AZUSR = "AZUSR_"        # AzureHound users
+$script:ANONYMIZED_PREFIX_AZGRP = "AZGRP_"        # AzureHound groups
+$script:ANONYMIZED_PREFIX_AZAPP = "AZAPP_"        # AzureHound applications
+$script:ANONYMIZED_PREFIX_AZSP = "AZSP_"          # AzureHound service principals
+$script:ANONYMIZED_PREFIX_AZDEV = "AZDEV_"        # AzureHound devices
+$script:ANONYMIZED_PREFIX_AZSUB = "AZSUB_"        # AzureHound subscriptions
+$script:ANONYMIZED_PREFIX_AZRG = "AZRG_"          # AzureHound resource groups
+$script:ANONYMIZED_PREFIX_AZRES = "AZRES_"        # AzureHound resource names (vaults, VMs, etc.)
+$script:ANONYMIZED_PREFIX_AZMG = "AZMG_"          # AzureHound management groups
+$script:ANONYMIZED_PREFIX_AZROLE = "AZROLE_"      # AzureHound custom role definitions
+$script:ANONYMIZED_PREFIX_AZFIC = "AZFIC_"        # AzureHound federated identity credentials
+$script:ANONYMIZED_PREFIX_AZPHYSID = "AZPHYSID_"  # AzureHound device physical IDs
+$script:ANONYMIZED_PREFIX_AZALTSEC = "AZALTSEC_"  # AzureHound alternative security IDs
+$script:ANONYMIZED_PREFIX_AZMODEL = "AZMODEL_"    # AzureHound device manufacturer/model
+
+# GitHub Mapping Tables (ensures consistent aliases across nodes)
+$script:GitHubOrgMapping = @{}
+$script:GitHubRepoMapping = @{}
+$script:GitHubTeamMapping = @{}
+$script:GitHubUserMapping = @{}
+$script:GitHubBranchMapping = @{}
+$script:GitHubWorkflowMapping = @{}
+$script:GitHubEnvironmentMapping = @{}
+$script:GitHubEmailMapping = @{}
+
+# Azure Mapping Tables (ensures consistent aliases across kinds)
+# Keys are stable identifiers (object id GUIDs, full resource paths) so cross-kind
+# references (role assignments, owners, members) remain valid.
+$script:AzureTenantNameMapping = @{}      # tenant displayName -> alias (lowercased key)
+$script:AzureUserMapping = @{}            # user object id -> alias for displayName/upnLocal
+$script:AzureGroupMapping = @{}           # group object id -> alias for displayName
+$script:AzureAppMapping = @{}             # app object id -> alias for displayName
+$script:AzureServicePrincipalMapping = @{} # sp object id -> alias for displayName
+$script:AzureDeviceMapping = @{}          # device object id -> alias for displayName
+$script:AzureSubscriptionMapping = @{}    # subscriptionId GUID -> alias for displayName
+$script:AzureResourceGroupMapping = @{}   # rg name (lowercased) -> alias
+$script:AzureResourceNameMapping = @{}    # resource id path -> alias (vaults, vms, apps, etc.)
+$script:AzureManagementGroupMapping = @{} # mg id -> alias
+$script:AzureCustomRoleMapping = @{}      # role definition id -> alias (only when isBuiltIn=false)
+$script:AzureFICMapping = @{}             # fic.id -> alias for fic.name
+$script:AzureFICSubjectMapping = @{}      # fic.subject string -> alias
+$script:AzureDevicePhysicalIdMapping = @{} # physicalIds[] entry -> alias
+$script:AzureDeviceAltSecIdMapping = @{}  # alternativeSecurityIds[].key -> alias
+$script:AzureDeviceModelMapping = @{}     # manufacturer|model -> alias
 
 # ============================================================================
 # Random Hex String Lengths
@@ -284,6 +337,9 @@ $script:WELL_KNOWN_CNS = @(
     'INFRASTRUCTURE', 'DELETED OBJECTS', 'MICROSOFTDNS', 'WINDOWS NT',
     'DNSZONE', 'QUOTAS', 'OPERATIONS', 'PHYSICAL LOCATIONS',
     'WELLKNOWN SECURITY PRINCIPALS', 'NTDS SETTINGS',
+    # Common infrastructure CNs seen in enterprise environments
+    'KRA', 'DEVICE REGISTRATION CONFIGURATION', 'OID', 'MICROSOFT SPP',
+    'MONITORING MAILBOXES', 'AZUREAD', 'AUTHN POLICY CONFIGURATION',
     # Well-known group containers that should be preserved as CNs too
     'INCOMING FOREST TRUST BUILDERS', 'GROUP POLICY CREATOR OWNERS',
     'CERT PUBLISHERS', 'ENTERPRISE ADMINS', 'SCHEMA ADMINS',
@@ -466,14 +522,19 @@ if (-not $InputDirectory -and -not $InputFile) {
         $scriptDir = Get-Location
     }
 
-    Write-Host "Scanning for BloodHound data in: " -NoNewline -ForegroundColor Yellow
+    Write-Host "Scanning for BloodHound/GitHound data in: " -NoNewline -ForegroundColor Yellow
     Write-Host "$scriptDir" -ForegroundColor White
     Write-Host ""
 
     # Scan for BloodHound JSON files
-    $bhFileTypes = @('*users*.json', '*groups*.json', '*computers*.json', '*domains*.json',
-                     '*gpos*.json', '*ous*.json', '*containers*.json', '*certtemplates*.json',
-                     '*ntauthstores*.json', '*aiacas*.json', '*rootcas*.json', '*enterprisecas*.json')
+    $bhFileTypes = @(
+        '*users*.json', '*groups*.json', '*computers*.json', '*domains*.json',
+        '*gpos*.json', '*ous*.json', '*containers*.json', '*certtemplates*.json',
+        '*ntauthstores*.json', '*aiacas*.json', '*rootcas*.json', '*enterprisecas*.json',
+        '*issuancepolicies*.json',
+        'githound.json', '*githound*.json',
+        'azurehound.json', '*azurehound*.json', '*azurehound-ce*.json'
+    )
 
     # Find directories containing BloodHound data
     $foundDirs = @{}
@@ -507,7 +568,7 @@ if (-not $InputDirectory -and -not $InputFile) {
     }
 
     if ($foundDirs.Count -eq 0) {
-        Write-Host "✗ No BloodHound data files found!" -ForegroundColor Red
+        Write-Host "✗ No BloodHound or GitHound data files found!" -ForegroundColor Red
         Write-Host "`nPlease specify input manually:" -ForegroundColor Yellow
         Write-Host "  Directory mode: .\script.ps1 -InputDirectory 'C:\Data'" -ForegroundColor Gray
         Write-Host "  Single file mode: .\script.ps1 -InputFile 'C:\Data\file.json'" -ForegroundColor Gray
@@ -515,7 +576,7 @@ if (-not $InputDirectory -and -not $InputFile) {
     }
 
     # Display found data
-    Write-Host "✓ Found BloodHound data in $($foundDirs.Count) location(s):" -ForegroundColor Green
+        Write-Host "✓ Found BloodHound/GitHound data in $($foundDirs.Count) location(s):" -ForegroundColor Green
     Write-Host ""
 
     $locationIndex = 1
@@ -530,8 +591,9 @@ if (-not $InputDirectory -and -not $InputFile) {
         Write-Host " ($($files.Count) files)" -ForegroundColor DarkGray
 
         $locationMap[$locationIndex] = @{
-            Path = $dirPath
-            Files = $files
+            Path        = $dirPath
+            Files       = $files
+            DisplayName = $displayPath
         }
         $locationIndex++
     }
@@ -546,7 +608,8 @@ if (-not $InputDirectory -and -not $InputFile) {
     Write-Host ""
     Write-Host "Enter your choice: " -NoNewline -ForegroundColor Yellow
 
-    $choice = Read-Host
+    $choice = (Read-Host).Trim()
+    $selectedLocation = $null
 
     if ($choice -match '^[Qq]') {
         Write-Host "`nExiting..." -ForegroundColor Yellow
@@ -556,7 +619,7 @@ if (-not $InputDirectory -and -not $InputFile) {
         # Show detailed file list
         Write-Host "`n" -NoNewline
         Write-Host "═══════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
-        Write-Host "  Available BloodHound Files" -ForegroundColor Cyan
+        Write-Host "  Available BloodHound/GitHound Files" -ForegroundColor Cyan
         Write-Host "═══════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
         Write-Host ""
 
@@ -602,19 +665,36 @@ if (-not $InputDirectory -and -not $InputFile) {
     elseif ($choice -match '^\d+$') {
         $locationNum = [int]$choice
         if ($locationMap.ContainsKey($locationNum)) {
-            $InputDirectory = $locationMap[$locationNum].Path
-            Write-Host "`n✓ Selected: " -NoNewline -ForegroundColor Green
-            Write-Host "$InputDirectory" -ForegroundColor White
-            Write-Host ""
+            $selectedLocation = $locationMap[$locationNum]
         }
         else {
             Write-Error "Invalid location selection"
             exit 1
         }
     }
+    elseif (-not [string]::IsNullOrWhiteSpace($choice)) {
+        $matchedEntry = $locationMap.GetEnumerator() |
+            Where-Object { $_.Value.DisplayName -ieq $choice } |
+            Select-Object -First 1
+
+        if ($matchedEntry) {
+            $selectedLocation = $matchedEntry.Value
+        }
+        else {
+            Write-Error "Invalid choice"
+            exit 1
+        }
+    }
     else {
         Write-Error "Invalid choice"
         exit 1
+    }
+
+    if ($selectedLocation) {
+        $InputDirectory = $selectedLocation.Path
+        Write-Host "`n✓ Selected: " -NoNewline -ForegroundColor Green
+        Write-Host "$InputDirectory" -ForegroundColor White
+        Write-Host ""
     }
 }
 
@@ -760,6 +840,34 @@ function Reset-MappingTables {
     $script:CNMapping.Clear()
     $script:ObjectTimestampOffsets.Clear()
 
+    # Clear GitHub mapping tables (so per-collection runs don't leak GitHound aliases)
+    $script:GitHubOrgMapping.Clear()
+    $script:GitHubRepoMapping.Clear()
+    $script:GitHubTeamMapping.Clear()
+    $script:GitHubUserMapping.Clear()
+    $script:GitHubBranchMapping.Clear()
+    $script:GitHubWorkflowMapping.Clear()
+    $script:GitHubEnvironmentMapping.Clear()
+    $script:GitHubEmailMapping.Clear()
+
+    # Clear Azure mapping tables
+    $script:AzureTenantNameMapping.Clear()
+    $script:AzureUserMapping.Clear()
+    $script:AzureGroupMapping.Clear()
+    $script:AzureAppMapping.Clear()
+    $script:AzureServicePrincipalMapping.Clear()
+    $script:AzureDeviceMapping.Clear()
+    $script:AzureSubscriptionMapping.Clear()
+    $script:AzureResourceGroupMapping.Clear()
+    $script:AzureResourceNameMapping.Clear()
+    $script:AzureManagementGroupMapping.Clear()
+    $script:AzureCustomRoleMapping.Clear()
+    $script:AzureFICMapping.Clear()
+    $script:AzureFICSubjectMapping.Clear()
+    $script:AzureDevicePhysicalIdMapping.Clear()
+    $script:AzureDeviceAltSecIdMapping.Clear()
+    $script:AzureDeviceModelMapping.Clear()
+
     # Reset preserved items tracking
     $script:PreservedItems = @{
         Computers = @{}
@@ -895,6 +1003,18 @@ function Write-ScriptLog {
 
     if ($Level -eq 'Error') {
         $script:ErrorLog += "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message"
+    }
+}
+
+function Register-ProcessedObjectCount {
+    <#
+    .SYNOPSIS
+    Adds to the script-wide object throughput counter (for objects/sec in the summary).
+    #>
+    [CmdletBinding()]
+    param([ValidateRange(0, [int]::MaxValue)][int]$Count)
+    if ($Count -gt 0 -and $null -ne $script:PerformanceMetrics) {
+        $script:PerformanceMetrics.TotalObjectsProcessed += $Count
     }
 }
 
@@ -1346,6 +1466,140 @@ function Optimize-HashtableCapacity {
     }
 }
 
+function New-AzureFastCloneType {
+    <#
+    .SYNOPSIS
+    Compiles the FastClone (Phase 2) and FastJsonWriter (Phase 3)
+    C# walkers once per pwsh process.
+    .DESCRIPTION
+    Phase 2: FastClone replaces Copy-ObjectDeep's JSON-roundtrip body.
+    Phase 3: FastJsonWriter replaces ConvertTo-SafeJson's ConvertTo-Json body.
+    Each Add-Type is independently guarded so re-dot-sourcing the script
+    is a no-op and a Phase-2-only session can dot-source a Phase-3 script
+    without throwing "type already exists" — see PLAN-phase3.md R-GUARD-1.
+    #>
+    if (-not ([System.Management.Automation.PSTypeName]'FastClone').Type) {
+        Add-Type -Language CSharp -TypeDefinition @'
+using System;
+using System.Collections;
+using System.Management.Automation;
+
+public static class FastClone {
+    public static object CloneAny(object src) {
+        if (src == null) return null;
+        var pso = PSObject.AsPSObject(src);
+        var bo  = pso.BaseObject;
+
+        if (bo is string)               return bo;
+        if (bo.GetType().IsValueType)   return bo;
+
+        var dict = bo as IDictionary;
+        if (dict != null) {
+            var pso2 = new PSObject();
+            foreach (DictionaryEntry e in dict) {
+                pso2.Properties.Add(new PSNoteProperty((string)e.Key, CloneAny(e.Value)));
+            }
+            return pso2;
+        }
+
+        var list = bo as IList;
+        if (list != null) {
+            var arr = new object[list.Count];
+            for (int i = 0; i < list.Count; i++) arr[i] = CloneAny(list[i]);
+            return arr;
+        }
+
+        var pso3 = new PSObject();
+        foreach (var p in pso.Properties) {
+            pso3.Properties.Add(new PSNoteProperty(p.Name, CloneAny(p.Value)));
+        }
+        return pso3;
+    }
+}
+'@
+    }
+
+    if (-not ([System.Management.Automation.PSTypeName]'FastJsonWriter').Type) {
+        Add-Type -Language CSharp -TypeDefinition @'
+using System;
+using System.Collections;
+using System.IO;
+using System.Management.Automation;
+using System.Text.Json;
+using System.Text.Encodings.Web;
+
+public static class FastJsonWriter {
+    private static readonly JsonWriterOptions _opts = new JsonWriterOptions {
+        Indented = true,
+        Encoder  = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+    };
+
+    public static byte[] Serialize(object src) {
+        using (var ms = new MemoryStream()) {
+            using (var w = new Utf8JsonWriter(ms, _opts)) { Walk(w, src); w.Flush(); }
+            return ms.ToArray();
+        }
+    }
+
+    private static void Walk(Utf8JsonWriter w, object node) {
+        if (node == null) { w.WriteNullValue(); return; }
+        var pso = node as PSObject;
+        var bo  = (pso != null) ? pso.BaseObject : node;
+
+        if (bo is string)         { w.WriteStringValue((string)bo); return; }
+        if (bo is bool)           { w.WriteBooleanValue((bool)bo);  return; }
+        if (bo is DateTime)       { w.WriteStringValue((DateTime)bo); return; }
+        if (bo is DateTimeOffset) { w.WriteStringValue((DateTimeOffset)bo); return; }
+        if (bo is Guid)           { w.WriteStringValue((Guid)bo); return; }
+
+        if (bo is sbyte)   { w.WriteNumberValue((sbyte)bo);   return; }
+        if (bo is byte)    { w.WriteNumberValue((byte)bo);    return; }
+        if (bo is short)   { w.WriteNumberValue((short)bo);   return; }
+        if (bo is ushort)  { w.WriteNumberValue((ushort)bo);  return; }
+        if (bo is int)     { w.WriteNumberValue((int)bo);     return; }
+        if (bo is uint)    { w.WriteNumberValue((uint)bo);    return; }
+        if (bo is long)    { w.WriteNumberValue((long)bo);    return; }
+        if (bo is ulong)   { w.WriteNumberValue((ulong)bo);   return; }
+        if (bo is float)   { w.WriteNumberValue((float)bo);   return; }
+        if (bo is double)  { w.WriteNumberValue((double)bo);  return; }
+        if (bo is decimal) { w.WriteNumberValue((decimal)bo); return; }
+        if (bo is Enum)    { w.WriteNumberValue(Convert.ToInt64(bo)); return; }
+
+        var dict = bo as IDictionary;
+        if (dict != null) {
+            w.WriteStartObject();
+            foreach (DictionaryEntry e in dict) {
+                w.WritePropertyName(e.Key == null ? "" : e.Key.ToString());
+                Walk(w, e.Value);
+            }
+            w.WriteEndObject();
+            return;
+        }
+
+        var list = bo as IList;
+        if (list != null) {
+            w.WriteStartArray();
+            for (int i = 0; i < list.Count; i++) Walk(w, list[i]);
+            w.WriteEndArray();
+            return;
+        }
+
+        if (pso == null) pso = PSObject.AsPSObject(node);
+        w.WriteStartObject();
+        foreach (var p in pso.Properties) {
+            string name; object val;
+            try { name = p.Name; val = p.Value; } catch { continue; }
+            w.WritePropertyName(name);
+            Walk(w, val);
+        }
+        w.WriteEndObject();
+    }
+}
+'@
+    }
+}
+New-AzureFastCloneType
+
 function Read-JsonOptimized {
     <#
     .SYNOPSIS
@@ -1712,6 +1966,8 @@ function Test-InputValidation {
             Write-Host "  • *_groups.json" -ForegroundColor White
             Write-Host "  • *_computers.json" -ForegroundColor White
             Write-Host "  • *_domains.json" -ForegroundColor White
+            Write-Host "  • githound.json" -ForegroundColor White
+            Write-Host "  • azurehound.json / azurehound-ce.json" -ForegroundColor White
             Write-Host "  • (and other BloodHound collection files)" -ForegroundColor Gray
             Write-Host ""
             Write-Host "Continue anyway? (y/n): " -ForegroundColor Yellow -NoNewline
@@ -1723,13 +1979,13 @@ function Test-InputValidation {
 
         # Check for BloodHound-format files
         $bhFiles = $jsonFiles | Where-Object {
-            $_.Name -match '_(users|groups|computers|domains|gpos|ous|containers|certtemplates|ntauthstores|aiacas|rootcas|enterprisecas)\.json$'
+            $null -ne (Get-FileTypeFromName $_.Name)
         }
 
         if ($bhFiles.Count -eq 0 -and $jsonFiles.Count -gt 0) {
             Write-Host ""
             Write-Host "⚠️  WARNING: JSON files found, but none match BloodHound format" -ForegroundColor Yellow
-            Write-Host "   Expected format: TIMESTAMP_TYPE.json (e.g., 20240101120000_users.json)" -ForegroundColor Gray
+            Write-Host "   Expected format: TIMESTAMP_TYPE.json (e.g., 20240101120000_users.json), githound.json, or azurehound*.json" -ForegroundColor Gray
             Write-Host ""
             Write-Host "Found files:" -ForegroundColor Cyan
             $jsonFiles | Select-Object -First 5 | ForEach-Object {
@@ -1761,10 +2017,10 @@ function Test-InputValidation {
         }
 
         # Check if it looks like a BloodHound file
-        if ($item.Name -notmatch '_(users|groups|computers|domains|gpos|ous|containers|certtemplates|ntauthstores|aiacas|rootcas|enterprisecas)\.json$') {
+        if (-not (Get-FileTypeFromName $item.Name)) {
             Write-Host ""
             Write-Host "⚠️  WARNING: File name doesn't match BloodHound format" -ForegroundColor Yellow
-            Write-Host "   Expected: TIMESTAMP_TYPE.json (e.g., 20240101120000_users.json)" -ForegroundColor Gray
+            Write-Host "   Expected: TIMESTAMP_TYPE.json (e.g., 20240101120000_users.json), githound.json, or azurehound*.json" -ForegroundColor Gray
             Write-Host "   Found: $($item.Name)" -ForegroundColor White
             Write-Host ""
             Write-Host "Continue anyway? (y/n): " -ForegroundColor Yellow -NoNewline
@@ -2291,6 +2547,14 @@ function Test-CNMappingConsistency {
     }
 
     # Check 2: Verify CNs in preserved items list are actually well-known
+    # Trust explicit preservation categories that are intentionally broader than
+    # the static WELL_KNOWN_CNS list (e.g., context/GUID-detected containers and
+    # regex-detected well-known group names).
+    $trustedPreservedReasonPatterns = @(
+        '^Well-known group name$',
+        '^Well-known container \(detected by (GUID|Context|String)\)$'
+    )
+
     foreach ($preservedCN in $script:PreservedItems.CNs.Keys) {
         $reason = $script:PreservedItems.CNs[$preservedCN]
 
@@ -2299,7 +2563,17 @@ function Test-CNMappingConsistency {
             if ($preservedCN.ToUpper() -notin $wellKnownCNsUpper) {
                 # Special case: Foreign Security Principal SIDs
                 if ($preservedCN -notmatch '^S-\d+-\d+(-\d+)+$') {
-                    $results.Issues += "Warning: CN '$preservedCN' is marked as well-known but not in WELL_KNOWN_CNS list"
+                    $isTrustedCategory = $false
+                    foreach ($trustedPattern in $trustedPreservedReasonPatterns) {
+                        if ($reason -match $trustedPattern) {
+                            $isTrustedCategory = $true
+                            break
+                        }
+                    }
+
+                    if (-not $isTrustedCategory) {
+                        $results.Issues += "Warning: CN '$preservedCN' is marked as well-known but not in WELL_KNOWN_CNS list"
+                    }
                 }
             }
         }
@@ -4027,6 +4301,14 @@ function Get-AnonymizedOuPath {
                     $isWellKnownCN = $true
                     $preserveReason = "Exchange Server Management group"
                 }
+                # Fall back to the broader well-known group pattern list so groups like
+                # "Exchange Organization Management" / "Exchange Recipient Administrators"
+                # don't get their CN anonymized when their DN is processed for some
+                # other object (Members reference, ACE PrincipalName mapping, etc.).
+                elseif (Test-WellKnownGroup $cn) {
+                    $isWellKnownCN = $true
+                    $preserveReason = "Well-known group name"
+                }
 
                 if ($isWellKnownCN) {
                     # Preserve well-known CNs in their original case
@@ -4292,11 +4574,18 @@ function ConvertTo-SafeJson {
     )
 
     try {
-        return $InputObject | ConvertTo-Json -Depth (Get-SafeJsonDepth) -Compress:$false
+        $bytes = [FastJsonWriter]::Serialize($InputObject)
+        return [System.Text.Encoding]::UTF8.GetString($bytes)
     }
     catch {
-        Write-ScriptLog "JSON serialization error: $_" -Level Error
-        throw
+        Write-ScriptLog "FastJsonWriter failed, falling back to ConvertTo-Json: $_" -Level Warning
+        try {
+            return $InputObject | ConvertTo-Json -Depth (Get-SafeJsonDepth) -Compress:$false
+        }
+        catch {
+            Write-ScriptLog "JSON serialization error: $_" -Level Error
+            throw
+        }
     }
 }
 
@@ -4318,14 +4607,1575 @@ function Copy-ObjectDeep {
     param($Object)
 
     try {
-        $json = $Object | ConvertTo-SafeJson
-        return ConvertFrom-SafeJson $json
+        return [FastClone]::CloneAny($Object)
     }
     catch {
-        Write-ScriptLog "Deep copy failed: $_" -Level Error
-        throw
+        Write-ScriptLog "FastClone failed, falling back to JSON roundtrip: $_" -Level Warning
+        try {
+            $json = $Object | ConvertTo-SafeJson
+            return ConvertFrom-SafeJson $json
+        }
+        catch {
+            Write-ScriptLog "Deep copy failed: $_" -Level Error
+            throw
+        }
     }
 }
+
+#region GitHub Mapping & Anonymization Helpers
+
+$script:GitHubCommonBranchNames = @('main','master','dev','develop','development','prod','production','stage','staging','test','qa','release','hotfix','bugfix')
+$script:GitHubCommonEnvironmentNames = @('prod','production','stage','staging','test','qa','dev','development','github-pages')
+
+function Get-GitHubAlias {
+    [CmdletBinding()]
+    param(
+        [string[]]$Keys,
+        [hashtable]$Mapping,
+        [string]$Prefix,
+        [int]$HexLength = $script:HEX_LENGTH_LONG
+    )
+
+    if (-not $Mapping) {
+        $Mapping = @{}
+    }
+
+    $usableKeys = @()
+    foreach ($key in $Keys) {
+        if ([string]::IsNullOrWhiteSpace($key)) {
+            continue
+        }
+
+        $usableKeys += $key
+        if ($Mapping.ContainsKey($key)) {
+            return $Mapping[$key]
+        }
+    }
+
+    $alias = $Prefix + (Get-RandomHex $HexLength)
+
+    foreach ($key in $usableKeys) {
+        $Mapping[$key] = $alias
+    }
+
+    if ($usableKeys.Count -eq 0) {
+        $Mapping["GEN::$alias"] = $alias
+    }
+
+    return $alias
+}
+
+function Get-GitHubOrgAlias {
+    [CmdletBinding()]
+    param(
+        [string]$OrgId,
+        [string]$OrgName
+    )
+
+    $keys = @()
+    if ($OrgId) { $keys += "ORGID::$OrgId" }
+    if ($OrgName) { $keys += "ORGNAME::$($OrgName.ToUpperInvariant())" }
+
+    return Get-GitHubAlias -Keys $keys -Mapping $script:GitHubOrgMapping -Prefix $script:ANONYMIZED_PREFIX_GHORG
+}
+
+function Get-GitHubRepoAlias {
+    [CmdletBinding()]
+    param(
+        [string]$RepoId,
+        [string]$FullName,
+        [string]$Name
+    )
+
+    $keys = @()
+    if ($RepoId) { $keys += "REPOID::$RepoId" }
+    if ($FullName) { $keys += "REPONAMESPACE::$($FullName.ToUpperInvariant())" }
+    if ($Name) { $keys += "REPONAME::$($Name.ToUpperInvariant())" }
+
+    return Get-GitHubAlias -Keys $keys -Mapping $script:GitHubRepoMapping -Prefix $script:ANONYMIZED_PREFIX_GHREPO
+}
+
+function Get-GitHubTeamAlias {
+    [CmdletBinding()]
+    param(
+        [string]$TeamId,
+        [string]$Slug,
+        [string]$OrgId,
+        [string]$OrgName
+    )
+
+    $keys = @()
+    if ($TeamId) { $keys += "TEAMID::$TeamId" }
+    if ($OrgName -and $Slug) { $keys += "TEAMSLUG::$($OrgName.ToUpperInvariant())/$($Slug.ToUpperInvariant())" }
+    if ($OrgId -and $Slug) { $keys += "TEAMKEY::$OrgId/$($Slug.ToUpperInvariant())" }
+
+    return Get-GitHubAlias -Keys $keys -Mapping $script:GitHubTeamMapping -Prefix $script:ANONYMIZED_PREFIX_GHTEAM
+}
+
+function Get-GitHubUserAlias {
+    [CmdletBinding()]
+    param(
+        [string]$UserId,
+        [string]$Login
+    )
+
+    $keys = @()
+    if ($UserId) { $keys += "USERID::$UserId" }
+    if ($Login) { $keys += "USERLOGIN::$($Login.ToUpperInvariant())" }
+
+    return Get-GitHubAlias -Keys $keys -Mapping $script:GitHubUserMapping -Prefix $script:ANONYMIZED_PREFIX_GHUSER
+}
+
+function Get-GitHubBranchAlias {
+    [CmdletBinding()]
+    param(
+        [string]$BranchId,
+        [string]$BranchName
+    )
+
+    $keys = @()
+    if ($BranchId) { $keys += "BRANCHID::$BranchId" }
+    if ($BranchName) { $keys += "BRANCHNAME::$($BranchName.ToUpperInvariant())" }
+
+    return Get-GitHubAlias -Keys $keys -Mapping $script:GitHubBranchMapping -Prefix $script:ANONYMIZED_PREFIX_GHBRANCH
+}
+
+function Get-GitHubWorkflowAlias {
+    [CmdletBinding()]
+    param(
+        [string]$WorkflowId,
+        [string]$WorkflowName
+    )
+
+    $keys = @()
+    if ($WorkflowId) { $keys += "WORKFLOWID::$WorkflowId" }
+    if ($WorkflowName) { $keys += "WORKFLOW::$($WorkflowName.ToUpperInvariant())" }
+
+    return Get-GitHubAlias -Keys $keys -Mapping $script:GitHubWorkflowMapping -Prefix $script:ANONYMIZED_PREFIX_GHWORKFLOW
+}
+
+function Get-GitHubEnvironmentAlias {
+    [CmdletBinding()]
+    param(
+        [string]$EnvironmentId,
+        [string]$EnvironmentName
+    )
+
+    $keys = @()
+    if ($EnvironmentId) { $keys += "ENVID::$EnvironmentId" }
+    if ($EnvironmentName) { $keys += "ENVNAME::$($EnvironmentName.ToUpperInvariant())" }
+
+    return Get-GitHubAlias -Keys $keys -Mapping $script:GitHubEnvironmentMapping -Prefix $script:ANONYMIZED_PREFIX_GHENV
+}
+
+function Get-GitHubEmailAlias {
+    [CmdletBinding()]
+    param([string]$Email)
+
+    if ([string]::IsNullOrWhiteSpace($Email)) {
+        return $Email
+    }
+
+    $key = $Email.ToLowerInvariant()
+    if (-not $script:GitHubEmailMapping.ContainsKey($key)) {
+        $localPart = $script:ANONYMIZED_PREFIX_EMAIL + (Get-RandomHex $script:HEX_LENGTH_MEDIUM)
+        $script:GitHubEmailMapping[$key] = "$localPart@domain1.local"
+    }
+
+    return $script:GitHubEmailMapping[$key]
+}
+
+function Test-IsGenericGitHubName {
+    [CmdletBinding()]
+    param(
+        [string]$Value,
+        [string[]]$AllowList
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return $true
+    }
+
+    return $AllowList -contains $Value.ToLowerInvariant()
+}
+
+function Convert-GitHubUrlOwnerRepo {
+    [CmdletBinding()]
+    param(
+        [string]$Url,
+        [string]$OwnerAlias,
+        [string]$RepoAlias
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Url) -or [string]::IsNullOrWhiteSpace($OwnerAlias) -or [string]::IsNullOrWhiteSpace($RepoAlias)) {
+        return $Url
+    }
+
+    return $Url -replace '/repos/[^/]+/[^/]+', "/repos/$OwnerAlias/$RepoAlias"
+}
+
+function Get-AnonymizedGitHubNode {
+    [CmdletBinding()]
+    param($Node)
+
+    if (-not $Node) {
+        return $Node
+    }
+
+    $kinds = $Node.kinds
+    $kind = if ($kinds -and $kinds.Count -gt 0) { $kinds[0] } else { $null }
+
+    switch ($kind) {
+        'GHOrganization' { return Get-AnonymizedGitHubOrganizationNode $Node }
+        'GHUser' { return Get-AnonymizedGitHubUserNode $Node }
+        'GHTeam' { return Get-AnonymizedGitHubTeamNode $Node }
+        'GHRepository' { return Get-AnonymizedGitHubRepositoryNode $Node }
+        'GHBranch' { return Get-AnonymizedGitHubBranchNode $Node }
+        'GHWorkflow' { return Get-AnonymizedGitHubWorkflowNode $Node }
+        'GHEnvironment' { return Get-AnonymizedGitHubEnvironmentNode $Node }
+        'GHTeamRole' { return Get-AnonymizedGitHubTeamRoleNode $Node }
+        'GHOrgRole' { return Get-AnonymizedGitHubOrgRoleNode $Node }
+        'GHRepoRole' { return Get-AnonymizedGitHubRepoRoleNode $Node }
+        default { return $Node }
+    }
+}
+
+function Get-AnonymizedGitHubOrganizationNode {
+    [CmdletBinding()]
+    param($Node)
+
+    $copy = Copy-ObjectDeep $Node
+    $props = $copy.properties
+
+    $alias = Get-GitHubOrgAlias -OrgId $copy.id -OrgName $props.name
+
+    if ($props.login) { $props.login = $alias }
+    if ($props.name) { $props.name = $alias }
+    if ($props.blog) { $props.blog = "https://$($alias.ToLowerInvariant()).example.com" }
+    if ($props.html_url) { $props.html_url = "https://github.com/$alias" }
+
+    return $copy
+}
+
+function Get-AnonymizedGitHubUserNode {
+    [CmdletBinding()]
+    param($Node)
+
+    $copy = Copy-ObjectDeep $Node
+    $props = $copy.properties
+
+    $alias = Get-GitHubUserAlias -UserId $copy.id -Login $props.login
+
+    if ($props.login) { $props.login = $alias }
+    if ($props.name) { $props.name = $alias }
+    if ($props.full_name) { $props.full_name = $alias }
+    if ($props.company) { $props.company = $alias }
+    if ($props.twitter_username) { $props.twitter_username = $alias }
+    if ($props.email) { $props.email = Get-GitHubEmailAlias $props.email }
+
+    if ($props.organization_name -or $props.organization_id) {
+        $props.organization_name = Get-GitHubOrgAlias -OrgId $props.organization_id -OrgName $props.organization_name
+    }
+
+    return $copy
+}
+
+function Get-AnonymizedGitHubTeamNode {
+    [CmdletBinding()]
+    param($Node)
+
+    $copy = Copy-ObjectDeep $Node
+    $props = $copy.properties
+
+    $orgAlias = Get-GitHubOrgAlias -OrgId $props.organization_id -OrgName $props.organization_name
+    $teamAlias = Get-GitHubTeamAlias -TeamId $copy.id -Slug $props.slug -OrgId $props.organization_id -OrgName $props.organization_name
+
+    if ($props.name) { $props.name = $teamAlias }
+    if ($props.slug) { $props.slug = $teamAlias.ToLowerInvariant() }
+    if ($props.description) { $props.description = "Anonymized team $teamAlias" }
+    $props.organization_name = $orgAlias
+
+    return $copy
+}
+
+function Get-AnonymizedGitHubRepositoryNode {
+    [CmdletBinding()]
+    param($Node)
+
+    $copy = Copy-ObjectDeep $Node
+    $props = $copy.properties
+    $originalOrgName = $props.organization_name
+    $originalOwnerName = $props.owner_name
+
+    $orgAlias = Get-GitHubOrgAlias -OrgId $props.organization_id -OrgName $originalOrgName
+    $ownerAlias = Get-GitHubOrgAlias -OrgId $props.owner_node_id -OrgName $originalOwnerName
+    $repoAlias = Get-GitHubRepoAlias -RepoId $copy.id -FullName "$originalOrgName/$($props.name)" -Name $props.name
+
+    if ($props.name) { $props.name = $repoAlias }
+    if ($props.full_name) { $props.full_name = "$orgAlias/$repoAlias" }
+    if ($props.html_url) { $props.html_url = "https://github.com/$orgAlias/$repoAlias" }
+    if ($props.description) { $props.description = "Anonymized repository $repoAlias" }
+
+    if ($props.owner_name) { $props.owner_name = $ownerAlias }
+    if ($props.organization_name) { $props.organization_name = $orgAlias }
+
+    return $copy
+}
+
+function Get-AnonymizedGitHubBranchNode {
+    [CmdletBinding()]
+    param($Node)
+
+    $copy = Copy-ObjectDeep $Node
+    $props = $copy.properties
+    $originalOrgName = $props.organization
+    $orgAlias = Get-GitHubOrgAlias -OrgId $props.organization_id -OrgName $originalOrgName
+
+    $props.organization = $orgAlias
+
+    $repoAlias = $null
+    $branchDisplay = $props.short_name
+    $originalName = $props.name
+
+    if ($originalName -and $originalName -match '\\') {
+        $parts = $originalName -split '\\', 2
+        $repoNamePart = $parts[0]
+        $branchNamePart = $parts[1]
+        $repoAlias = Get-GitHubRepoAlias -RepoId $null -FullName "$originalOrgName/$repoNamePart" -Name $repoNamePart
+        if (-not $branchDisplay) {
+            $branchDisplay = $branchNamePart
+        }
+    }
+
+    $shouldAnonymizeShortName = -not (Test-IsGenericGitHubName -Value $branchDisplay -AllowList $script:GitHubCommonBranchNames)
+    if ($shouldAnonymizeShortName -and $branchDisplay) {
+        $branchAlias = Get-GitHubBranchAlias -BranchId $copy.id -BranchName $branchDisplay
+        $branchDisplay = $branchAlias
+    }
+
+    if ($branchDisplay) {
+        $props.short_name = $branchDisplay
+    }
+
+    if ($repoAlias -and $branchDisplay) {
+        $props.name = "$repoAlias\$branchDisplay"
+    } elseif ($branchDisplay) {
+        $props.name = $branchDisplay
+    }
+
+    if ($props.commit_url -and $repoAlias) {
+        $props.commit_url = Convert-GitHubUrlOwnerRepo -Url $props.commit_url -OwnerAlias $orgAlias -RepoAlias $repoAlias
+    }
+
+    return $copy
+}
+
+function Get-AnonymizedGitHubWorkflowNode {
+    [CmdletBinding()]
+    param($Node)
+
+    $copy = Copy-ObjectDeep $Node
+    $props = $copy.properties
+    $originalOrgName = $props.organization
+    $orgAlias = Get-GitHubOrgAlias -OrgId $props.organization_id -OrgName $originalOrgName
+    $props.organization = $orgAlias
+
+    $workflowAlias = Get-GitHubWorkflowAlias -WorkflowId $copy.id -WorkflowName $props.short_name
+    if ($props.short_name) { $props.short_name = $workflowAlias }
+
+    $repoAlias = $null
+    if ($props.name -and $props.name -match '\\') {
+        $parts = $props.name -split '\\', 2
+        $repoNamePart = $parts[0]
+        $repoAlias = Get-GitHubRepoAlias -RepoId $null -FullName "$originalOrgName/$repoNamePart" -Name $repoNamePart
+        $props.name = "$repoAlias\$workflowAlias"
+    } else {
+        $props.name = $workflowAlias
+    }
+
+    if ($props.path) {
+        $props.path = ".github/workflows/$($workflowAlias.ToLowerInvariant()).yml"
+    }
+
+    if ($props.url -and $repoAlias) {
+        $props.url = Convert-GitHubUrlOwnerRepo -Url $props.url -OwnerAlias $orgAlias -RepoAlias $repoAlias
+    }
+
+    return $copy
+}
+
+function Get-AnonymizedGitHubEnvironmentNode {
+    [CmdletBinding()]
+    param($Node)
+
+    $copy = Copy-ObjectDeep $Node
+    $props = $copy.properties
+    $originalOrgName = $props.organization
+    $orgAlias = Get-GitHubOrgAlias -OrgId $props.organization_id -OrgName $originalOrgName
+    $props.organization = $orgAlias
+
+    $envDisplay = $props.short_name
+
+    $shouldAnonymize = -not (Test-IsGenericGitHubName -Value $envDisplay -AllowList $script:GitHubCommonEnvironmentNames)
+    if ($shouldAnonymize -and $envDisplay) {
+        $envAlias = Get-GitHubEnvironmentAlias -EnvironmentId $copy.id -EnvironmentName $envDisplay
+        $envDisplay = $envAlias
+        $props.short_name = $envAlias
+    }
+
+    if ($props.name -and $props.name -match '\\') {
+        $parts = $props.name -split '\\', 2
+        $repoNamePart = $parts[0]
+        $repoAlias = Get-GitHubRepoAlias -RepoId $null -FullName "$originalOrgName/$repoNamePart" -Name $repoNamePart
+        $envNamePart = if ($envDisplay) { $envDisplay } else { $parts[1] }
+        $props.name = "$repoAlias\$envNamePart"
+    } elseif ($envDisplay) {
+        $props.name = $envDisplay
+    }
+
+    return $copy
+}
+
+function Get-AnonymizedGitHubTeamRoleNode {
+    [CmdletBinding()]
+    param($Node)
+
+    $copy = Copy-ObjectDeep $Node
+    $props = $copy.properties
+    $originalOrgName = $props.organization_name
+    $props.organization_name = Get-GitHubOrgAlias -OrgId $props.organization_id -OrgName $originalOrgName
+
+    if ($props.name -and $props.name -match '^([^/]+)/([^/]+)/(.+)$') {
+        $orgSegment = $matches[1]
+        $teamSegment = $matches[2]
+        $roleSegment = $matches[3]
+        $teamAlias = Get-GitHubTeamAlias -TeamId $null -Slug $teamSegment -OrgId $props.organization_id -OrgName $originalOrgName
+        $props.name = "$($props.organization_name)/$teamAlias/$roleSegment"
+    }
+
+    return $copy
+}
+
+function Get-AnonymizedGitHubOrgRoleNode {
+    [CmdletBinding()]
+    param($Node)
+
+    $copy = Copy-ObjectDeep $Node
+    $props = $copy.properties
+    $originalOrgName = $props.organization_name
+    $props.organization_name = Get-GitHubOrgAlias -OrgId $props.organization_id -OrgName $originalOrgName
+
+    if ($props.name -and $props.name -match '^([^/]+)/(.+)$') {
+        $props.name = "$($props.organization_name)/$($matches[2])"
+    }
+
+    return $copy
+}
+
+function Get-AnonymizedGitHubRepoRoleNode {
+    [CmdletBinding()]
+    param($Node)
+
+    $copy = Copy-ObjectDeep $Node
+    $props = $copy.properties
+    $originalOrgName = $props.organization_name
+    $props.organization_name = Get-GitHubOrgAlias -OrgId $props.organization_id -OrgName $originalOrgName
+
+    if ($props.name -and $props.name -match '^([^/]+)/([^/]+)/(.+)$') {
+        $orgSegment = $matches[1]
+        $repoSegment = $matches[2]
+        $roleSegment = $matches[3]
+        $repoAlias = Get-GitHubRepoAlias -RepoId $null -FullName "$orgSegment/$repoSegment" -Name $repoSegment
+        $props.name = "$($props.organization_name)/$repoAlias/$roleSegment"
+    }
+
+    return $copy
+}
+
+#endregion GitHub Mapping & Anonymization Helpers
+
+#region Azure Mapping & Anonymization Helpers
+# ============================================================================
+# AzureHound (AZ*) anonymization
+# ============================================================================
+# AzureHound CE files use the envelope:
+#   { "data": [ { "kind": "AZ*", "data": { ... } }, ... ], "meta": { ... } }
+# Per-kind handlers below copy each record, rewrite PII fields, and use the
+# script-scoped $script:Azure*Mapping tables for stable cross-kind aliases.
+#
+# Convention: handlers receive the inner $Data PSCustomObject and mutate a deep
+# copy. Object-id GUIDs are preserved so role-assignment/owner/member rows that
+# reference them keep working. Display strings, names, paths, and tokens are
+# routed through alias maps.
+
+function Get-AzureMappedAlias {
+    [CmdletBinding()]
+    param(
+        [string]$Key,
+        [hashtable]$Mapping,
+        [string]$Prefix,
+        [int]$HexLength = $script:HEX_LENGTH_LONG
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Key)) {
+        return $null
+    }
+
+    $normalized = $Key.ToLowerInvariant()
+    if ($Mapping.ContainsKey($normalized)) {
+        return $Mapping[$normalized]
+    }
+
+    $alias = $Prefix + (Get-RandomHex $HexLength)
+    $Mapping[$normalized] = $alias
+    return $alias
+}
+
+function Get-AzureTenantNameAlias {
+    [CmdletBinding()]
+    param([string]$DisplayName)
+
+    if ([string]::IsNullOrWhiteSpace($DisplayName)) { return $DisplayName }
+    return Get-AzureMappedAlias -Key $DisplayName -Mapping $script:AzureTenantNameMapping -Prefix $script:ANONYMIZED_PREFIX_AZTENANT
+}
+
+function Get-AzureUserAlias {
+    [CmdletBinding()]
+    param([string]$ObjectId, [string]$DisplayHint)
+
+    $key = if (-not [string]::IsNullOrWhiteSpace($ObjectId)) { $ObjectId } else { $DisplayHint }
+    return Get-AzureMappedAlias -Key $key -Mapping $script:AzureUserMapping -Prefix $script:ANONYMIZED_PREFIX_AZUSR
+}
+
+function Get-AzureGroupAlias {
+    [CmdletBinding()]
+    param([string]$ObjectId, [string]$DisplayHint)
+
+    $key = if (-not [string]::IsNullOrWhiteSpace($ObjectId)) { $ObjectId } else { $DisplayHint }
+    return Get-AzureMappedAlias -Key $key -Mapping $script:AzureGroupMapping -Prefix $script:ANONYMIZED_PREFIX_AZGRP
+}
+
+function Get-AzureAppAlias {
+    [CmdletBinding()]
+    param([string]$ObjectId, [string]$AppId, [string]$DisplayHint)
+
+    $key = if (-not [string]::IsNullOrWhiteSpace($ObjectId)) { $ObjectId }
+           elseif (-not [string]::IsNullOrWhiteSpace($AppId)) { "appid:$AppId" }
+           else { $DisplayHint }
+    return Get-AzureMappedAlias -Key $key -Mapping $script:AzureAppMapping -Prefix $script:ANONYMIZED_PREFIX_AZAPP
+}
+
+function Get-AzureServicePrincipalAlias {
+    [CmdletBinding()]
+    param([string]$ObjectId, [string]$AppId, [string]$DisplayHint)
+
+    $key = if (-not [string]::IsNullOrWhiteSpace($ObjectId)) { $ObjectId }
+           elseif (-not [string]::IsNullOrWhiteSpace($AppId)) { "appid:$AppId" }
+           else { $DisplayHint }
+    return Get-AzureMappedAlias -Key $key -Mapping $script:AzureServicePrincipalMapping -Prefix $script:ANONYMIZED_PREFIX_AZSP
+}
+
+function Get-AzureDeviceAlias {
+    [CmdletBinding()]
+    param([string]$ObjectId, [string]$DeviceId, [string]$DisplayHint)
+
+    $key = if (-not [string]::IsNullOrWhiteSpace($ObjectId)) { $ObjectId }
+           elseif (-not [string]::IsNullOrWhiteSpace($DeviceId)) { "devid:$DeviceId" }
+           else { $DisplayHint }
+    return Get-AzureMappedAlias -Key $key -Mapping $script:AzureDeviceMapping -Prefix $script:ANONYMIZED_PREFIX_AZDEV
+}
+
+function Get-AzureSubscriptionAlias {
+    [CmdletBinding()]
+    param([string]$SubscriptionId, [string]$DisplayHint)
+
+    $key = if (-not [string]::IsNullOrWhiteSpace($SubscriptionId)) { $SubscriptionId } else { $DisplayHint }
+    return Get-AzureMappedAlias -Key $key -Mapping $script:AzureSubscriptionMapping -Prefix $script:ANONYMIZED_PREFIX_AZSUB
+}
+
+function Get-AzureResourceGroupAlias {
+    [CmdletBinding()]
+    param([string]$Name)
+
+    return Get-AzureMappedAlias -Key $Name -Mapping $script:AzureResourceGroupMapping -Prefix $script:ANONYMIZED_PREFIX_AZRG
+}
+
+function Get-AzureResourceNameAlias {
+    [CmdletBinding()]
+    param([string]$Name)
+
+    # Key on the leaf name (lowercased by Get-AzureMappedAlias) so the same
+    # resource gets the same alias whether reached via .name or via a path rewrite.
+    return Get-AzureMappedAlias -Key $Name -Mapping $script:AzureResourceNameMapping -Prefix $script:ANONYMIZED_PREFIX_AZRES
+}
+
+function Get-AzureManagementGroupAlias {
+    [CmdletBinding()]
+    param([string]$Id, [string]$DisplayHint)
+
+    $key = if (-not [string]::IsNullOrWhiteSpace($Id)) { $Id } else { $DisplayHint }
+    return Get-AzureMappedAlias -Key $key -Mapping $script:AzureManagementGroupMapping -Prefix $script:ANONYMIZED_PREFIX_AZMG
+}
+
+function Get-AzureCustomRoleAlias {
+    [CmdletBinding()]
+    param([string]$RoleId, [string]$DisplayHint)
+
+    $key = if (-not [string]::IsNullOrWhiteSpace($RoleId)) { $RoleId } else { $DisplayHint }
+    return Get-AzureMappedAlias -Key $key -Mapping $script:AzureCustomRoleMapping -Prefix $script:ANONYMIZED_PREFIX_AZROLE
+}
+
+function Get-AzureFICNameAlias {
+    [CmdletBinding()]
+    param([string]$FICId, [string]$NameHint)
+
+    $key = if (-not [string]::IsNullOrWhiteSpace($FICId)) { $FICId } else { $NameHint }
+    return Get-AzureMappedAlias -Key $key -Mapping $script:AzureFICMapping -Prefix $script:ANONYMIZED_PREFIX_AZFIC
+}
+
+function Get-AzureFICSubjectAlias {
+    [CmdletBinding()]
+    param([string]$Subject)
+
+    if ([string]::IsNullOrWhiteSpace($Subject)) { return $Subject }
+    return Get-AzureMappedAlias -Key $Subject -Mapping $script:AzureFICSubjectMapping -Prefix $script:ANONYMIZED_PREFIX_AZFIC
+}
+
+function Get-AzurePhysicalIdAlias {
+    [CmdletBinding()]
+    param([string]$Token)
+
+    if ([string]::IsNullOrWhiteSpace($Token)) { return $Token }
+    return Get-AzureMappedAlias -Key $Token -Mapping $script:AzureDevicePhysicalIdMapping -Prefix $script:ANONYMIZED_PREFIX_AZPHYSID -HexLength $script:HEX_LENGTH_LONG
+}
+
+function Get-AzureAltSecIdAlias {
+    [CmdletBinding()]
+    param([string]$Token)
+
+    if ([string]::IsNullOrWhiteSpace($Token)) { return $Token }
+    return Get-AzureMappedAlias -Key $Token -Mapping $script:AzureDeviceAltSecIdMapping -Prefix $script:ANONYMIZED_PREFIX_AZALTSEC -HexLength $script:HEX_LENGTH_LONG
+}
+
+function Get-AzureDeviceModelAlias {
+    [CmdletBinding()]
+    param([string]$Manufacturer, [string]$Model)
+
+    $key = ("{0}|{1}" -f ($Manufacturer, ''), ($Model, '') | Out-String).Trim()
+    if ([string]::IsNullOrWhiteSpace($Key)) {
+        $key = "$Manufacturer|$Model"
+    }
+    return Get-AzureMappedAlias -Key $key -Mapping $script:AzureDeviceModelMapping -Prefix $script:ANONYMIZED_PREFIX_AZMODEL
+}
+
+function Get-AzureDomainAlias {
+    [CmdletBinding()]
+    param([string]$Domain)
+
+    if ([string]::IsNullOrWhiteSpace($Domain)) { return $Domain }
+
+    # Special-case Azure tenant onmicrosoft.com domains. Get-AnonymizedDomain
+    # treats the customer-controlled left label as a subdomain and preserves it
+    # (e.g. "GlobalTechR.onmicrosoft.com" -> "globaltechr.domain<N>.local"), but
+    # that left label IS the tenant identity. Alias the whole label here, and
+    # also handle multi-label subdomains under the tenant (e.g.
+    # "ckt.phantomcorp.onmicrosoft.com") + the .mail.onmicrosoft.com variant.
+    $lower = $Domain.ToLowerInvariant()
+    if ($lower.EndsWith('.onmicrosoft.com')) {
+        $isMail = $lower.EndsWith('.mail.onmicrosoft.com')
+        $stripped = if ($isMail) { $lower.Substring(0, $lower.Length - '.mail.onmicrosoft.com'.Length) }
+                    else        { $lower.Substring(0, $lower.Length - '.onmicrosoft.com'.Length) }
+        # Tenant label is the rightmost label of the prefix.
+        $tenantLabel = ($stripped -split '\.')[-1]
+        if ($tenantLabel) {
+            $alias = (Get-AzureMappedAlias -Key $tenantLabel -Mapping $script:AzureTenantNameMapping -Prefix $script:ANONYMIZED_PREFIX_AZTENANT).ToLowerInvariant()
+            if ($isMail) { return "$alias.mail.onmicrosoft.com" }
+            return "$alias.onmicrosoft.com"
+        }
+    }
+
+    # Otherwise reuse the existing on-prem domain alias namespace per user decision.
+    # Note: Get-AnonymizedDomain preserves the leftmost label as a subdomain prefix
+    # (e.g. phantomcorpresearch.com -> phantomcorp.<base>) which leaks the tenant
+    # identifier for Azure data. Collapse any preserved subdomain to just the
+    # anonymized base for Azure callers.
+    $anon = Get-AnonymizedDomain $Domain
+    if ($anon) {
+        if ($anon -match '(?i)(domain\d+\.local)$') {
+            return $matches[1].ToLowerInvariant()
+        }
+        return $anon.ToLowerInvariant()
+    }
+    return $anon
+}
+
+function Get-AzureUPNAlias {
+    [CmdletBinding()]
+    param([string]$UPN, [string]$UserId)
+
+    if ([string]::IsNullOrWhiteSpace($UPN)) { return $UPN }
+
+    $atIdx = $UPN.IndexOf('@')
+    $localPart = if ($atIdx -ge 0) { $UPN.Substring(0, $atIdx) } else { $UPN }
+    $domainPart = if ($atIdx -ge 0) { $UPN.Substring($atIdx + 1) } else { $null }
+
+    $localAlias = Get-AzureUserAlias -ObjectId $UserId -DisplayHint $localPart
+    if ($domainPart) {
+        $anonDomain = Get-AzureDomainAlias $domainPart
+        return "$localAlias@$anonDomain"
+    }
+    return $localAlias
+}
+
+function Get-AzureMailAlias {
+    [CmdletBinding()]
+    param([string]$Mail)
+
+    if ([string]::IsNullOrWhiteSpace($Mail)) { return $Mail }
+    $atIdx = $Mail.IndexOf('@')
+    if ($atIdx -lt 0) {
+        return ($script:ANONYMIZED_PREFIX_EMAIL + (Get-RandomHex $script:HEX_LENGTH_MEDIUM))
+    }
+    $localPart = $Mail.Substring(0, $atIdx)
+    $domainPart = $Mail.Substring($atIdx + 1)
+    $anonLocal = $script:ANONYMIZED_PREFIX_EMAIL + (Get-RandomHex $script:HEX_LENGTH_MEDIUM)
+    $anonDomain = Get-AzureDomainAlias $domainPart
+    return "$anonLocal@$anonDomain"
+}
+
+function Convert-AzureProxyAddress {
+    [CmdletBinding()]
+    param([string]$Address)
+
+    if ([string]::IsNullOrWhiteSpace($Address)) { return $Address }
+
+    # SMTP:user@domain / smtp:user@domain
+    if ($Address -match '^(?<scheme>[A-Za-z]+):(?<local>[^@]+)@(?<domain>.+)$') {
+        $scheme = $matches['scheme']
+        $domainPart = $matches['domain']
+        $anonLocal = $script:ANONYMIZED_PREFIX_EMAIL + (Get-RandomHex $script:HEX_LENGTH_MEDIUM)
+        $anonDomain = Get-AzureDomainAlias $domainPart
+        return ("{0}:{1}@{2}" -f $scheme, $anonLocal, $anonDomain)
+    }
+
+    # SPO addresses look like "SPO:SPO_<guid>@SPO_<tenantId>" - replace local part only.
+    if ($Address -match '^(?<scheme>[A-Za-z]+):(?<rest>.+)$') {
+        $scheme = $matches['scheme']
+        return ("{0}:{1}{2}" -f $scheme, $script:ANONYMIZED_PREFIX_EMAIL, (Get-RandomHex $script:HEX_LENGTH_MEDIUM))
+    }
+
+    return $script:ANONYMIZED_PREFIX_EMAIL + (Get-RandomHex $script:HEX_LENGTH_MEDIUM)
+}
+
+function Convert-AzureUrlHost {
+    [CmdletBinding()]
+    param([string]$Url)
+
+    if ([string]::IsNullOrWhiteSpace($Url)) { return $Url }
+
+    # Manual host extraction so we handle wildcard URLs like
+    # "https://contoso-*.sharepoint.com/..." that System.Uri rejects.
+    if ($Url -notmatch '^(?<scheme>[a-zA-Z][a-zA-Z0-9+.\-]*)://(?<host>[^/?#]+)(?<rest>.*)$') {
+        return $Url
+    }
+    $scheme = $matches['scheme']
+    $host_ = $matches['host']
+    $rest = $matches['rest']
+    if ([string]::IsNullOrWhiteSpace($host_)) { return $Url }
+
+    # Strip optional port for matching, keep it in output via $rest if present.
+    $hostNoPort = $host_
+    $portTail = ''
+    if ($host_ -match '^(?<h>.+):(?<p>\d+)$') {
+        $hostNoPort = $matches['h']
+        $portTail = ':' + $matches['p']
+    }
+    $host_ = $hostNoPort
+
+    # Preserve well-known Microsoft-controlled token/identity endpoints (host == suffix).
+    # Azure resource subdomains like *.vault.azure.net or *.blob.core.windows.net embed
+    # the customer-chosen resource name, so those are NOT preserved here.
+    $preservedExactHosts = @(
+        'login.microsoftonline.com',
+        'token.actions.githubusercontent.com',
+        'graph.microsoft.com','graph.windows.net'
+    )
+    if ($preservedExactHosts -contains $host_.ToLowerInvariant()) {
+        return $Url
+    }
+
+    # For Azure resource hosts, alias the leaf subdomain (the customer name) and
+    # keep the well-known suffix intact so the URL still looks/parses Azure-shaped.
+    $resourceHostSuffixes = @(
+        'vault.azure.net','blob.core.windows.net','file.core.windows.net',
+        'queue.core.windows.net','table.core.windows.net','dfs.core.windows.net',
+        'azurewebsites.net','azurecr.io','servicebus.windows.net','database.windows.net',
+        'sharepoint.com'
+    )
+    $hostLower = $host_.ToLowerInvariant()
+    foreach ($suffix in $resourceHostSuffixes) {
+        if ($hostLower.EndsWith('.' + $suffix) -or $hostLower -eq $suffix) {
+            $leaf = if ($hostLower.Length -gt $suffix.Length) { $hostLower.Substring(0, $hostLower.Length - $suffix.Length - 1) } else { '' }
+            if ($leaf) {
+                # Strip wildcards before keying so "contoso-*" and "contoso" map to the same alias.
+                $cleanLeaf = ($leaf -replace '\*','').Trim('-','.')
+                if ($cleanLeaf) {
+                    $aliasLeaf = (Get-AzureResourceNameAlias -Name $cleanLeaf).ToLowerInvariant()
+                    return "${scheme}://${aliasLeaf}.${suffix}${portTail}${rest}"
+                }
+            }
+            return "${scheme}://anon.${suffix}${portTail}${rest}"
+        }
+    }
+
+    $anonHost = Get-AzureDomainAlias $host_
+    return "${scheme}://${anonHost}${portTail}${rest}"
+}
+
+function Convert-AzureResourcePath {
+    [CmdletBinding()]
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path)) { return $Path }
+
+    $segments = $Path -split '/'
+    if ($segments.Count -lt 2) { return $Path }
+
+    $i = 0
+    while ($i -lt $segments.Count) {
+        $seg = $segments[$i]
+        switch -Regex ($seg) {
+            '^(?i)resourceGroups$' {
+                if ($i + 1 -lt $segments.Count -and $segments[$i + 1]) {
+                    $segments[$i + 1] = Get-AzureResourceGroupAlias -Name $segments[$i + 1]
+                }
+                $i += 2
+                break
+            }
+            '^(?i)providers$' {
+                # /providers/<namespace>/<type>/<name>(/<subtype>/<subname>)*
+                # Preserve namespace ($i+1) and primary type ($i+2); alias every value
+                # token after that (positions $i+3, $i+5, ...).
+                $j = $i + 3
+                while ($j -lt $segments.Count) {
+                    if ($segments[$j]) {
+                        $segments[$j] = Get-AzureResourceNameAlias -Name $segments[$j]
+                    }
+                    $j += 2
+                }
+                # Done with the provider tail
+                $i = $segments.Count
+                break
+            }
+            '^(?i)managementGroups$' {
+                if ($i + 1 -lt $segments.Count -and $segments[$i + 1]) {
+                    $segments[$i + 1] = Get-AzureManagementGroupAlias -Id $segments[$i + 1]
+                }
+                $i += 2
+                break
+            }
+            default {
+                $i += 1
+            }
+        }
+    }
+
+    return ($segments -join '/')
+}
+
+function Convert-AzureDistinguishedName {
+    [CmdletBinding()]
+    param(
+        [string]$DN,
+        [string]$LeafAlias
+    )
+
+    if ([string]::IsNullOrWhiteSpace($DN)) { return $DN }
+
+    $parts = $DN -split '(?<!\\),'
+    $rebuilt = New-Object System.Collections.Generic.List[string]
+    $cnSeen = $false
+    foreach ($part in $parts) {
+        if ($part -match '^(?i)\s*(?<key>CN|OU|DC)=(?<val>.+)$') {
+            $key = $matches['key'].ToUpperInvariant()
+            switch ($key) {
+                'CN' {
+                    if (-not $cnSeen -and $LeafAlias) {
+                        $rebuilt.Add("CN=$LeafAlias") | Out-Null
+                    } else {
+                        $rebuilt.Add("CN=anon") | Out-Null
+                    }
+                    $cnSeen = $true
+                }
+                'OU' { $rebuilt.Add("OU=anon") | Out-Null }
+                'DC' { $rebuilt.Add("DC=anon") | Out-Null }
+            }
+        } else {
+            $rebuilt.Add('anon') | Out-Null
+        }
+    }
+    return ($rebuilt -join ',')
+}
+
+function Update-AzureScrubAny {
+    [CmdletBinding()]
+    param(
+        $Obj,
+        [int]$Depth = 0
+    )
+
+    if ($null -eq $Obj) { return }
+    if ($Depth -gt 12) { return }
+
+    # Detect nested principal records and dispatch through entity handlers so
+    # aliases stay consistent with the top-level kind handlers.
+    if ($Obj -is [System.Management.Automation.PSCustomObject]) {
+        # Microsoft Graph nested objects use @odata.type for kind discrimination.
+        $odataType = $null
+        if ($Obj.PSObject.Properties.Match('@odata.type').Count -gt 0) {
+            $odataType = [string]$Obj.'@odata.type'
+        }
+        if ($odataType) {
+            switch -Regex ($odataType) {
+                '#microsoft\.graph\.user$'              { Update-AnonymizedAZUserData $Obj; return }
+                '#microsoft\.graph\.group$'             { Update-AnonymizedAZGroupData $Obj; return }
+                '#microsoft\.graph\.servicePrincipal$'  { Update-AnonymizedAZServicePrincipalData $Obj; return }
+                '#microsoft\.graph\.device$'            { Update-AnonymizedAZDeviceData $Obj; return }
+                '#microsoft\.graph\.application$'       { Update-AnonymizedAZAppData $Obj; return }
+            }
+        }
+
+        $hasUPN     = $Obj.PSObject.Properties.Match('userPrincipalName').Count -gt 0
+        $hasUserType = $Obj.PSObject.Properties.Match('userType').Count -gt 0
+        $hasSecId   = $Obj.PSObject.Properties.Match('securityIdentifier').Count -gt 0
+        $hasGroupTypes = $Obj.PSObject.Properties.Match('groupTypes').Count -gt 0 -or $Obj.PSObject.Properties.Match('mailEnabled').Count -gt 0
+        $hasAppId   = $Obj.PSObject.Properties.Match('appId').Count -gt 0 -and $Obj.PSObject.Properties.Match('servicePrincipalNames').Count -gt 0
+        $hasDeviceId = $Obj.PSObject.Properties.Match('deviceId').Count -gt 0
+
+        if ($hasUPN -or $hasUserType) {
+            Update-AnonymizedAZUserData $Obj
+            return
+        }
+        if ($hasAppId) {
+            Update-AnonymizedAZServicePrincipalData $Obj
+            return
+        }
+        if ($hasGroupTypes -and $hasSecId) {
+            Update-AnonymizedAZGroupData $Obj
+            return
+        }
+        if ($hasDeviceId -and $Obj.PSObject.Properties.Match('trustType').Count -gt 0) {
+            Update-AnonymizedAZDeviceData $Obj
+            return
+        }
+
+        foreach ($prop in @($Obj.PSObject.Properties)) {
+            $name = $prop.Name
+            $val = $prop.Value
+            if ($null -eq $val) { continue }
+
+            if ($val -is [string]) {
+                $newVal = Update-AzureScrubStringByName -PropertyName $name -Value $val
+                if ($newVal -ne $val) { $Obj.$name = $newVal }
+            }
+            elseif ($val -is [System.Collections.IList] -and $val -isnot [string]) {
+                for ($i = 0; $i -lt $val.Count; $i++) {
+                    $item = $val[$i]
+                    if ($null -eq $item) { continue }
+                    if ($item -is [string]) {
+                        $newItem = Update-AzureScrubStringByName -PropertyName $name -Value $item
+                        if ($newItem -ne $item) { $val[$i] = $newItem }
+                    } else {
+                        Update-AzureScrubAny -Obj $item -Depth ($Depth + 1)
+                    }
+                }
+            }
+            elseif ($val -is [System.Management.Automation.PSCustomObject]) {
+                Update-AzureScrubAny -Obj $val -Depth ($Depth + 1)
+            }
+        }
+    }
+    elseif ($Obj -is [System.Collections.IList]) {
+        for ($i = 0; $i -lt $Obj.Count; $i++) {
+            $item = $Obj[$i]
+            if ($null -eq $item) { continue }
+            if ($item -is [string]) {
+                # Without a property name we only handle path-shaped strings
+                if ($item -like '/subscriptions/*' -or $item -like '/providers/*' -or $item -like '/managementGroups/*') {
+                    $Obj[$i] = Convert-AzureResourcePath $item
+                }
+            } else {
+                Update-AzureScrubAny -Obj $item -Depth ($Depth + 1)
+            }
+        }
+    }
+}
+
+# Recognises an "<local>@<domain>" token embedded anywhere inside a string. Used by
+# the tail-pass scrub so we catch UPNs / mails in fields we don't enumerate by name
+# (signInNames, homeAccountId, B2B "Address", identifierUris, etc.). Local part is
+# permissive enough to match B2B forms like "alice_example.com#EXT#@tenant.onmicrosoft.com".
+$script:AzureEmailEmbeddedRegex = [regex]'(?<local>[^\s@"<>(){}\[\],;]+)@(?<domain>[A-Za-z0-9.\-]+\.[A-Za-z]{2,})'
+
+function Update-AzureRewriteEmailToken {
+    [CmdletBinding()]
+    param([string]$Value)
+
+    if ([string]::IsNullOrEmpty($Value) -or -not $script:AzureEmailEmbeddedRegex.IsMatch($Value)) {
+        return $Value
+    }
+    return $script:AzureEmailEmbeddedRegex.Replace($Value, {
+        param($m)
+        $local = $m.Groups['local'].Value
+        # Skip values we already aliased (idempotent re-anonymization).
+        if ($local.StartsWith('email_')) { return $m.Value }
+        if ($local -cmatch '^AZ[A-Z]+_[A-F0-9]+$') { return $m.Value }
+        return Get-AzureMailAlias $m.Value
+    })
+}
+
+function Update-AzureScrubEmbeddedPaths {
+    [CmdletBinding()]
+    param($Obj, [int]$Depth = 0)
+
+    if ($null -eq $Obj -or $Depth -gt 12) { return }
+
+    if ($Obj -is [System.Management.Automation.PSCustomObject]) {
+        foreach ($prop in @($Obj.PSObject.Properties)) {
+            $val = $prop.Value
+            if ($null -eq $val) { continue }
+
+            if ($val -is [string]) {
+                if ($val -like '/subscriptions/*' -or $val -like '/providers/*' -or $val -like '/managementGroups/*') {
+                    $Obj.$($prop.Name) = Convert-AzureResourcePath $val
+                }
+            }
+            elseif ($val -is [System.Collections.IList] -and $val -isnot [string]) {
+                for ($i = 0; $i -lt $val.Count; $i++) {
+                    $item = $val[$i]
+                    if ($null -eq $item) { continue }
+                    if ($item -is [string]) {
+                        if ($item -like '/subscriptions/*' -or $item -like '/providers/*' -or $item -like '/managementGroups/*') {
+                            $val[$i] = Convert-AzureResourcePath $item
+                        }
+                    } else {
+                        Update-AzureScrubEmbeddedPaths -Obj $item -Depth ($Depth + 1)
+                    }
+                }
+            }
+            elseif ($val -is [System.Management.Automation.PSCustomObject]) {
+                Update-AzureScrubEmbeddedPaths -Obj $val -Depth ($Depth + 1)
+            }
+        }
+    }
+    elseif ($Obj -is [System.Collections.IList]) {
+        for ($i = 0; $i -lt $Obj.Count; $i++) {
+            $item = $Obj[$i]
+            if ($null -eq $item) { continue }
+            if ($item -is [string]) {
+                if ($item -like '/subscriptions/*' -or $item -like '/providers/*' -or $item -like '/managementGroups/*') {
+                    $Obj[$i] = Convert-AzureResourcePath $item
+                }
+            } else {
+                Update-AzureScrubEmbeddedPaths -Obj $item -Depth ($Depth + 1)
+            }
+        }
+    }
+}
+
+function Update-AzureScrubEmbeddedEmails {
+    [CmdletBinding()]
+    param($Obj, [int]$Depth = 0)
+
+    if ($null -eq $Obj -or $Depth -gt 12) { return }
+
+    if ($Obj -is [System.Management.Automation.PSCustomObject]) {
+        foreach ($prop in @($Obj.PSObject.Properties)) {
+            $val = $prop.Value
+            if ($null -eq $val) { continue }
+
+            if ($val -is [string]) {
+                $newVal = Update-AzureRewriteEmailToken $val
+                if ($newVal -ne $val) { $Obj.$($prop.Name) = $newVal }
+            }
+            elseif ($val -is [System.Collections.IList] -and $val -isnot [string]) {
+                for ($i = 0; $i -lt $val.Count; $i++) {
+                    $item = $val[$i]
+                    if ($null -eq $item) { continue }
+                    if ($item -is [string]) {
+                        $newItem = Update-AzureRewriteEmailToken $item
+                        if ($newItem -ne $item) { $val[$i] = $newItem }
+                    } else {
+                        Update-AzureScrubEmbeddedEmails -Obj $item -Depth ($Depth + 1)
+                    }
+                }
+            }
+            elseif ($val -is [System.Management.Automation.PSCustomObject]) {
+                Update-AzureScrubEmbeddedEmails -Obj $val -Depth ($Depth + 1)
+            }
+        }
+    }
+    elseif ($Obj -is [System.Collections.IList]) {
+        for ($i = 0; $i -lt $Obj.Count; $i++) {
+            $item = $Obj[$i]
+            if ($null -eq $item) { continue }
+            if ($item -is [string]) {
+                $newItem = Update-AzureRewriteEmailToken $item
+                if ($newItem -ne $item) { $Obj[$i] = $newItem }
+            } else {
+                Update-AzureScrubEmbeddedEmails -Obj $item -Depth ($Depth + 1)
+            }
+        }
+    }
+}
+
+function Update-AzureScrubStringByName {
+    [CmdletBinding()]
+    param([string]$PropertyName, [string]$Value)
+
+    if ([string]::IsNullOrEmpty($Value)) { return $Value }
+
+    # Path-shaped values: rewrite regardless of the property name.
+    if ($Value -like '/subscriptions/*' -or $Value -like '/providers/*' -or $Value -like '/managementGroups/*') {
+        return Convert-AzureResourcePath $Value
+    }
+
+    switch -Regex ($PropertyName) {
+        '^(?i)tenantName$|^(?i)publisherName$'                  { return Get-AzureTenantNameAlias $Value }
+        '^(?i)userPrincipalName$|^(?i)onPremisesUserPrincipalName$' { return Get-AzureUPNAlias -UPN $Value -UserId $null }
+        '^(?i)mail$|^(?i)issuerAssignedId$'                     {
+            if ($Value -match '@') { return Get-AzureMailAlias $Value }
+            return $Value
+        }
+        '^(?i)issuer$|^(?i)publisherDomain$|^(?i)onPremisesDomainName$' { return Get-AzureDomainAlias $Value }
+        '^(?i)onPremisesDistinguishedName$'                     { return Convert-AzureDistinguishedName -DN $Value -LeafAlias 'anon' }
+        '^(?i)homepage$|^(?i)replyUrls$|^(?i)logoutUrl$|^(?i)homePageUrl$' {
+            if ($Value -match '^https?://') { return Convert-AzureUrlHost $Value }
+            return $Value
+        }
+        default                                                  { return $Value }
+    }
+}
+
+function Get-AnonymizedAzureNode {
+    [CmdletBinding()]
+    param($Node)
+
+    if (-not $Node) { return $Node }
+
+    $kind = $Node.kind
+    $copy = Copy-ObjectDeep $Node
+    if (-not $copy.PSObject.Properties.Match('data') -or -not $copy.data) {
+        return $copy
+    }
+
+    switch ($kind) {
+        'AZTenant'                              { Update-AnonymizedAZTenantData $copy.data; break }
+        'AZUser'                                { Update-AnonymizedAZUserData $copy.data; break }
+        'AZGroup'                               { Update-AnonymizedAZGroupData $copy.data; break }
+        'AZApp'                                 { Update-AnonymizedAZAppData $copy.data; break }
+        'AZServicePrincipal'                    { Update-AnonymizedAZServicePrincipalData $copy.data; break }
+        'AZDevice'                              { Update-AnonymizedAZDeviceData $copy.data; break }
+        'AZSubscription'                        { Update-AnonymizedAZSubscriptionData $copy.data; break }
+        'AZResourceGroup'                       { Update-AnonymizedAZResourceGroupData $copy.data; break }
+        'AZManagementGroup'                     { Update-AnonymizedAZManagementGroupData $copy.data; break }
+        'AZRole'                                { Update-AnonymizedAZRoleData $copy.data; break }
+        'AZFederatedIdentityCredential'         { Update-AnonymizedAZFICData $copy.data; break }
+        # Resource kinds — name + path rewrite, preserve security flags
+        { $_ -in 'AZKeyVault','AZAutomationAccount','AZContainerRegistry','AZFunctionApp','AZLogicApp','AZManagedCluster','AZVM','AZVMScaleSet','AZWebApp' } {
+            Update-AnonymizedAZResourceData $copy.data
+            break
+        }
+        # Relationship / role kinds — preserve ids; rewrite any embedded path/display strings
+        default {
+            Update-AnonymizedAZRelationshipData $copy.data
+            break
+        }
+    }
+
+    # Tail passes (idempotent — skip already-aliased tokens):
+    # 1. Rewrite Azure resource paths embedded in nested properties (e.g. AZVM
+    #    properties.networkProfile.networkInterfaces[].id, disks, extensions).
+    # 2. Scrub UPN/email tokens embedded in fields we don't enumerate by name
+    #    (signInNames, homeAccountId, B2B "Address" identifiers, identifierUris).
+    Update-AzureScrubEmbeddedPaths -Obj $copy.data
+    Update-AzureScrubEmbeddedEmails -Obj $copy.data
+
+    return $copy
+}
+
+function Update-AnonymizedAZTenantData {
+    [CmdletBinding()]
+    param($Data)
+
+    if ($Data.displayName) {
+        $Data.displayName = Get-AzureTenantNameAlias $Data.displayName
+    }
+    if ($Data.defaultDomain) {
+        $Data.defaultDomain = Get-AzureDomainAlias $Data.defaultDomain
+    }
+    if ($Data.domains) {
+        $Data.domains = @($Data.domains | ForEach-Object { Get-AzureDomainAlias $_ })
+    }
+}
+
+function Update-AnonymizedAZUserData {
+    [CmdletBinding()]
+    param($Data)
+
+    $userId = $Data.id
+    $alias = Get-AzureUserAlias -ObjectId $userId -DisplayHint $Data.displayName
+
+    if ($Data.displayName)        { $Data.displayName = $alias }
+    if ($Data.givenName)          { $Data.givenName = $alias }
+    if ($Data.surname)            { $Data.surname = $alias }
+    if ($Data.userPrincipalName)  { $Data.userPrincipalName = Get-AzureUPNAlias -UPN $Data.userPrincipalName -UserId $userId }
+    if ($Data.mail)               { $Data.mail = Get-AzureMailAlias $Data.mail }
+    if ($Data.mailNickname)       { $Data.mailNickname = $alias }
+    if ($Data.otherMails)         { $Data.otherMails = @($Data.otherMails | ForEach-Object { Get-AzureMailAlias $_ }) }
+    if ($Data.proxyAddresses)     { $Data.proxyAddresses = @($Data.proxyAddresses | ForEach-Object { Convert-AzureProxyAddress $_ }) }
+    if ($Data.jobTitle)           { $Data.jobTitle = $alias }
+    if ($Data.department)         { $Data.department = $alias }
+    if ($Data.companyName)        { $Data.companyName = $alias }
+    if ($Data.officeLocation)     { $Data.officeLocation = $alias }
+    if ($Data.country)            { $Data.country = $alias }
+    if ($Data.city)               { $Data.city = $alias }
+    if ($Data.state)              { $Data.state = $alias }
+    if ($Data.streetAddress)      { $Data.streetAddress = $alias }
+    if ($Data.postalCode)         { $Data.postalCode = $alias }
+    if ($Data.mobilePhone)        { $Data.mobilePhone = $alias }
+    if ($Data.businessPhones)     { $Data.businessPhones = @($Data.businessPhones | ForEach-Object { $alias }) }
+    if ($Data.employeeId)         { $Data.employeeId = $alias }
+    if ($Data.faxNumber)          { $Data.faxNumber = $alias }
+    if ($Data.preferredLanguage)  { $Data.preferredLanguage = $alias }
+    if ($Data.usageLocation)      { $Data.usageLocation = $alias }
+    if ($Data.tenantName)         { $Data.tenantName = Get-AzureTenantNameAlias $Data.tenantName }
+
+    # On-prem hybrid attributes
+    if ($Data.PSObject.Properties.Match('onPremisesDistinguishedName').Count -gt 0 -and $Data.onPremisesDistinguishedName) {
+        $Data.onPremisesDistinguishedName = Convert-AzureDistinguishedName -DN $Data.onPremisesDistinguishedName -LeafAlias $alias
+    }
+    if ($Data.PSObject.Properties.Match('onPremisesDomainName').Count -gt 0 -and $Data.onPremisesDomainName) {
+        $Data.onPremisesDomainName = Get-AzureDomainAlias $Data.onPremisesDomainName
+    }
+    if ($Data.PSObject.Properties.Match('onPremisesUserPrincipalName').Count -gt 0 -and $Data.onPremisesUserPrincipalName) {
+        $Data.onPremisesUserPrincipalName = Get-AzureUPNAlias -UPN $Data.onPremisesUserPrincipalName -UserId $userId
+    }
+    if ($Data.PSObject.Properties.Match('onPremisesSamAccountName').Count -gt 0 -and $Data.onPremisesSamAccountName) {
+        $Data.onPremisesSamAccountName = $alias
+    }
+    if ($Data.PSObject.Properties.Match('onPremisesImmutableId').Count -gt 0 -and $Data.onPremisesImmutableId) {
+        $Data.onPremisesImmutableId = (Get-RandomHex $script:HEX_LENGTH_LONG)
+    }
+
+    if ($Data.PSObject.Properties.Match('identities').Count -gt 0 -and $Data.identities) {
+        foreach ($ident in $Data.identities) {
+            if ($ident.PSObject.Properties.Match('issuer').Count -gt 0 -and $ident.issuer) {
+                $ident.issuer = Get-AzureDomainAlias $ident.issuer
+            }
+            if ($ident.PSObject.Properties.Match('issuerAssignedId').Count -gt 0 -and $ident.issuerAssignedId) {
+                if ($ident.issuerAssignedId -match '@') {
+                    $ident.issuerAssignedId = Get-AzureUPNAlias -UPN $ident.issuerAssignedId -UserId $userId
+                } else {
+                    $ident.issuerAssignedId = $alias
+                }
+            }
+        }
+    }
+
+    if ($Data.employeeOrgData) {
+        if ($Data.employeeOrgData.PSObject.Properties.Match('division').Count -gt 0 -and $Data.employeeOrgData.division) {
+            $Data.employeeOrgData.division = $alias
+        }
+        if ($Data.employeeOrgData.PSObject.Properties.Match('costCenter').Count -gt 0 -and $Data.employeeOrgData.costCenter) {
+            $Data.employeeOrgData.costCenter = $alias
+        }
+    }
+
+    if ($Data.onPremisesExtensionAttributes) {
+        $extProps = @($Data.onPremisesExtensionAttributes.PSObject.Properties)
+        foreach ($p in $extProps) {
+            if ($p.Value -is [string] -and -not [string]::IsNullOrEmpty($p.Value)) {
+                $Data.onPremisesExtensionAttributes.$($p.Name) = $alias
+            }
+        }
+    }
+
+    if ($Data.signInActivity) {
+        if ($Data.signInActivity.PSObject.Properties.Match('lastSignInIpAddress').Count -gt 0 -and $Data.signInActivity.lastSignInIpAddress) {
+            $Data.signInActivity.lastSignInIpAddress = '0.0.0.0'
+        }
+    }
+
+    if ($RandomizeTimestamps) {
+        foreach ($f in 'createdDateTime','lastPasswordChangeDateTime') {
+            if ($Data.$f) { $Data.$f = Get-AnonymizedTimestamp $Data.$f }
+        }
+        if ($Data.signInActivity -and $Data.signInActivity.PSObject.Properties.Match('lastSignInDateTime').Count -gt 0 -and $Data.signInActivity.lastSignInDateTime) {
+            $Data.signInActivity.lastSignInDateTime = Get-AnonymizedTimestamp $Data.signInActivity.lastSignInDateTime
+        }
+    }
+}
+
+function Update-AnonymizedAZGroupData {
+    [CmdletBinding()]
+    param($Data)
+
+    $alias = Get-AzureGroupAlias -ObjectId $Data.id -DisplayHint $Data.displayName
+
+    if ($Data.displayName)              { $Data.displayName = $alias }
+    if ($Data.mailNickname)             { $Data.mailNickname = $alias }
+    if ($Data.description)              { $Data.description = "Anonymized group $alias" }
+    if ($Data.onPremisesSamAccountName) { $Data.onPremisesSamAccountName = $alias }
+    if ($Data.mail)                     { $Data.mail = Get-AzureMailAlias $Data.mail }
+    if ($Data.proxyAddresses)           { $Data.proxyAddresses = @($Data.proxyAddresses | ForEach-Object { Convert-AzureProxyAddress $_ }) }
+    if ($Data.tenantName)               { $Data.tenantName = Get-AzureTenantNameAlias $Data.tenantName }
+    if ($Data.membershipRule)           { $Data.membershipRule = "Anonymized membership rule for $alias" }
+
+    if ($RandomizeTimestamps) {
+        foreach ($f in 'createdDateTime','renewedDateTime','onPremisesLastSyncDateTime') {
+            if ($Data.$f) { $Data.$f = Get-AnonymizedTimestamp $Data.$f }
+        }
+    }
+}
+
+function Update-AnonymizedAZAppData {
+    [CmdletBinding()]
+    param($Data)
+
+    $alias = Get-AzureAppAlias -ObjectId $Data.id -AppId $Data.appId -DisplayHint $Data.displayName
+
+    if ($Data.displayName)       { $Data.displayName = $alias }
+    if ($Data.publisherDomain)   { $Data.publisherDomain = Get-AzureDomainAlias $Data.publisherDomain }
+    if ($Data.tenantName)        { $Data.tenantName = Get-AzureTenantNameAlias $Data.tenantName }
+    if ($Data.identifierUris)    { $Data.identifierUris = @($Data.identifierUris | ForEach-Object { Convert-AzureUrlHost $_ }) }
+
+    if ($Data.web) {
+        if ($Data.web.PSObject.Properties.Match('redirectUris').Count -gt 0 -and $Data.web.redirectUris) {
+            $Data.web.redirectUris = @($Data.web.redirectUris | ForEach-Object { Convert-AzureUrlHost $_ })
+        }
+        if ($Data.web.PSObject.Properties.Match('homePageUrl').Count -gt 0 -and $Data.web.homePageUrl) {
+            $Data.web.homePageUrl = Convert-AzureUrlHost $Data.web.homePageUrl
+        }
+        if ($Data.web.PSObject.Properties.Match('logoutUrl').Count -gt 0 -and $Data.web.logoutUrl) {
+            $Data.web.logoutUrl = Convert-AzureUrlHost $Data.web.logoutUrl
+        }
+    }
+
+    if ($Data.passwordCredentials) {
+        foreach ($cred in $Data.passwordCredentials) {
+            if ($cred.PSObject.Properties.Match('displayName').Count -gt 0 -and $cred.displayName) {
+                $cred.displayName = $alias
+            }
+            if ($cred.PSObject.Properties.Match('hint').Count -gt 0 -and $cred.hint) {
+                $cred.hint = '***'
+            }
+            if ($RandomizeTimestamps) {
+                foreach ($f in 'startDateTime','endDateTime') {
+                    if ($cred.PSObject.Properties.Match($f).Count -gt 0 -and $cred.$f) { $cred.$f = Get-AnonymizedTimestamp $cred.$f }
+                }
+            }
+        }
+    }
+    if ($Data.keyCredentials) {
+        foreach ($cred in $Data.keyCredentials) {
+            if ($cred.PSObject.Properties.Match('displayName').Count -gt 0 -and $cred.displayName) {
+                $cred.displayName = $alias
+            }
+            if ($cred.PSObject.Properties.Match('customKeyIdentifier').Count -gt 0 -and $cred.customKeyIdentifier) {
+                $cred.customKeyIdentifier = (Get-RandomHex $script:HEX_LENGTH_THUMBPRINT).ToUpperInvariant()
+            }
+            if ($RandomizeTimestamps) {
+                foreach ($f in 'startDateTime','endDateTime') {
+                    if ($cred.PSObject.Properties.Match($f).Count -gt 0 -and $cred.$f) { $cred.$f = Get-AnonymizedTimestamp $cred.$f }
+                }
+            }
+        }
+    }
+
+    if ($RandomizeTimestamps -and $Data.createdDateTime) { $Data.createdDateTime = Get-AnonymizedTimestamp $Data.createdDateTime }
+}
+
+function Update-AnonymizedAZServicePrincipalData {
+    [CmdletBinding()]
+    param($Data)
+
+    $alias = Get-AzureServicePrincipalAlias -ObjectId $Data.id -AppId $Data.appId -DisplayHint $Data.displayName
+
+    if ($Data.displayName)     { $Data.displayName = $alias }
+    if ($Data.appDisplayName)  { $Data.appDisplayName = $alias }
+    if ($Data.PSObject.Properties.Match('publisherName').Count -gt 0 -and $Data.publisherName) {
+        $Data.publisherName = Get-AzureTenantNameAlias $Data.publisherName
+    }
+    if ($Data.PSObject.Properties.Match('homepage').Count -gt 0 -and $Data.homepage) {
+        $Data.homepage = Convert-AzureUrlHost $Data.homepage
+    }
+    if ($Data.PSObject.Properties.Match('replyUrls').Count -gt 0 -and $Data.replyUrls) {
+        $Data.replyUrls = @($Data.replyUrls | ForEach-Object { Convert-AzureUrlHost $_ })
+    }
+    if ($Data.PSObject.Properties.Match('servicePrincipalNames').Count -gt 0 -and $Data.servicePrincipalNames) {
+        $Data.servicePrincipalNames = @($Data.servicePrincipalNames | ForEach-Object {
+            if ($_ -is [string] -and $_ -match '^https?://') { Convert-AzureUrlHost $_ } else { $_ }
+        })
+    }
+    if ($Data.tenantName)      { $Data.tenantName = Get-AzureTenantNameAlias $Data.tenantName }
+}
+
+function Update-AnonymizedAZDeviceData {
+    [CmdletBinding()]
+    param($Data)
+
+    $alias = Get-AzureDeviceAlias -ObjectId $Data.id -DeviceId $Data.deviceId -DisplayHint $Data.displayName
+
+    if ($Data.displayName)   { $Data.displayName = $alias }
+    if ($Data.tenantName)    { $Data.tenantName = Get-AzureTenantNameAlias $Data.tenantName }
+    if ($Data.manufacturer)  { $Data.manufacturer = Get-AzureDeviceModelAlias -Manufacturer $Data.manufacturer -Model $Data.model }
+    if ($Data.model)         { $Data.model = Get-AzureDeviceModelAlias -Manufacturer $Data.manufacturer -Model $Data.model }
+    if ($Data.operatingSystem -and -not $PreserveOSVersions) { $Data.operatingSystem = Get-AnonymizedOS $Data.operatingSystem }
+
+    if ($Data.physicalIds) {
+        $Data.physicalIds = @($Data.physicalIds | ForEach-Object { Get-AzurePhysicalIdAlias $_ })
+    }
+    if ($Data.alternativeSecurityIds) {
+        foreach ($altId in $Data.alternativeSecurityIds) {
+            if ($altId.PSObject.Properties.Match('key').Count -gt 0 -and $altId.key) {
+                $altId.key = Get-AzureAltSecIdAlias $altId.key
+            }
+        }
+    }
+
+    if ($RandomizeTimestamps) {
+        foreach ($f in 'approximateLastSignInDateTime','onPremisesLastSyncDateTime') {
+            if ($Data.$f) { $Data.$f = Get-AnonymizedTimestamp $Data.$f }
+        }
+    }
+}
+
+function Update-AnonymizedAZSubscriptionData {
+    [CmdletBinding()]
+    param($Data)
+
+    if ($Data.displayName) {
+        $Data.displayName = Get-AzureSubscriptionAlias -SubscriptionId $Data.subscriptionId -DisplayHint $Data.displayName
+    }
+}
+
+function Update-AnonymizedAZResourceGroupData {
+    [CmdletBinding()]
+    param($Data)
+
+    if ($Data.name) {
+        $alias = Get-AzureResourceGroupAlias -Name $Data.name
+        $Data.name = $alias
+    }
+    if ($Data.id)              { $Data.id = Convert-AzureResourcePath $Data.id }
+    if ($Data.subscriptionId)  { $Data.subscriptionId = Convert-AzureResourcePath $Data.subscriptionId }
+    if ($Data.PSObject.Properties.Match('resourceGroup').Count -gt 0 -and $Data.resourceGroup) {
+        $Data.resourceGroup = Convert-AzureResourcePath $Data.resourceGroup
+    }
+}
+
+function Update-AnonymizedAZResourceData {
+    [CmdletBinding()]
+    param($Data)
+
+    if ($Data.name) {
+        $Data.name = Get-AzureResourceNameAlias -Name $Data.name
+    }
+    if ($Data.id)              { $Data.id = Convert-AzureResourcePath $Data.id }
+    if ($Data.PSObject.Properties.Match('resourceGroup').Count -gt 0 -and $Data.resourceGroup) {
+        $Data.resourceGroup = Convert-AzureResourcePath $Data.resourceGroup
+    }
+    if ($Data.PSObject.Properties.Match('subscriptionId').Count -gt 0 -and $Data.subscriptionId) {
+        # subscriptionId here is sometimes the bare GUID, sometimes a /subscriptions/<id> path.
+        if ($Data.subscriptionId -like '/subscriptions/*') {
+            $Data.subscriptionId = Convert-AzureResourcePath $Data.subscriptionId
+        }
+    }
+
+    if ($Data.properties) {
+        foreach ($urlField in 'vaultUri','endpoint','hostName','defaultHostName','registryUri','homePageUrl') {
+            if ($Data.properties.PSObject.Properties.Match($urlField).Count -gt 0 -and $Data.properties.$urlField) {
+                $Data.properties.$urlField = Convert-AzureUrlHost $Data.properties.$urlField
+            }
+        }
+    }
+}
+
+function Update-AnonymizedAZManagementGroupData {
+    [CmdletBinding()]
+    param($Data)
+
+    if ($Data.id -or $Data.name) {
+        $alias = Get-AzureManagementGroupAlias -Id $Data.id -DisplayHint $Data.name
+        if ($Data.name) { $Data.name = $alias }
+    }
+    if ($Data.id) { $Data.id = Convert-AzureResourcePath $Data.id }
+    if ($Data.PSObject.Properties.Match('displayName').Count -gt 0 -and $Data.displayName) {
+        $Data.displayName = Get-AzureManagementGroupAlias -Id $Data.id -DisplayHint $Data.displayName
+    }
+    if ($Data.PSObject.Properties.Match('tenantName').Count -gt 0 -and $Data.tenantName) {
+        $Data.tenantName = Get-AzureTenantNameAlias $Data.tenantName
+    }
+}
+
+function Update-AnonymizedAZRoleData {
+    [CmdletBinding()]
+    param($Data)
+
+    $isBuiltIn = $true
+    if ($Data.PSObject.Properties.Match('isBuiltIn').Count -gt 0) {
+        $isBuiltIn = [bool]$Data.isBuiltIn
+    }
+
+    if (-not $isBuiltIn) {
+        $alias = Get-AzureCustomRoleAlias -RoleId $Data.id -DisplayHint $Data.displayName
+        if ($Data.displayName) { $Data.displayName = $alias }
+        if ($Data.description) { $Data.description = "Anonymized custom role $alias" }
+    }
+
+    if ($Data.PSObject.Properties.Match('tenantName').Count -gt 0 -and $Data.tenantName) {
+        $Data.tenantName = Get-AzureTenantNameAlias $Data.tenantName
+    }
+}
+
+function Update-AnonymizedAZFICData {
+    [CmdletBinding()]
+    param($Data)
+
+    if ($Data.fics) {
+        foreach ($entry in $Data.fics) {
+            if ($entry.PSObject.Properties.Match('fic').Count -gt 0 -and $entry.fic) {
+                $fic = $entry.fic
+                $alias = Get-AzureFICNameAlias -FICId $fic.id -NameHint $fic.name
+                if ($fic.PSObject.Properties.Match('name').Count -gt 0 -and $fic.name) {
+                    $fic.name = $alias
+                }
+                if ($fic.PSObject.Properties.Match('subject').Count -gt 0 -and $fic.subject) {
+                    $fic.subject = Get-AzureFICSubjectAlias $fic.subject
+                }
+            }
+        }
+    }
+}
+
+function Update-AnonymizedAZRelationshipData {
+    [CmdletBinding()]
+    param($Data)
+
+    # Relationship/role-assignment kinds frequently embed full nested principal
+    # records (users, groups, service principals) and Azure resource paths in
+    # arbitrary fields (resourceGroupId, scope, properties.scope, ...).
+    # Walk the whole subtree and let dispatch-by-shape route nested principals
+    # through their entity handlers, while path-shaped strings are rewritten.
+    Update-AzureScrubAny -Obj $Data
+
+    if ($Data.PSObject.Properties.Match('principalDisplayName').Count -gt 0 -and $Data.principalDisplayName) {
+        $Data.principalDisplayName = '[anon-principal]'
+    }
+}
+
+#endregion Azure Mapping & Anonymization Helpers
 
 function Get-AnonymizedOS {
     [CmdletBinding()]
@@ -4422,7 +6272,39 @@ function Convert-ACEWithNames {
         $anonACE.PrincipalName = "Principal_" + (Get-RandomHex $script:HEX_LENGTH_LONG)
     }
 
+    # AD CS CARegistryData ACEs additionally carry nested principal references.
+    # Each Agent / Target object has its own ObjectIdentifier (often a domain-prefixed
+    # well-known SID like "WRAITH.CORP-S-1-1-0") that must be anonymized too.
+    if ($anonACE.Agent -and $anonACE.Agent.ObjectIdentifier) {
+        $anonACE.Agent.ObjectIdentifier = Convert-ACEPrincipalSID $anonACE.Agent.ObjectIdentifier
+    }
+    if ($anonACE.Targets -and $anonACE.Targets.Count -gt 0) {
+        foreach ($t in $anonACE.Targets) {
+            if ($t.PSObject.Properties.Match('ObjectIdentifier').Count -gt 0 -and $t.ObjectIdentifier) {
+                $t.ObjectIdentifier = Convert-ACEPrincipalSID $t.ObjectIdentifier
+            }
+        }
+    }
+
     return $anonACE
+}
+
+function Convert-ObjectIdentifierAny {
+    [CmdletBinding()]
+    param([string]$Value)
+
+    if ([string]::IsNullOrEmpty($Value)) { return $Value }
+
+    # GUID-shaped
+    if ($Value -match '(?i)^[0-9a-f\-]{36}$') {
+        return Get-AnonymizedGuid $Value
+    }
+    # DN-shaped (foreign-principal cross-domain references appear as DN strings)
+    if ($Value -match '(?i)^(CN|OU|DC)=') {
+        return Get-AnonymizedOuPath $Value
+    }
+    # SID-shaped (or domain-prefixed SID — Get-AnonymizedDomainSid handles both)
+    return Get-AnonymizedDomainSid $Value
 }
 
 function Convert-ObjectRelationships {
@@ -4451,11 +6333,7 @@ function Convert-ObjectRelationships {
     if ($Object.ContainedBy) {
         $AnonymizedObject.ContainedBy = Copy-ObjectDeep $Object.ContainedBy
         if ($AnonymizedObject.ContainedBy.ObjectIdentifier) {
-            if ($AnonymizedObject.ContainedBy.ObjectIdentifier -match '(?i)^[0-9a-f\-]{36}$') {
-                $AnonymizedObject.ContainedBy.ObjectIdentifier = Get-AnonymizedGuid $AnonymizedObject.ContainedBy.ObjectIdentifier
-            } else {
-                $AnonymizedObject.ContainedBy.ObjectIdentifier = Get-AnonymizedDomainSid $AnonymizedObject.ContainedBy.ObjectIdentifier
-            }
+            $AnonymizedObject.ContainedBy.ObjectIdentifier = Convert-ObjectIdentifierAny $AnonymizedObject.ContainedBy.ObjectIdentifier
         }
     }
 
@@ -4465,11 +6343,7 @@ function Convert-ObjectRelationships {
             try {
                 $child = Copy-ObjectDeep $_
                 if ($child.ObjectIdentifier) {
-                    if ($child.ObjectIdentifier -match '(?i)^[0-9a-f\-]{36}$') {
-                        $child.ObjectIdentifier = Get-AnonymizedGuid $child.ObjectIdentifier
-                    } else {
-                        $child.ObjectIdentifier = Get-AnonymizedDomainSid $child.ObjectIdentifier
-                    }
+                    $child.ObjectIdentifier = Convert-ObjectIdentifierAny $child.ObjectIdentifier
                 }
                 $child
             }
@@ -4480,13 +6354,14 @@ function Convert-ObjectRelationships {
         })
     }
 
-    # Process Members (for groups)
+    # Process Members (for groups). Members[].ObjectIdentifier can be a SID, GUID,
+    # or — for cross-domain foreign principals — a DistinguishedName string.
     if ($Object.Members -and $Object.Members.Count -gt 0) {
         $AnonymizedObject.Members = @($Object.Members | ForEach-Object {
             try {
                 $member = Copy-ObjectDeep $_
                 if ($member.ObjectIdentifier) {
-                    $member.ObjectIdentifier = Get-AnonymizedDomainSid $member.ObjectIdentifier
+                    $member.ObjectIdentifier = Convert-ObjectIdentifierAny $member.ObjectIdentifier
                 }
                 # Anonymize MemberName if present
                 if ($member.MemberName) {
@@ -4779,6 +6654,18 @@ function Get-AnonymizedGroup {
             # Examples: $D31000-NDAG01AAG0, $A31000-..., $xxxxxxxx-xxxx-xxxx...
             $anonSAM = '$' + (Get-RandomHex $script:HEX_LENGTH_MEDIUM) + '-' + (Get-RandomHex $script:HEX_LENGTH_XLONG)
             $anonymizedGroup.Properties.samaccountname = $anonSAM
+
+            # Anonymize the @<DOMAIN> suffix on .name and rewrite DN domain parts
+            # so the original tenant/forest name doesn't leak through Exchange groups.
+            if ($Group.Properties.name -and $Group.Properties.name -match '^(.+?)@(.+)$') {
+                $localPart = $matches[1]
+                $domainPart = $matches[2]
+                $anonDomain = Get-AnonymizedDomain $domainPart
+                $anonymizedGroup.Properties.name = "$anonSAM@$anonDomain".ToUpper()
+            }
+            if ($Group.Properties.distinguishedname) {
+                $anonymizedGroup.Properties.distinguishedname = Get-AnonymizedOuPath $Group.Properties.distinguishedname
+            }
         } else {
             # Regular groups: fully anonymize
             # Build a single alias token for name, sAMAccountName, and DN leaf CN
@@ -4971,11 +6858,25 @@ function Get-AnonymizedComputer {
 
         # Process LocalGroups
         if ($Computer.LocalGroups -and $Computer.LocalGroups.Count -gt 0) {
+            # Build the anonymized FQDN suffix for the host this computer object describes,
+            # so LocalGroup.Name like "ADMINISTRATORS@EXTCA01.WRAITH.CORP" gets the
+            # well-known group preserved and the hostname/domain anonymized consistently.
+            $anonComputerFQDN = $null
+            if ($computerBaseName -and $originalDomain) {
+                $anonDomainForLG = Get-AnonymizedDomain $originalDomain
+                $anonComputerFQDN = "$($computerBaseName.ToUpper()).$($anonDomainForLG.ToUpper())"
+            }
+
             $anonymizedComputer.LocalGroups = @($Computer.LocalGroups | ForEach-Object {
                 try {
                     $localGroup = Copy-ObjectDeep $_
                     if ($localGroup.ObjectIdentifier) {
                         $localGroup.ObjectIdentifier = Convert-ACEPrincipalSID $localGroup.ObjectIdentifier
+                    }
+                    if ($localGroup.Name -and $anonComputerFQDN -and $localGroup.Name -match '^(.+?)@(.+)$') {
+                        # Preserve the well-known group prefix (ADMINISTRATORS, POWER USERS, …)
+                        # and replace only the host suffix with the anonymized FQDN.
+                        $localGroup.Name = "$($matches[1])@$anonComputerFQDN"
                     }
                     if ($localGroup.Results -and $localGroup.Results.Count -gt 0) {
                         $localGroup.Results = @($localGroup.Results | ForEach-Object {
@@ -5523,6 +7424,87 @@ function Get-AnonymizedCertTemplate {
     }
 }
 
+function Get-AnonymizedIssuancePolicy {
+    <#
+    .SYNOPSIS
+        Anonymizes an Active Directory Issuance Policy (msPKI-Enterprise-Oid) object.
+
+    .DESCRIPTION
+        Issuance policies are AD-CS objects living under
+        CN=OID,CN=Public Key Services,CN=Services,CN=Configuration,DC=...
+        SharpHound CE collects them in a dedicated issuancepolicies.json. Each record
+        has the same Properties / Aces / ContainedBy shape as a CertTemplate, plus a
+        GroupLink reference. We anonymize the customer-chosen displayname and DN leaf,
+        reuse the existing OID mapping for certtemplateoid, and route relationships
+        through the shared helpers.
+    #>
+    [CmdletBinding()]
+    param($IssuancePolicy)
+
+    try {
+        $anon = Copy-ObjectDeep $IssuancePolicy
+
+        $originalDomain = $IssuancePolicy.Properties.domain
+        Convert-StandardDomainProperties -Object $IssuancePolicy -AnonymizedObject $anon -OriginalDomain $originalDomain
+
+        $aliasToken = Get-RandomHex $script:HEX_LENGTH_LONG
+        $policyAlias = "ISSUEPOL_$aliasToken"
+
+        if ($IssuancePolicy.Properties.name -and $IssuancePolicy.Properties.name -match '^(.+?)@(.+)$') {
+            $domainPart = $matches[2]
+            $anonDomain = Get-AnonymizedDomain $domainPart
+            $anon.Properties.name = "$policyAlias@$anonDomain".ToUpper()
+        }
+
+        if ($IssuancePolicy.Properties.PSObject.Properties.Match('displayname').Count -gt 0 -and $IssuancePolicy.Properties.displayname) {
+            $anon.Properties.displayname = "Issuance Policy $aliasToken"
+        }
+
+        if ($IssuancePolicy.Properties.distinguishedname) {
+            $anon.Properties.distinguishedname = Set-DNLeafCN -DN $anon.Properties.distinguishedname -NewLeafCN $policyAlias
+        }
+
+        if ($IssuancePolicy.Properties.PSObject.Properties.Match('certtemplateoid').Count -gt 0 -and $IssuancePolicy.Properties.certtemplateoid) {
+            if (-not $script:OidMapping) {
+                $script:OidMapping = @{}
+            }
+            $origOid = $IssuancePolicy.Properties.certtemplateoid
+            if (-not $script:OidMapping.ContainsKey($origOid)) {
+                $oidParts = @()
+                for ($i = 0; $i -lt 8; $i++) {
+                    $oidParts += Get-Random -Minimum 1000000 -Maximum 9999999
+                }
+                $script:OidMapping[$origOid] = "1.3.6.1.4.1.311.21.8." + ($oidParts -join '.')
+            }
+            $anon.Properties.certtemplateoid = $script:OidMapping[$origOid]
+        }
+
+        if ($IssuancePolicy.Properties.PSObject.Properties.Match('objectguid').Count -gt 0 -and $IssuancePolicy.Properties.objectguid) {
+            $anon.Properties.objectguid = Get-AnonymizedGuid $IssuancePolicy.Properties.objectguid
+        }
+
+        if ($IssuancePolicy.Properties.description) {
+            $anon.Properties.description = $null
+        }
+
+        if ($IssuancePolicy.ObjectIdentifier) {
+            $anon.ObjectIdentifier = Get-AnonymizedGuid $IssuancePolicy.ObjectIdentifier
+        }
+
+        if ($IssuancePolicy.GroupLink -and $IssuancePolicy.GroupLink.PSObject.Properties.Match('ObjectIdentifier').Count -gt 0 -and $IssuancePolicy.GroupLink.ObjectIdentifier) {
+            $anon.GroupLink.ObjectIdentifier = Convert-ObjectIdentifierAny $IssuancePolicy.GroupLink.ObjectIdentifier
+        }
+
+        Convert-ObjectRelationships -Object $IssuancePolicy -AnonymizedObject $anon
+
+        return $anon
+    }
+    catch {
+        Write-ScriptLog "Error anonymizing Issuance Policy: $_" -Level Error
+        throw
+    }
+}
+
 function Get-AnonymizedNTAuthStore {
     <#
     .SYNOPSIS
@@ -5987,6 +7969,19 @@ function Get-AnonymizedEnterpriseCA {
                 })
             }
 
+            # Process EnrollmentAgentRestrictions — same Agent/Targets shape as CASecurity ACEs.
+            if ($anonRegData.EnrollmentAgentRestrictions -and $anonRegData.EnrollmentAgentRestrictions.Restrictions -and $anonRegData.EnrollmentAgentRestrictions.Restrictions.Count -gt 0) {
+                $anonRegData.EnrollmentAgentRestrictions.Restrictions = @($anonRegData.EnrollmentAgentRestrictions.Restrictions | ForEach-Object {
+                    try {
+                        Convert-ACEWithNames $_
+                    }
+                    catch {
+                        Write-ScriptLog "Error processing enrollment agent restriction: $_" -Level Warning
+                        $_
+                    }
+                })
+            }
+
             $anonymizedCA.CARegistryData = $anonRegData
         }
 
@@ -6052,21 +8047,23 @@ function Invoke-UsersFileProcessing {
         }
 
         # Second pass: process users
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $processedCount = 0
         foreach ($user in $data.data) {
             try {
                 $anonUser = Get-AnonymizedUser $user
-                $anonymized.data += $anonUser
+                $bag.Add($anonUser)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize user: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Write without BOM
@@ -6077,6 +8074,7 @@ function Invoke-UsersFileProcessing {
         $jsonOutput = $anonymized | ConvertTo-SafeJson
         [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
 
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Anonymized $processedCount users" -Level Success
     }
     catch {
@@ -6109,21 +8107,23 @@ function Invoke-GroupsFileProcessing {
         }
 
         # Second pass: process groups
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $processedCount = 0
         foreach ($group in $data.data) {
             try {
                 $anonGroup = Get-AnonymizedGroup $group
-                $anonymized.data += $anonGroup
+                $bag.Add($anonGroup)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize group: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Update meta.count to match actual data count
@@ -6133,6 +8133,7 @@ function Invoke-GroupsFileProcessing {
         $jsonOutput = $anonymized | ConvertTo-SafeJson
         [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
 
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Anonymized $processedCount groups" -Level Success
     }
     catch {
@@ -6165,22 +8166,24 @@ function Invoke-ComputersFileProcessing {
         }
 
         # Second pass: process computers
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $computerMappingBefore = $script:ComputerMapping.Count
         $processedCount = 0
         foreach ($computer in $data.data) {
             try {
                 $anonComputer = Get-AnonymizedComputer $computer
-                $anonymized.data += $anonComputer
+                $bag.Add($anonComputer)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize computer: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Update meta.count to match actual data count
@@ -6193,6 +8196,7 @@ function Invoke-ComputersFileProcessing {
         $computerMappingAfter = $script:ComputerMapping.Count
         $anonymizedCount = $computerMappingAfter - $computerMappingBefore
         $preservedCount = $processedCount - $anonymizedCount
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Processed $processedCount computers ($anonymizedCount anonymized, $preservedCount preserved)" -Level Success
     }
     catch {
@@ -6225,21 +8229,23 @@ function Invoke-DomainsFileProcessing {
         }
 
         # Second pass: process domains
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $processedCount = 0
         foreach ($domain in $data.data) {
             try {
                 $anonDomain = Get-AnonymizedDomainObject $domain
-                $anonymized.data += $anonDomain
+                $bag.Add($anonDomain)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize domain: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Update meta.count to match actual data count
@@ -6249,6 +8255,7 @@ function Invoke-DomainsFileProcessing {
         $jsonOutput = $anonymized | ConvertTo-SafeJson
         [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
 
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Anonymized $processedCount domains" -Level Success
     }
     catch {
@@ -6281,21 +8288,23 @@ function Invoke-GPOsFileProcessing {
         }
 
         # Second pass: process GPOs
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $processedCount = 0
         foreach ($gpo in $data.data) {
             try {
                 $anonGPO = Get-AnonymizedGPO $gpo
-                $anonymized.data += $anonGPO
+                $bag.Add($anonGPO)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize GPO: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Update meta.count to match actual data count
@@ -6305,6 +8314,7 @@ function Invoke-GPOsFileProcessing {
         $jsonOutput = $anonymized | ConvertTo-SafeJson
         [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
 
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Anonymized $processedCount GPOs" -Level Success
     }
     catch {
@@ -6337,21 +8347,23 @@ function Invoke-OUsFileProcessing {
         }
 
         # Second pass: process OUs
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $processedCount = 0
         foreach ($ou in $data.data) {
             try {
                 $anonOU = Get-AnonymizedOU $ou
-                $anonymized.data += $anonOU
+                $bag.Add($anonOU)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize OU: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Update meta.count to match actual data count
@@ -6361,6 +8373,7 @@ function Invoke-OUsFileProcessing {
         $jsonOutput = $anonymized | ConvertTo-SafeJson
         [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
 
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Anonymized $processedCount OUs" -Level Success
     }
     catch {
@@ -6411,21 +8424,23 @@ function Invoke-ContainersFileProcessing {
         }
 
         # Second pass: process containers
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $processedCount = 0
         foreach ($container in $data.data) {
             try {
                 $anonContainer = Get-AnonymizedContainer $container
-                $anonymized.data += $anonContainer
+                $bag.Add($anonContainer)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize container: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Update meta.count to match actual data count
@@ -6435,6 +8450,7 @@ function Invoke-ContainersFileProcessing {
         $jsonOutput = $anonymized | ConvertTo-SafeJson
         [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
 
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Anonymized $processedCount Containers" -Level Success
     }
     catch {
@@ -6467,21 +8483,23 @@ function Invoke-CertTemplatesFileProcessing {
         }
 
         # Second pass: process certificate templates
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $processedCount = 0
         foreach ($template in $data.data) {
             try {
                 $anonTemplate = Get-AnonymizedCertTemplate $template
-                $anonymized.data += $anonTemplate
+                $bag.Add($anonTemplate)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize certificate template: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Update meta.count to match actual data count
@@ -6491,10 +8509,68 @@ function Invoke-CertTemplatesFileProcessing {
         $jsonOutput = $anonymized | ConvertTo-SafeJson
         [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
 
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Anonymized $processedCount Certificate Templates" -Level Success
     }
     catch {
         Write-ScriptLog "Error processing Certificate Templates file '$FilePath': $_" -Level Error
+        throw
+    }
+}
+
+function Invoke-IssuancePoliciesFileProcessing {
+    [CmdletBinding()]
+    param([string]$FilePath, [string]$OutputPath)
+
+    try {
+        Write-ScriptLog "Processing Issuance Policies file: $FilePath" -Level Info
+        $jsonContent = Get-Content $FilePath -Raw -ErrorAction Stop
+        $data = ConvertFrom-SafeJson $jsonContent
+
+        if (-not $data.data) {
+            throw "Invalid JSON structure: missing 'data' property"
+        }
+
+        # First pass: collect domain mappings
+        foreach ($policy in $data.data) {
+            if ($policy.Properties.domain -and -not (Test-WellKnownDomain $policy.Properties.domain)) {
+                $null = Get-AnonymizedDomain $policy.Properties.domain
+            }
+            if ($policy.Properties.domainsid -and $policy.Properties.domain) {
+                $script:DomainSidToDomain[$policy.Properties.domainsid] = $policy.Properties.domain
+            }
+        }
+
+        $bag = New-Object System.Collections.Generic.List[object]
+
+        $processedCount = 0
+        foreach ($policy in $data.data) {
+            try {
+                $anonPolicy = Get-AnonymizedIssuancePolicy $policy
+                $bag.Add($anonPolicy)
+                $processedCount++
+            }
+            catch {
+                Write-ScriptLog "Failed to anonymize issuance policy: $_" -Level Warning
+            }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
+        }
+
+        if ($anonymized.meta) {
+            $anonymized.meta.count = $anonymized.data.Count
+        }
+        $jsonOutput = $anonymized | ConvertTo-SafeJson
+        [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
+
+        Register-ProcessedObjectCount $processedCount
+        Write-ScriptLog "Anonymized $processedCount Issuance Policies" -Level Success
+    }
+    catch {
+        Write-ScriptLog "Error processing Issuance Policies file '$FilePath': $_" -Level Error
         throw
     }
 }
@@ -6527,21 +8603,23 @@ function Invoke-NTAuthStoresFileProcessing {
         }
 
         # Second pass: process NTAuthStores
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $processedCount = 0
         foreach ($store in $data.data) {
             try {
                 $anonStore = Get-AnonymizedNTAuthStore $store
-                $anonymized.data += $anonStore
+                $bag.Add($anonStore)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize NTAuthStore: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Update meta.count to match actual data count
@@ -6551,6 +8629,7 @@ function Invoke-NTAuthStoresFileProcessing {
         $jsonOutput = $anonymized | ConvertTo-SafeJson
         [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
 
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Anonymized $processedCount NTAuthStores" -Level Success
     }
     catch {
@@ -6583,21 +8662,23 @@ function Invoke-AIACAsFileProcessing {
         }
 
         # Second pass: process AIA CAs
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $processedCount = 0
         foreach ($aiaca in $data.data) {
             try {
                 $anonAIACA = Get-AnonymizedAIACA $aiaca
-                $anonymized.data += $anonAIACA
+                $bag.Add($anonAIACA)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize AIA CA: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Update meta.count to match actual data count
@@ -6607,6 +8688,7 @@ function Invoke-AIACAsFileProcessing {
         $jsonOutput = $anonymized | ConvertTo-SafeJson
         [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
 
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Anonymized $processedCount AIA CAs" -Level Success
     }
     catch {
@@ -6639,21 +8721,23 @@ function Invoke-RootCAsFileProcessing {
         }
 
         # Second pass: process root CAs
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $processedCount = 0
         foreach ($ca in $data.data) {
             try {
                 $anonCA = Get-AnonymizedRootCA $ca
-                $anonymized.data += $anonCA
+                $bag.Add($anonCA)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize root CA: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Update meta.count to match actual data count
@@ -6663,6 +8747,7 @@ function Invoke-RootCAsFileProcessing {
         $jsonOutput = $anonymized | ConvertTo-SafeJson
         [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
 
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Anonymized $processedCount Root CAs" -Level Success
     }
     catch {
@@ -6695,21 +8780,23 @@ function Invoke-EnterpriseCAsFileProcessing {
         }
 
         # Second pass: process enterprise CAs
-        $anonymized = [ordered]@{
-            data = @()
-            meta = $data.meta
-        }
+        $bag = New-Object System.Collections.Generic.List[object]
 
         $processedCount = 0
         foreach ($ca in $data.data) {
             try {
                 $anonCA = Get-AnonymizedEnterpriseCA $ca
-                $anonymized.data += $anonCA
+                $bag.Add($anonCA)
                 $processedCount++
             }
             catch {
                 Write-ScriptLog "Failed to anonymize enterprise CA: $_" -Level Warning
             }
+        }
+
+        $anonymized = [ordered]@{
+            data = $bag.ToArray()
+            meta = $data.meta
         }
 
         # Update meta.count to match actual data count
@@ -6719,10 +8806,117 @@ function Invoke-EnterpriseCAsFileProcessing {
         $jsonOutput = $anonymized | ConvertTo-SafeJson
         [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
 
+        Register-ProcessedObjectCount $processedCount
         Write-ScriptLog "Anonymized $processedCount Enterprise CAs" -Level Success
     }
     catch {
         Write-ScriptLog "Error processing Enterprise CAs file '$FilePath': $_" -Level Error
+        throw
+    }
+}
+
+function Invoke-GitHoundFileProcessing {
+    [CmdletBinding()]
+    param([string]$FilePath, [string]$OutputPath)
+
+    try {
+        Write-ScriptLog "Processing GitHound file: $FilePath" -Level Info
+        $jsonContent = Get-Content $FilePath -Raw -ErrorAction Stop
+        $data = ConvertFrom-SafeJson $jsonContent
+
+        if (-not $data.graph -or -not $data.graph.nodes) {
+            throw "Invalid GitHound JSON structure: missing graph nodes"
+        }
+
+        $anonymizedNodes = New-Object System.Collections.Generic.List[object]
+
+        foreach ($node in $data.graph.nodes) {
+            try {
+                $anonymizedNodes.Add((Get-AnonymizedGitHubNode $node))
+            }
+            catch {
+                Write-ScriptLog "Failed to anonymize GitHound node: $_" -Level Warning
+            }
+        }
+
+        $anonymizedGraph = [ordered]@{
+            metadata = $data.metadata
+            graph    = [ordered]@{
+                nodes = $anonymizedNodes.ToArray()
+                edges = if ($data.graph.edges) { $data.graph.edges } else { @() }
+            }
+        }
+
+        $jsonOutput = $anonymizedGraph | ConvertTo-SafeJson
+        [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
+
+        Register-ProcessedObjectCount $anonymizedNodes.Count
+        Write-ScriptLog "Anonymized GitHound graph with $($anonymizedNodes.Count) node(s)" -Level Success
+    }
+    catch {
+        Write-ScriptLog "Error processing GitHound file '$FilePath': $_" -Level Error
+        throw
+    }
+}
+
+function Invoke-AzureHoundFileProcessing {
+    [CmdletBinding()]
+    param([string]$FilePath, [string]$OutputPath)
+
+    try {
+        Write-ScriptLog "Processing AzureHound file: $FilePath" -Level Info
+
+        # Use the optimized reader for large tenant exports.
+        $data = Read-JsonOptimized -FilePath $FilePath
+
+        if (-not $data -or -not $data.PSObject.Properties.Match('data').Count) {
+            throw "Invalid AzureHound JSON structure: missing top-level 'data' array"
+        }
+
+        $sourceItems = @($data.data)
+        $anonymized = New-Object System.Collections.Generic.List[object]
+        $kindCounts = @{}
+        $unknownKinds = @{}
+
+        foreach ($item in $sourceItems) {
+            try {
+                $kind = if ($item.PSObject.Properties.Match('kind').Count -gt 0) { $item.kind } else { $null }
+                if (-not $kind) {
+                    $anonymized.Add($item)
+                    continue
+                }
+
+                $anonNode = Get-AnonymizedAzureNode $item
+                $anonymized.Add($anonNode)
+
+                if (-not $kindCounts.ContainsKey($kind)) { $kindCounts[$kind] = 0 }
+                $kindCounts[$kind] += 1
+            }
+            catch {
+                Write-ScriptLog ("Failed to anonymize AzureHound record (kind=$($item.kind)): $_") -Level Warning
+                $anonymized.Add($item)
+            }
+        }
+
+        $payload = [ordered]@{
+            data = $anonymized.ToArray()
+        }
+        if ($data.PSObject.Properties.Match('meta').Count -gt 0 -and $data.meta) {
+            $payload.meta = $data.meta
+        }
+
+        $jsonOutput = $payload | ConvertTo-SafeJson
+        [System.IO.File]::WriteAllText($OutputPath, $jsonOutput, (New-Object System.Text.UTF8Encoding($false)))
+
+        $summary = ($kindCounts.Keys | Sort-Object | ForEach-Object { "$($_)=$($kindCounts[$_])" }) -join ', '
+        Register-ProcessedObjectCount $anonymized.Count
+        Write-ScriptLog "Anonymized AzureHound file: $($anonymized.Count) record(s) — $summary" -Level Success
+        if ($unknownKinds.Count -gt 0) {
+            Write-ScriptLog ("AzureHound: passed-through unknown kinds: " + ((($unknownKinds.Keys | Sort-Object) -join ', '))) -Level Warning
+        }
+    }
+    catch {
+        Write-ScriptLog "Error processing AzureHound file '$FilePath': $_" -Level Error
         throw
     }
 }
@@ -6744,6 +8938,10 @@ function Get-FileTypeFromName {
     if ($FileName -match 'aiacas\.json$') { return 'aiacas' }
     if ($FileName -match 'rootcas\.json$') { return 'rootcas' }
     if ($FileName -match 'enterprisecas\.json$') { return 'enterprisecas' }
+    if ($FileName -match 'issuancepolicies\.json$') { return 'issuancepolicies' }
+    if ($FileName -match 'githound\.json$') { return 'githound' }
+    if ($FileName -match 'azurehound[^/\\]*\.json$') { return 'azurehound' }
+    if ($FileName -match '(^|[/\\_-])az[-_]?hound[^/\\]*\.json$') { return 'azurehound' }
 
     return $null
 }
@@ -9451,6 +11649,7 @@ $script:PerformanceMetrics = @{
     StartTime = $scriptStartTime
     FileProcessingTimes = @{}
     TotalBytesProcessed = 0
+    TotalObjectsProcessed = 0
     OptimizationsApplied = @()
 }
 
@@ -9461,24 +11660,12 @@ $script:PerformanceMetrics = @{
 # Determine optimal throttle limit if not specified
 if ($EnableParallel) {
     if ($ThrottleLimit -eq 0) {
-        # Auto-detect: Use number of logical processors, capped at 8
         $cpuCount = (Get-CimInstance -ClassName Win32_ComputerSystem).NumberOfLogicalProcessors
-        $ThrottleLimit = [Math]::Min($cpuCount, 8)
-        if ($ThrottleLimit -lt 2) { $ThrottleLimit = 4 } # Minimum 4 for reasonable parallelism
+        $ThrottleLimit = [Math]::Min([Math]::Max($cpuCount, 4), 16)
     }
-
-    # Check PowerShell version for parallel support
-    if ($PSVersionTable.PSVersion.Major -lt 7) {
-        Write-Host "`n⚠️  WARNING: Parallel processing requires PowerShell 7+" -ForegroundColor Yellow
-        Write-Host "   Current version: PowerShell $($PSVersionTable.PSVersion)" -ForegroundColor Yellow
-        Write-Host "   Falling back to sequential processing..." -ForegroundColor Yellow
-        Write-Host "   TIP: Install PowerShell 7+ for 2-4x faster performance`n" -ForegroundColor Cyan
-        $EnableParallel = $false
-    } else {
-        Write-Host "`n⚡ Parallel Processing ENABLED" -ForegroundColor Green
-        Write-Host "   Threads: $ThrottleLimit" -ForegroundColor White
-        Write-Host "   Expected speedup: 2-4x faster`n" -ForegroundColor Cyan
-    }
+    Write-Host "`nℹ️  Note: -EnableParallel is reserved for future multi-threaded processing." -ForegroundColor DarkGray
+    Write-Host "   Shared anonymization mappings require sequential file order within each collection;" -ForegroundColor DarkGray
+    Write-Host "   FastClone + UTF-8 JSON writer + list-based buffers still apply.`n" -ForegroundColor DarkGray
 }
 
 # Begin file processing
@@ -9526,6 +11713,9 @@ try {
             'aiacas' { Invoke-AIACAsFileProcessing -FilePath $InputFile -OutputPath $outputPath }
             'rootcas' { Invoke-RootCAsFileProcessing -FilePath $InputFile -OutputPath $outputPath }
             'enterprisecas' { Invoke-EnterpriseCAsFileProcessing -FilePath $InputFile -OutputPath $outputPath }
+            'issuancepolicies' { Invoke-IssuancePoliciesFileProcessing -FilePath $InputFile -OutputPath $outputPath }
+            'githound' { Invoke-GitHoundFileProcessing -FilePath $InputFile -OutputPath $outputPath }
+            'azurehound' { Invoke-AzureHoundFileProcessing -FilePath $InputFile -OutputPath $outputPath }
         }
     }
     else {
@@ -9616,12 +11806,7 @@ try {
             # PERFORMANCE MODE SELECTION: Parallel vs Sequential
             # ====================================================================
 
-            # Check if parallel processing is requested and show warning
-            if ($EnableParallel -and $files.Count -gt 3) {
-                Write-Host "   ⚠️  Parallel mode not yet supported (shared state complexity)" -ForegroundColor Yellow
-                Write-Host "   Using optimized sequential processing with memory enhancements..." -ForegroundColor Cyan
-            }
-
+            # Sequential processing within each timestamp collection (shared mapping tables).
             # OPTIMIZED SEQUENTIAL PROCESSING with memory improvements
             foreach ($file in $files) {
                 $fileIndex++
@@ -9658,6 +11843,9 @@ try {
                     'aiacas' { Invoke-AIACAsFileProcessing -FilePath $file.FullName -OutputPath $outputPath }
                     'rootcas' { Invoke-RootCAsFileProcessing -FilePath $file.FullName -OutputPath $outputPath }
                     'enterprisecas' { Invoke-EnterpriseCAsFileProcessing -FilePath $file.FullName -OutputPath $outputPath }
+                    'issuancepolicies' { Invoke-IssuancePoliciesFileProcessing -FilePath $file.FullName -OutputPath $outputPath }
+                    'githound' { Invoke-GitHoundFileProcessing -FilePath $file.FullName -OutputPath $outputPath }
+                    'azurehound' { Invoke-AzureHoundFileProcessing -FilePath $file.FullName -OutputPath $outputPath }
                 }
             }
 
@@ -10083,20 +12271,28 @@ try {
                               -OutputPath $(if ($organizedOutput) { $organizedOutput.Folder } else { $OutputDirectory }) `
                               -ZipPath $(if ($organizedOutput) { $organizedOutput.ZipFile } else { $null })
 
-    # Display performance metrics if optimizations were applied
-    if ($script:PerformanceMetrics.OptimizationsApplied.Count -gt 0) {
-        Write-Host "⚡ Performance Optimizations Applied:" -ForegroundColor Green
-        foreach ($optimization in $script:PerformanceMetrics.OptimizationsApplied) {
-            Write-Host "   • $optimization" -ForegroundColor Gray
+    # Display performance metrics when optimizations ran or objects were counted
+    $perfOpts = $script:PerformanceMetrics.OptimizationsApplied.Count -gt 0
+    $perfObjs = $script:PerformanceMetrics.TotalObjectsProcessed -gt 0
+    if ($perfOpts -or $perfObjs) {
+        if ($perfOpts) {
+            Write-Host "⚡ Performance Optimizations Applied:" -ForegroundColor Green
+            foreach ($optimization in $script:PerformanceMetrics.OptimizationsApplied) {
+                Write-Host "   • $optimization" -ForegroundColor Gray
+            }
         }
 
-        # Calculate throughput
-        $totalMB = $script:PerformanceMetrics.TotalBytesProcessed / 1MB
-        $throughputMBps = if ($processingDuration.TotalSeconds -gt 0) {
-            [Math]::Round($totalMB / $processingDuration.TotalSeconds, 2)
-        } else { 0 }
+        if ($script:PerformanceMetrics.TotalBytesProcessed -gt 0 -and $processingDuration.TotalSeconds -gt 0) {
+            $totalMB = $script:PerformanceMetrics.TotalBytesProcessed / 1MB
+            $throughputMBps = [Math]::Round($totalMB / $processingDuration.TotalSeconds, 2)
+            Write-Host "   • Throughput (input bytes): $throughputMBps MB/s" -ForegroundColor Gray
+        }
 
-        Write-Host "   • Throughput: $throughputMBps MB/s" -ForegroundColor Gray
+        if ($perfObjs -and $processingDuration.TotalSeconds -gt 0) {
+            $objPerSec = [Math]::Round($script:PerformanceMetrics.TotalObjectsProcessed / $processingDuration.TotalSeconds, 1)
+            Write-Host "   • Throughput (records): $($script:PerformanceMetrics.TotalObjectsProcessed) objects (~$objPerSec objects/sec)" -ForegroundColor Gray
+        }
+
         Write-Host ""
     }
 
