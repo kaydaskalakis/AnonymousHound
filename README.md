@@ -2,18 +2,18 @@
 
 Mask the trail, keep the scent. AnonymousHound anonymizes sensitive data within BloodHound exports (users, groups, PKI, etc.) ensuring PII is scrubbed, but the full map of security vulnerabilities and attack paths remains 100% intact for analysis.
 
-<img width="896" height="1152" alt="AnonymousHound" src="https://github.com/user-attachments/assets/1c04d92c-3dda-4299-967f-b9fe0b4d5f17" />
+
 
 He is super anonymous.
 
-He is...
----
+## He is...
 
 ## Table of Contents
+
 - [What is AnonymousHound?](#what-is-anonymoushound)
 - [Why Does This Exist?](#why-does-this-exist)
 - [Quick Start](#quick-start)
-- [What's New in v0.2 BETA](#whats-new-in-v02-beta)
+- [What's New in v0.3 BETA](#whats-new-in-v03-beta)
 - [Features](#features)
 - [User Experience](#user-experience)
 - [Performance & Optimization](#performance--optimization)
@@ -27,6 +27,7 @@ He is...
 - [Credits](#credits)
 
 ---
+
 **Version:** 0.2 BETA
 
 **Author:** Kay Daskalakis
@@ -55,7 +56,7 @@ Imagine you're a security consultant who just completed a comprehensive Active D
 **BUT** - the BloodHound data contains extremely sensitive information:
 
 - Employee names and usernames (e.g., "john.smith", "sarah.johnson")
-- Email addresses (<john.smith@acmecorp.com>)
+- Email addresses ([john.smith@acmecorp.com](mailto:john.smith@acmecorp.com))
 - Computer hostnames (FINANCE-PC-01, CEO-LAPTOP)
 - Domain names (acmecorp.local, internal.acmecorp.com)
 - Organizational structure (Sales OU, Executive OU, IT Department)
@@ -86,6 +87,7 @@ User: USR_A3F2E1@domain1.local
 ```
 
 **The attack path still exists!** You can still see that:
+
 - A user is a Domain Admin
 - That user has a session somewhere
 - This creates a path to compromise another computer
@@ -139,6 +141,7 @@ Just run the script - it will guide you through everything!
 ```
 
 **What happens:**
+
 - Automatically detects missing parameters
 - Launches interactive wizard
 - Step-by-step prompts
@@ -174,6 +177,7 @@ See what will happen without making any changes:
 ```
 
 **Shows:**
+
 - Files that would be processed
 - Example anonymizations
 - Well-known objects preserved
@@ -183,9 +187,36 @@ See what will happen without making any changes:
 
 ---
 
-## What's New in v0.2 BETA
+## What's New in v0.3 BETA
 
-Version 0.2 BETA introduces major user experience improvements, performance optimizations, and enhanced reporting. This release focuses on making AnonymousHound accessible to users of all skill levels.
+v0.3 BETA is the first release that consolidates AD/PKI + GitHound + AzureHound support, hardens consistency behavior, and ships major throughput improvements.
+
+### v0.3 Changelog (Complete)
+
+- **Platform coverage**
+  - Added AzureHound CE single-file support (`azurehound*.json`) with kind-aware anonymization for identities, groups, apps/SPNs, devices, subscriptions/resource groups/resources, roles, and relationship records.
+  - Added AD CS `issuancepolicies.json` support.
+  - Expanded GitHound coverage and documentation.
+- **PII anonymization hardening**
+  - Added recursive Azure scrubbers for embedded emails/UPNs and resource paths in nested fields.
+  - Improved Azure domain handling for `*.onmicrosoft.com` multi-label tenant domains.
+  - Aligned resource-name aliasing so name fields and resource-path segments stay consistent.
+- **AD/PKI consistency fixes**
+  - Preserved additional well-known CN/group cases (including Exchange/DHCP pattern families) during DN processing.
+  - Improved object identifier conversion for SID/GUID/DN-shaped values in relationship structures.
+  - Fixed Exchange/special `$`-prefixed group handling and local group hostname suffix rewriting.
+- **Performance improvements**
+  - Replaced quadratic array appends with `List[object].Add()` + `ToArray()` across file processors.
+  - Switched deep copy to fast object walking (`FastClone`) with JSON fallback.
+  - Switched JSON output path to `System.Text.Json` writer (`FastJsonWriter`) with fallback.
+  - Added throughput reporting in both MB/s and records/sec (`objects/sec`).
+- **Validation/reporting quality**
+  - Reduced CN consistency false-positive warning noise by trusting explicit preserved categories and adding vetted infrastructure CNs (`KRA`, `OID`, `AZUREAD`, etc.).
+  - Kept critical consistency checks intact (well-known anonymized unexpectedly, conflicting mappings, invalid formats).
+- **Docs/versioning**
+  - Updated supported file type matrix (BloodHound / GitHound / AzureHound).
+  - Updated parallelism notes (`-EnableParallel` reserved until thread-safe shared mapping architecture is implemented).
+  - Bumped product/docs version references to `v0.3 BETA`.
 
 ### 🎯 User Experience Enhancements
 
@@ -197,7 +228,7 @@ Version 0.2 BETA introduces major user experience improvements, performance opti
 PS> .\AnonymousHound.ps1
 
 ╔═══════════════════════════════════════════════════════════════════╗
-║                    🛡️  ANONYMOUSHOUND v0.2 BETA                 ║
+║                    🛡️  ANONYMOUSHOUND v0.3 BETA                 ║
 ║             BloodHound Data Anonymization Tool                    ║
 ╚═══════════════════════════════════════════════════════════════════╝
 
@@ -212,6 +243,7 @@ Enter your choice (1, 2, or 3):
 ```
 
 **Features:**
+
 - **Step-by-step wizard** with examples and defaults
 - **Drag-and-drop support** - paste paths directly from File Explorer
 - **Advanced options** (optional) - preserve hostnames, OS versions, etc.
@@ -237,6 +269,7 @@ Path not found: C:\MyDat
 ```
 
 **Validates:**
+
 - Path existence and accessibility
 - File vs directory type
 - JSON file detection
@@ -320,6 +353,7 @@ AnonymousHound now recognizes GitHound exports (`githound.json`) automatically:
 #### 2. Optimized JSON Parsing
 
 **NEW:** Smart file size detection with optimized parsers:
+
 - Files <10MB: Fast standard `ConvertFrom-Json`
 - Files >10MB: Memory-efficient .NET `System.Text.Json`
 - Automatic fallback on errors
@@ -338,6 +372,7 @@ AnonymousHound now recognizes GitHound exports (`githound.json`) automatically:
 ```
 
 **Metrics tracked:**
+
 - Total processing duration
 - Bytes processed (directory batches)
 - Throughput (MB/s) and objects/sec when applicable
@@ -354,6 +389,7 @@ Current file: 20240101_computers.json
 ```
 
 **Features:**
+
 - Real-time progress percentage
 - Estimated time remaining
 - Current file being processed
@@ -376,6 +412,7 @@ Executive Summary
 ```
 
 **Includes:**
+
 - Success rate percentage
 - Risk assessment (LOW/MEDIUM/HIGH)
 - Total objects processed
@@ -409,6 +446,7 @@ Executive Summary
 #### 1. Consistency Checks
 
 **IMPROVED:** Domain trust SID mapping fixes:
+
 - Fixed 3→1 domain SID association warnings
 - Proper TargetDomainSid → TargetDomainName mapping
 - Enhanced domain trust relationship handling
@@ -416,6 +454,7 @@ Executive Summary
 #### 2. SHARPHOUND Preservation
 
 **FIXED:** SHARPHOUND hostnames now correctly preserved:
+
 - Pattern matching for SHARPHOUND in SPNs
 - Preserves as 'SRV-SHARPHOUND'
 - No longer incorrectly anonymized
@@ -423,6 +462,7 @@ Executive Summary
 #### 3. PSScriptAnalyzer Compliance
 
 **IMPROVED:** Reduced warnings by 97.5%:
+
 - 200+ → 5 warnings
 - Added appropriate suppressions with justifications
 - Cleaner, more maintainable code
@@ -430,6 +470,7 @@ Executive Summary
 ### 📝 Documentation
 
 All documentation consolidated into README.md:
+
 - Quick Start guide
 - Interactive mode walkthrough
 - Troubleshooting section
@@ -484,6 +525,7 @@ All documentation consolidated into README.md:
 **Goal:** Anonymize BloodHound/GitHound data with no prior knowledge
 
 **Steps:**
+
 1. Run: `.\AnonymousHound.ps1`
 2. Choose option [1] - Quick Start Wizard
 3. Follow prompts
@@ -496,6 +538,7 @@ All documentation consolidated into README.md:
 **Goal:** Quick anonymization with command-line parameters
 
 **Steps:**
+
 1. Run: `.\AnonymousHound.ps1 -InputDirectory "C:\Data" -OutputDirectory "C:\Output"`
 2. Done
 
@@ -506,6 +549,7 @@ All documentation consolidated into README.md:
 **Goal:** Preview before committing
 
 **Steps:**
+
 1. Run: `.\AnonymousHound.ps1 -InputDirectory "C:\Data" -WhatIf`
 2. Review preview
 3. If satisfied, run without `-WhatIf`
@@ -556,6 +600,7 @@ Configure options: n
 ```
 
 **Advanced options include:**
+
 - Preserve original hostnames (y/n)
 - Preserve OS version strings (y/n)
 - Generate HTML report (y/n, default: y)
@@ -580,25 +625,29 @@ Press Enter to begin or Ctrl+C to cancel...
 
 ### Performance Benchmarks
 
-Throughput depends heavily on disk speed, CPU, and average record size. Recent builds add **linear-time output buffering** (`List[object]` instead of repeated array concatenation), **deep copies without JSON round-trips** (`FastClone`), and **`System.Text.Json` UTF-8 serialization** (`FastJsonWriter`) for writes—these typically dominate runtime on million-record exports.
+Throughput depends heavily on disk speed, CPU, and average record size. Recent builds add **linear-time output buffering** (`List[object]` instead of repeated array concatenation), **deep copies without JSON round-trips** (`FastClone`), and `**System.Text.Json` UTF-8 serialization** (`FastJsonWriter`) for writes—these typically dominate runtime on million-record exports.
 
-| Dataset Size | Objects | Processing Time | Throughput (rough) |
-|-------------|---------|-----------------|---------------------|
-| Small (<100MB) | <5,000 | <30 seconds | ~3–8 MB/s input *and* hundreds–few thousand objects/sec |
-| Medium (100MB–500MB) | 5,000–25,000 | 1–5 minutes | ~2–4 MB/s input |
-| Large (500MB–1GB) | 25,000–50,000 | 5–15 minutes | ~1–3 MB/s input |
-| Very Large (>1GB) | 50,000+ | 15–60 minutes | ~0.5–2 MB/s input |
+
+| Dataset Size         | Objects       | Processing Time | Throughput (rough)                                      |
+| -------------------- | ------------- | --------------- | ------------------------------------------------------- |
+| Small (<100MB)       | <5,000        | <30 seconds     | ~3–8 MB/s input *and* hundreds–few thousand objects/sec |
+| Medium (100MB–500MB) | 5,000–25,000  | 1–5 minutes     | ~2–4 MB/s input                                         |
+| Large (500MB–1GB)    | 25,000–50,000 | 5–15 minutes    | ~1–3 MB/s input                                         |
+| Very Large (>1GB)    | 50,000+       | 15–60 minutes   | ~0.5–2 MB/s input                                       |
+
 
 Use the summary line **Throughput (records)** (objects/sec) after each run for apples-to-apples comparisons on your hardware.
 
 ### Memory Usage
 
-| Dataset Size | Peak Memory (Estimated) | Notes |
-|-------------|------------------------|-------|
-| <100MB | <500MB | Standard processing |
-| 100MB-500MB | 500MB-2GB | Hashtable pre-allocation helps |
-| 500MB-1GB | 2GB-4GB | Monitor available RAM |
-| >1GB | 4GB+ | Consider splitting dataset |
+
+| Dataset Size | Peak Memory (Estimated) | Notes                          |
+| ------------ | ----------------------- | ------------------------------ |
+| <100MB       | <500MB                  | Standard processing            |
+| 100MB-500MB  | 500MB-2GB               | Hashtable pre-allocation helps |
+| 500MB-1GB    | 2GB-4GB                 | Monitor available RAM          |
+| >1GB         | 4GB+                    | Consider splitting dataset     |
+
 
 ### Optimizations Applied
 
@@ -813,7 +862,7 @@ After processing completes, AnonymousHound generates a comprehensive HTML report
   - AZRole (built-in roles preserved; custom roles aliased)
   - AZFederatedIdentityCredential (subject + name aliased)
   - All `*Owner` / `*RoleAssignment` / `*UserAccessAdmin` / `*Contributor` / `AZGroupMember` relationship kinds (object IDs preserved, embedded principal records and resource paths consistently aliased)
-  - See [`ANONYMIZATION_PLAN_AZURE.md`](ANONYMIZATION_PLAN_AZURE.md) for the full PII vs preserve field matrix.
+  - See `[ANONYMIZATION_PLAN_AZURE.md](ANONYMIZATION_PLAN_AZURE.md)` for the full PII vs preserve field matrix.
 
 ---
 
@@ -828,6 +877,7 @@ After processing completes, AnonymousHound generates a comprehensive HTML report
 ```
 
 **Solutions:**
+
 - ✅ Check spelling: `C:\MyData` vs `C:\My Data`
 - ✅ Verify drive letter exists
 - ✅ Ensure you have read permissions
@@ -842,6 +892,7 @@ After processing completes, AnonymousHound generates a comprehensive HTML report
 ```
 
 **Solutions:**
+
 - ✅ Verify this is a BloodHound export directory
 - ✅ Check for files named like: `20240101_users.json`
 - ✅ Ensure files have `.json` extension
@@ -914,17 +965,19 @@ Get-Help .\AnonymousHound.ps1 -Full
 
 ### Parameters Reference
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `-InputDirectory` | String | Directory containing BloodHound JSON files |
-| `-InputFile` | String | Single JSON file to anonymize |
-| `-OutputDirectory` | String | Where anonymized files will be saved |
-| `-DomainMappingFile` | String | Path to existing domain mapping file |
+
+| Parameter              | Type   | Description                                    |
+| ---------------------- | ------ | ---------------------------------------------- |
+| `-InputDirectory`      | String | Directory containing BloodHound JSON files     |
+| `-InputFile`           | String | Single JSON file to anonymize                  |
+| `-OutputDirectory`     | String | Where anonymized files will be saved           |
+| `-DomainMappingFile`   | String | Path to existing domain mapping file           |
 | `-RandomizeTimestamps` | Switch | Randomize timestamps with per-object variation |
-| `-PreserveOSVersions` | Switch | Keep original OS version strings |
-| `-PreserveHostnames` | Switch | Keep original hostnames |
-| `-WhatIf` | Switch | Preview without making changes (dry-run mode) |
-| `-Verbose` | Switch | Detailed logging output |
+| `-PreserveOSVersions`  | Switch | Keep original OS version strings               |
+| `-PreserveHostnames`   | Switch | Keep original hostnames                        |
+| `-WhatIf`              | Switch | Preview without making changes (dry-run mode)  |
+| `-Verbose`             | Switch | Detailed logging output                        |
+
 
 ---
 
@@ -996,6 +1049,7 @@ Located in: `OutputDirectory\AnonymizedData_TIMESTAMP\`
 ## Example: Before and After
 
 ### Before (Sensitive!)
+
 ```json
 {
   "Properties": {
@@ -1008,6 +1062,7 @@ Located in: `OutputDirectory\AnonymizedData_TIMESTAMP\`
 ```
 
 ### After (Safe to Share!)
+
 ```json
 {
   "Properties": {
@@ -1070,6 +1125,7 @@ Special thanks to:
 ### Version 0.2 BETA (October 2025)
 
 **User Experience:**
+
 - ✅ **Interactive Mode** - Run without parameters, guided wizard
 - ✅ **Input Validation** - Helpful error messages with suggestions
 - ✅ **Dry-Run Mode (`-WhatIf`)** - Preview before processing
@@ -1077,28 +1133,33 @@ Special thanks to:
 - ✅ **Drag-and-Drop Support** - Paste paths directly from File Explorer
 
 **Performance:**
+
 - ✅ **Hashtable Pre-Allocation** - 10-20% speedup for large datasets
 - ✅ **Optimized JSON Parsing** - 30-40% memory reduction for large files
 - ✅ **Performance Metrics** - Real-time throughput tracking
 - ✅ **Progress with ETA** - Estimated time remaining
 
 **HTML Report:**
+
 - ✅ **Executive Summary** - High-level metrics for stakeholders
 - ✅ **WCAG 2.1 Level AA Compliance** - Full accessibility support
 - ✅ **Dark Theme** - Professional appearance
 - ✅ **Responsive Design** - Mobile-friendly
 
 **Bug Fixes:**
+
 - ✅ Fixed domain trust SID mapping (3→1 warnings)
 - ✅ Fixed SHARPHOUND hostname preservation
 - ✅ Reduced PSScriptAnalyzer warnings by 97.5% (200+ → 5)
 
 **Security:**
+
 - ✅ **ZIP excludes mapping file** - Mapping file kept only in folder for security
 - ✅ ZIP archive contains ONLY anonymized JSON files (safe to share)
 - ✅ Mapping file explicitly excluded from ZIP to prevent accidental disclosure
 
 **Technical:**
+
 - ✅ Consolidated documentation into README.md
 - ✅ Added comprehensive error handling
 - ✅ Improved code maintainability
@@ -1107,6 +1168,7 @@ Special thanks to:
 ### Version 0.1 ALPHA (Initial Release)
 
 **Core Features:**
+
 - ✅ Consistent identity mapping across all files
 - ✅ Relationship preservation (attack paths intact)
 - ✅ Well-known principal protection
