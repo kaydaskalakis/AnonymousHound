@@ -2,6 +2,8 @@
 
 Mask the trail, keep the scent. AnonymousHound anonymizes sensitive data within BloodHound exports (users, groups, PKI, etc.) ensuring PII is scrubbed, but the full map of security vulnerabilities and attack paths remains 100% intact for analysis.
 
+<img width="896" height="1152" alt="AnonymousHound" src="https://github.com/user-attachments/assets/1c04d92c-3dda-4299-967f-b9fe0b4d5f17" />
+
 
 
 He is super anonymous.
