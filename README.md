@@ -20,15 +20,18 @@ He is super anonymous.
 - [What Gets Anonymized?](#what-gets-anonymized)
 - [Usage Examples](#usage-examples)
 - [HTML Report](#html-report)
-- [Supported File Types](#supported-bloodhound-file-types)
+- [Supported File Types](#supported-bloodhound--githound--azurehound-file-types)
 - [Troubleshooting](#troubleshooting)
 - [Advanced Usage](#advanced-usage)
 - [License & Usage](#license--usage)
 - [Credits](#credits)
+- [Changelog](#changelog)
 
 ---
 
-**Version:** 0.2 BETA
+**Version:** 0.3 BETA
+
+**Runtime Requirement:** PowerShell 7+ (`pwsh`) is required. Windows PowerShell 5.1 / ISE is not supported.
 
 **Author:** Kay Daskalakis
 
@@ -384,6 +387,10 @@ AnonymousHound now recognizes GitHound exports (`githound.json`) automatically:
 
 ```text
 Anonymizing Collection: 20240101
+[████░░░░░░░░░░░░░░░░░░░░] 20% - ETA: calculating...
+Current file: 20240101_users.json
+
+Anonymizing Collection: 20240101
 [████████████████████░░░░] 80% - ETA: 2 min 15 sec
 Current file: 20240101_computers.json
 ```
@@ -391,8 +398,9 @@ Current file: 20240101_computers.json
 **Features:**
 
 - Real-time progress percentage
-- Estimated time remaining
-- Current file being processed
+- Warmup phase (`ETA: calculating...`) until enough timing data exists
+- Estimated time remaining after warmup
+- Current file/phase being processed (single-file and directory modes)
 - Formatted time display (seconds, minutes, hours)
 
 ### 📊 Enhanced HTML Reporting
@@ -1035,7 +1043,8 @@ Located in: `OutputDirectory\AnonymizedData_TIMESTAMP\`
 
 ⚡ Performance Optimizations Applied:
    • Hashtable pre-allocation (estimated: 1247 objects)
-   • Throughput: 2.34 MB/s
+   • Throughput (input bytes): 2.34 MB/s
+   • Throughput (records): 1247 objects (~103.9 objects/sec)
 
 📊 Interactive HTML Report: C:\Output\AnonymizedData_...\anonymization_report.html
 
@@ -1122,62 +1131,47 @@ Special thanks to:
 
 ## Changelog
 
-### Version 0.2 BETA (October 2025)
+### v0.3 BETA (line-by-line)
 
-**User Experience:**
+**Coverage**
+- Added native AzureHound CE single-file processing (`azurehound*.json`) with per-kind anonymization handlers.
+- Added AD CS `issuancepolicies.json` file-type detection and processing pipeline.
+- Expanded GitHound support and documentation for graph nodes/roles/workflows/environments.
+- Updated auto-discovery patterns to include AzureHound and new AD CS inputs.
 
-- ✅ **Interactive Mode** - Run without parameters, guided wizard
-- ✅ **Input Validation** - Helpful error messages with suggestions
-- ✅ **Dry-Run Mode (`-WhatIf`)** - Preview before processing
-- ✅ **Enhanced Visual Output** - Color-coded, bordered, with icons
-- ✅ **Drag-and-Drop Support** - Paste paths directly from File Explorer
+**Anonymization hardening**
+- Added recursive Azure scrubbers for embedded email/UPN tokens in unenumerated string fields.
+- Added recursive Azure resource-path rewriting for nested path leakage prevention.
+- Hardened Azure `*.onmicrosoft.com` aliasing for multi-label tenant domains.
+- Aligned Azure resource `name` aliases with corresponding `id` path segments.
 
-**Performance:**
+**AD/PKI consistency fixes**
+- Preserved well-known Exchange/DHCP family names when encountered in CN/DN paths.
+- Improved object identifier conversion for SID/GUID/DN-shaped identifiers in nested relationships.
+- Added deeper ACE traversal for Enrollment Agent Restriction principal/target identifiers.
+- Fixed handling for `$`-prefixed special groups and local-group hostname suffix rewriting.
 
-- ✅ **Hashtable Pre-Allocation** - 10-20% speedup for large datasets
-- ✅ **Optimized JSON Parsing** - 30-40% memory reduction for large files
-- ✅ **Performance Metrics** - Real-time throughput tracking
-- ✅ **Progress with ETA** - Estimated time remaining
+**Performance**
+- Replaced repeated array concatenation with `List[object].Add()` + `ToArray()` in file processors.
+- Switched deep-copy path to `FastClone` object walking with JSON fallback.
+- Switched JSON output serialization to `FastJsonWriter` (`System.Text.Json`) with fallback.
+- Added throughput reporting for both input MB/s and records/sec.
 
-**HTML Report:**
+**Validation and reporting**
+- Reduced CN consistency false positives by trusting explicit preserved reason categories.
+- Added vetted infrastructure CNs to preserve list (`KRA`, `OID`, `AZUREAD`, etc.).
+- Retained critical consistency failure paths for true anonymization regressions.
 
-- ✅ **Executive Summary** - High-level metrics for stakeholders
-- ✅ **WCAG 2.1 Level AA Compliance** - Full accessibility support
-- ✅ **Dark Theme** - Professional appearance
-- ✅ **Responsive Design** - Mobile-friendly
+**Docs and versioning**
+- Updated all product/version labels to `v0.3 BETA`.
+- Updated supported file matrix to BloodHound/GitHound/AzureHound.
+- Clarified `-EnableParallel` as reserved until thread-safe shared mapping architecture is implemented.
+- Added this complete line-by-line v0.3 changelog block.
 
-**Bug Fixes:**
+### Previous releases
 
-- ✅ Fixed domain trust SID mapping (3→1 warnings)
-- ✅ Fixed SHARPHOUND hostname preservation
-- ✅ Reduced PSScriptAnalyzer warnings by 97.5% (200+ → 5)
-
-**Security:**
-
-- ✅ **ZIP excludes mapping file** - Mapping file kept only in folder for security
-- ✅ ZIP archive contains ONLY anonymized JSON files (safe to share)
-- ✅ Mapping file explicitly excluded from ZIP to prevent accidental disclosure
-
-**Technical:**
-
-- ✅ Consolidated documentation into README.md
-- ✅ Added comprehensive error handling
-- ✅ Improved code maintainability
-- ✅ Enhanced logging and diagnostics
-
-### Version 0.1 ALPHA (Initial Release)
-
-**Core Features:**
-
-- ✅ Consistent identity mapping across all files
-- ✅ Relationship preservation (attack paths intact)
-- ✅ Well-known principal protection
-- ✅ Full AD CS support (certificates, templates, CAs)
-- ✅ Domain trust handling
-- ✅ Distinguished name parsing
-- ✅ Idempotent processing
-- ✅ HTML report generation
-- ✅ Comprehensive mapping files
+- `v0.2 BETA`: interactive UX overhaul, dry-run mode, richer HTML reporting, baseline performance instrumentation.
+- `v0.1 ALPHA`: initial AD/PKI anonymization engine with mapping consistency and attack-path preservation.
 
 ---
 

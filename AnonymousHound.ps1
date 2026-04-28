@@ -133,6 +133,16 @@ param(
     # Useful when OS versions are relevant to the analysis
     [switch]$PreserveOSVersions,
 
+    # AzureHound preflight behavior:
+    # - Off: skip kind validation
+    # - Warn: log missing/unknown kinds and continue
+    # - Strict: fail fast on missing/unknown kinds (unless -AzureAllowUnknownKinds)
+    [ValidateSet('Off', 'Warn', 'Strict')]
+    [string]$AzurePreflightMode = 'Warn',
+
+    # Allow unknown Azure kinds in Strict mode (missing/blank kind still fails)
+    [switch]$AzureAllowUnknownKinds,
+
     # Optional: Reserved for future file-level parallelism (requires thread-safe shared alias maps).
     # Processing stays sequential within each collection so mappings stay consistent; other
     # throughput work (FastClone, System.Text.Json writer, list-based buffers) always applies.
@@ -142,6 +152,18 @@ param(
     [ValidateRange(1, 16)]
     [int]$ThrottleLimit = 0
 )
+
+# Runtime requirement guard
+# This script depends on .NET APIs (System.Text.Json, Utf8JsonWriter, etc.)
+# that are available in PowerShell 7+ but not Windows PowerShell 5.1/ISE.
+if ($PSVersionTable.PSVersion.Major -lt 7) {
+    Write-Host ""
+    Write-Host "ERROR: AnonymousHound requires PowerShell 7 or newer." -ForegroundColor Red
+    Write-Host "Detected: PowerShell $($PSVersionTable.PSVersion)" -ForegroundColor Yellow
+    Write-Host "Run with: pwsh -File `"$PSCommandPath`" <args>" -ForegroundColor Cyan
+    Write-Host "Windows PowerShell 5.1 / ISE is not supported for this version." -ForegroundColor Yellow
+    exit 1
+}
 
 #region Constants and Configuration
 # ============================================================================
@@ -1015,6 +1037,41 @@ function Register-ProcessedObjectCount {
     param([ValidateRange(0, [int]::MaxValue)][int]$Count)
     if ($Count -gt 0 -and $null -ne $script:PerformanceMetrics) {
         $script:PerformanceMetrics.TotalObjectsProcessed += $Count
+    }
+}
+
+function Get-ReportCounters {
+    <#
+    .SYNOPSIS
+    Returns a null-safe snapshot of AD, Azure, and combined report counters.
+    #>
+    [CmdletBinding()]
+    param()
+
+    $adUsers = if ($script:UserMapping) { $script:UserMapping.Count } else { 0 }
+    $adGroups = if ($script:GroupMapping) { $script:GroupMapping.Count } else { 0 }
+    $adComputers = if ($script:ComputerMapping) { $script:ComputerMapping.Count } else { 0 }
+
+    $azureUsers = if ($script:AzureUserMapping) { $script:AzureUserMapping.Count } else { 0 }
+    $azureGroups = if ($script:AzureGroupMapping) { $script:AzureGroupMapping.Count } else { 0 }
+    $azureDevices = if ($script:AzureDeviceMapping) { $script:AzureDeviceMapping.Count } else { 0 }
+
+    return @{
+        AD = @{
+            Users = $adUsers
+            Groups = $adGroups
+            Computers = $adComputers
+        }
+        Azure = @{
+            Users = $azureUsers
+            Groups = $azureGroups
+            Computers = $azureDevices
+        }
+        Total = @{
+            Users = $adUsers + $azureUsers
+            Groups = $adGroups + $azureGroups
+            Computers = $adComputers + $azureDevices
+        }
     }
 }
 
@@ -2173,7 +2230,8 @@ function Show-ProgressWithETA {
         [int]$Current,
         [int]$Total,
         [datetime]$StartTime,
-        [string]$CurrentFile = ""
+        [string]$CurrentFile = "",
+        [int]$WarmupItems = 2
     )
 
     if ($Total -eq 0) { return }
@@ -2181,8 +2239,8 @@ function Show-ProgressWithETA {
     $percent = [Math]::Round(($Current / $Total) * 100, 1)
     $elapsed = (Get-Date) - $StartTime
 
-    # Calculate ETA
-    if ($Current -gt 0) {
+    # Calculate ETA with warmup phase
+    if ($Current -ge $WarmupItems -and $Current -gt 0) {
         $avgTimePerItem = $elapsed.TotalSeconds / $Current
         $remainingItems = $Total - $Current
         $etaSeconds = [Math]::Round($avgTimePerItem * $remainingItems)
@@ -2200,7 +2258,7 @@ function Show-ProgressWithETA {
             $etaString = "$hours hr $minutes min"
         }
     } else {
-        $etaString = "Calculating..."
+        $etaString = "calculating..."
     }
 
     # Build status message
@@ -8859,9 +8917,135 @@ function Invoke-GitHoundFileProcessing {
     }
 }
 
+function Get-AzureHoundPreflightConfig {
+    [CmdletBinding()]
+    param()
+
+    # Keep the required set small and stable across AzureHound CE versions.
+    # These kinds represent the core identity/authorization graph.
+    return @{
+        RequiredKinds = @(
+            'AZTenant',
+            'AZUser',
+            'AZGroup',
+            'AZServicePrincipal',
+            'AZRole',
+            'AZRoleAssignment'
+        )
+    }
+}
+
+function Test-AzureHoundKindPreflight {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [object[]]$SourceItems,
+        [ValidateSet('Off', 'Warn', 'Strict')]
+        [string]$Mode = 'Warn',
+        [switch]$AllowUnknownKinds
+    )
+
+    $result = @{
+        Mode = $Mode
+        KindCounts = @{}
+        UnknownKinds = @{}
+        MissingKindCount = 0
+        MissingRequiredKinds = @()
+        SampleMissingKindIndexes = @()
+        IsValid = $true
+    }
+
+    if ($Mode -eq 'Off') {
+        return $result
+    }
+
+    $cfg = Get-AzureHoundPreflightConfig
+    $requiredKinds = @($cfg.RequiredKinds)
+    $seenKinds = @{}
+
+    for ($i = 0; $i -lt $SourceItems.Count; $i++) {
+        $item = $SourceItems[$i]
+        if ($null -eq $item) {
+            $result.MissingKindCount++
+            if ($result.SampleMissingKindIndexes.Count -lt 5) { $result.SampleMissingKindIndexes += $i }
+            continue
+        }
+
+        $kind = $null
+        if ($item.PSObject.Properties.Match('kind').Count -gt 0) {
+            $kind = [string]$item.kind
+        }
+        $kind = if ($kind) { $kind.Trim() } else { $null }
+
+        if ([string]::IsNullOrWhiteSpace($kind)) {
+            $result.MissingKindCount++
+            if ($result.SampleMissingKindIndexes.Count -lt 5) { $result.SampleMissingKindIndexes += $i }
+            continue
+        }
+
+        if (-not $result.KindCounts.ContainsKey($kind)) { $result.KindCounts[$kind] = 0 }
+        $result.KindCounts[$kind] += 1
+        $seenKinds[$kind] = $true
+
+        # Treat non-AZ* kinds as unknown; AZ* kinds are forward-compatible.
+        if ($kind -notmatch '^AZ[A-Za-z0-9]+$') {
+            if (-not $result.UnknownKinds.ContainsKey($kind)) { $result.UnknownKinds[$kind] = 0 }
+            $result.UnknownKinds[$kind] += 1
+        }
+    }
+
+    foreach ($required in $requiredKinds) {
+        if (-not $seenKinds.ContainsKey($required)) {
+            $result.MissingRequiredKinds += $required
+        }
+    }
+
+    $unknownKindList = @($result.UnknownKinds.Keys | Sort-Object)
+    $missingRequiredList = @($result.MissingRequiredKinds | Sort-Object)
+
+    if ($Mode -eq 'Warn') {
+        if ($result.MissingKindCount -gt 0) {
+            $indexPreview = ($result.SampleMissingKindIndexes -join ', ')
+            Write-ScriptLog "Azure preflight warning: $($result.MissingKindCount) record(s) missing 'kind' (sample indexes: $indexPreview)" -Level Warning
+        }
+        if ($missingRequiredList.Count -gt 0) {
+            Write-ScriptLog ("Azure preflight warning: missing required kind(s): " + ($missingRequiredList -join ', ')) -Level Warning
+        }
+        if ($unknownKindList.Count -gt 0) {
+            Write-ScriptLog ("Azure preflight warning: unknown non-AZ kind(s): " + ($unknownKindList -join ', ')) -Level Warning
+        }
+    }
+    elseif ($Mode -eq 'Strict') {
+        if ($result.MissingKindCount -gt 0) {
+            $indexPreview = ($result.SampleMissingKindIndexes -join ', ')
+            throw "Azure preflight failed: $($result.MissingKindCount) record(s) missing required 'kind' field (sample indexes: $indexPreview)."
+        }
+
+        if ($missingRequiredList.Count -gt 0) {
+            throw ("Azure preflight failed: required kind(s) not found: " + ($missingRequiredList -join ', ') + ".")
+        }
+
+        if ($unknownKindList.Count -gt 0 -and -not $AllowUnknownKinds) {
+            throw ("Azure preflight failed: unknown non-AZ kind(s) found: " + ($unknownKindList -join ', ') + ". Use -AzureAllowUnknownKinds to proceed.")
+        }
+
+        if ($unknownKindList.Count -gt 0 -and $AllowUnknownKinds) {
+            Write-ScriptLog ("Azure preflight strict mode: allowing unknown non-AZ kind(s): " + ($unknownKindList -join ', ')) -Level Warning
+        }
+    }
+
+    return $result
+}
+
 function Invoke-AzureHoundFileProcessing {
     [CmdletBinding()]
-    param([string]$FilePath, [string]$OutputPath)
+    param(
+        [string]$FilePath,
+        [string]$OutputPath,
+        [ValidateSet('Off', 'Warn', 'Strict')]
+        [string]$AzurePreflightMode = 'Warn',
+        [switch]$AzureAllowUnknownKinds
+    )
 
     try {
         Write-ScriptLog "Processing AzureHound file: $FilePath" -Level Info
@@ -8875,8 +9059,13 @@ function Invoke-AzureHoundFileProcessing {
 
         $sourceItems = @($data.data)
         $anonymized = New-Object System.Collections.Generic.List[object]
-        $kindCounts = @{}
-        $unknownKinds = @{}
+        $preflight = Test-AzureHoundKindPreflight `
+            -SourceItems $sourceItems `
+            -Mode $AzurePreflightMode `
+            -AllowUnknownKinds:$AzureAllowUnknownKinds
+
+        $kindCounts = $preflight.KindCounts
+        $unknownKinds = $preflight.UnknownKinds
 
         foreach ($item in $sourceItems) {
             try {
@@ -8889,8 +9078,6 @@ function Invoke-AzureHoundFileProcessing {
                 $anonNode = Get-AnonymizedAzureNode $item
                 $anonymized.Add($anonNode)
 
-                if (-not $kindCounts.ContainsKey($kind)) { $kindCounts[$kind] = 0 }
-                $kindCounts[$kind] += 1
             }
             catch {
                 Write-ScriptLog ("Failed to anonymize AzureHound record (kind=$($item.kind)): $_") -Level Warning
@@ -9246,11 +9433,13 @@ function Save-ComprehensiveMappings {
         $lines += "## SUMMARY"
         $lines += ""
 
+        $counters = Get-ReportCounters
+
         # Calculate total items anonymized
         $totalItems = $script:DomainMapping.Count +
-                     $script:UserMapping.Count +
-                     $script:GroupMapping.Count +
-                     $script:ComputerMapping.Count +
+                     $counters.Total.Users +
+                     $counters.Total.Groups +
+                     $counters.Total.Computers +
                      $script:HostnameMapping.Count +
                      $script:OuMapping.Count +
                      $script:CNMapping.Count +
@@ -9263,9 +9452,9 @@ function Save-ComprehensiveMappings {
         $lines += ""
         $lines += "Breakdown:"
         $lines += "  Domains: $($script:DomainMapping.Count)"
-        $lines += "  Users: $($script:UserMapping.Count)"
-        $lines += "  Groups: $($script:GroupMapping.Count)"
-        $lines += "  Computers: $($script:ComputerMapping.Count)"
+        $lines += "  Users: $($counters.Total.Users) (AD: $($counters.AD.Users), Azure: $($counters.Azure.Users))"
+        $lines += "  Groups: $($counters.Total.Groups) (AD: $($counters.AD.Groups), Azure: $($counters.Azure.Groups))"
+        $lines += "  Computers: $($counters.Total.Computers) (AD: $($counters.AD.Computers), Azure devices: $($counters.Azure.Computers))"
         $lines += "  Hostnames: $($script:HostnameMapping.Count)"
         $lines += "  OUs: $($script:OuMapping.Count)"
         $lines += "  CNs: $($script:CNMapping.Count)"
@@ -10594,12 +10783,14 @@ function Save-ComprehensiveMappingsHTML {
         <main id="main-content" role="main" class="content">
 "@
 
+        $counters = Get-ReportCounters
+
         # Calculate comprehensive statistics
         $totalMappings = 0
         if ($script:DomainMapping) { $totalMappings += $script:DomainMapping.Count }
-        if ($script:UserMapping) { $totalMappings += $script:UserMapping.Count }
-        if ($script:GroupMapping) { $totalMappings += $script:GroupMapping.Count }
-        if ($script:ComputerMapping) { $totalMappings += $script:ComputerMapping.Count }
+        $totalMappings += $counters.Total.Users
+        $totalMappings += $counters.Total.Groups
+        $totalMappings += $counters.Total.Computers
         if ($script:OUMapping) { $totalMappings += $script:OUMapping.Count }
         if ($script:CNMapping) { $totalMappings += $script:CNMapping.Count }
         if ($script:GPOMapping) { $totalMappings += $script:GPOMapping.Count }
@@ -10699,15 +10890,15 @@ function Save-ComprehensiveMappingsHTML {
                         <ul role="list">
                             <li>
                                 <span class="icon" aria-hidden="true">🔐</span>
-                                <span><strong>$($script:UserMapping.Count) users</strong> anonymized with cryptographically random identifiers</span>
+                                <span><strong>$($counters.Total.Users) users</strong> anonymized with cryptographically random identifiers</span>
                             </li>
                             <li>
                                 <span class="icon" aria-hidden="true">👥</span>
-                                <span><strong>$($script:GroupMapping.Count) groups</strong> renamed to prevent organizational identification</span>
+                                <span><strong>$($counters.Total.Groups) groups</strong> renamed to prevent organizational identification</span>
                             </li>
                             <li>
                                 <span class="icon" aria-hidden="true">💻</span>
-                                <span><strong>$($script:ComputerMapping.Count) computers</strong> obfuscated while maintaining DC patterns</span>
+                                <span><strong>$($counters.Total.Computers) computers/devices</strong> obfuscated while maintaining relationship analysis</span>
                             </li>
                             <li>
                                 <span class="icon" aria-hidden="true">🌐</span>
@@ -10797,7 +10988,7 @@ function Save-ComprehensiveMappingsHTML {
                         </div>
                         <div class="stat-card">
                             <h3>Users</h3>
-                            <div class="value">$($script:UserMapping.Count)</div>
+                            <div class="value">$($counters.Total.Users)</div>
                             <div class="label">User Mappings</div>
                         </div>
                     </div>
@@ -10842,7 +11033,7 @@ function Save-ComprehensiveMappingsHTML {
                         <div class="pii-grid">
                             <div class="pii-item" style="background: #d4edda; color: #155724;">
                                 <div class="pii-label">User Names</div>
-                                <div class="pii-status">✓ Anonymized ($($script:UserMapping.Count))</div>
+                                <div class="pii-status">✓ Anonymized ($($counters.Total.Users))</div>
                             </div>
                             <div class="pii-item" style="background: #d4edda; color: #155724;">
                                 <div class="pii-label">Email Addresses</div>
@@ -10850,11 +11041,11 @@ function Save-ComprehensiveMappingsHTML {
                             </div>
                             <div class="pii-item" style="background: #d4edda; color: #155724;">
                                 <div class="pii-label">Computer Hostnames</div>
-                                <div class="pii-status">✓ Anonymized ($($script:ComputerMapping.Count))</div>
+                                <div class="pii-status">✓ Anonymized ($($counters.Total.Computers))</div>
                             </div>
                             <div class="pii-item" style="background: #d4edda; color: #155724;">
                                 <div class="pii-label">Group Names</div>
-                                <div class="pii-status">✓ Anonymized ($($script:GroupMapping.Count))</div>
+                                <div class="pii-status">✓ Anonymized ($($counters.Total.Groups))</div>
                             </div>
                             <div class="pii-item" style="background: #d4edda; color: #155724;">
                                 <div class="pii-label">Domain Names</div>
@@ -11231,9 +11422,9 @@ function Save-ComprehensiveMappingsHTML {
                 labels: ['Users', 'Groups', 'Computers', 'Domains', 'OUs', 'CNs', 'GPOs', 'Others'],
                 datasets: [{
                     data: [
-                        $($script:UserMapping.Count),
-                        $($script:GroupMapping.Count),
-                        $($script:ComputerMapping.Count),
+                        $($counters.Total.Users),
+                        $($counters.Total.Groups),
+                        $($counters.Total.Computers),
                         $($script:DomainMapping.Count),
                         $($script:OUMapping.Count),
                         $($script:CNMapping.Count),
@@ -11368,10 +11559,10 @@ function Save-ComprehensiveMappingsHTML {
                 datasets: [{
                     label: 'Number of Objects',
                     data: [
-                        $($script:UserMapping.Count),
+                        $($counters.Total.Users),
                         $($script:CNMapping.Count),
-                        $($script:GroupMapping.Count),
-                        $($script:ComputerMapping.Count),
+                        $($counters.Total.Groups),
+                        $($counters.Total.Computers),
                         $($script:OUMapping.Count)
                     ],
                     backgroundColor: [
@@ -11669,6 +11860,9 @@ if ($EnableParallel) {
 }
 
 # Begin file processing
+$singleFileProgressStart = $null
+$singleFileProgressActivity = $null
+$singleFileProgressName = $null
 try {
     # ========================================================================
     # SINGLE FILE MODE
@@ -11676,6 +11870,9 @@ try {
     # ========================================================================
     if ($InputFile) {
         $fileName = Split-Path $InputFile -Leaf
+        $singleFileProgressStart = Get-Date
+        $singleFileProgressActivity = "Anonymizing File"
+        $singleFileProgressName = $fileName
 
         # Idempotence guard: skip already anonymized files
         if ($fileName -match '^ANONYMIZED_') {
@@ -11699,6 +11896,13 @@ try {
 
         $outputPath = Join-Path $OutputDirectory $outputFileName
 
+        # Phase 1/3: file anonymization warmup
+        Show-ProgressWithETA -Activity $singleFileProgressActivity `
+                             -Current 1 `
+                             -Total 3 `
+                             -StartTime $singleFileProgressStart `
+                             -CurrentFile $singleFileProgressName
+
         # Process based on file type
         switch ($fileType) {
             'users' { Invoke-UsersFileProcessing -FilePath $InputFile -OutputPath $outputPath }
@@ -11715,7 +11919,13 @@ try {
             'enterprisecas' { Invoke-EnterpriseCAsFileProcessing -FilePath $InputFile -OutputPath $outputPath }
             'issuancepolicies' { Invoke-IssuancePoliciesFileProcessing -FilePath $InputFile -OutputPath $outputPath }
             'githound' { Invoke-GitHoundFileProcessing -FilePath $InputFile -OutputPath $outputPath }
-            'azurehound' { Invoke-AzureHoundFileProcessing -FilePath $InputFile -OutputPath $outputPath }
+            'azurehound' {
+                Invoke-AzureHoundFileProcessing `
+                    -FilePath $InputFile `
+                    -OutputPath $outputPath `
+                    -AzurePreflightMode $AzurePreflightMode `
+                    -AzureAllowUnknownKinds:$AzureAllowUnknownKinds
+            }
         }
     }
     else {
@@ -11845,7 +12055,13 @@ try {
                     'enterprisecas' { Invoke-EnterpriseCAsFileProcessing -FilePath $file.FullName -OutputPath $outputPath }
                     'issuancepolicies' { Invoke-IssuancePoliciesFileProcessing -FilePath $file.FullName -OutputPath $outputPath }
                     'githound' { Invoke-GitHoundFileProcessing -FilePath $file.FullName -OutputPath $outputPath }
-                    'azurehound' { Invoke-AzureHoundFileProcessing -FilePath $file.FullName -OutputPath $outputPath }
+                    'azurehound' {
+                        Invoke-AzureHoundFileProcessing `
+                            -FilePath $file.FullName `
+                            -OutputPath $outputPath `
+                            -AzurePreflightMode $AzurePreflightMode `
+                            -AzureAllowUnknownKinds:$AzureAllowUnknownKinds
+                    }
                 }
             }
 
@@ -11861,6 +12077,15 @@ try {
     # CONSISTENCY CHECKS
     # Validate domain mapping consistency and perform reverse lookups
     # ========================================================================
+    if ($singleFileProgressStart) {
+        # Phase 2/3: consistency validation
+        Show-ProgressWithETA -Activity $singleFileProgressActivity `
+                             -Current 2 `
+                             -Total 3 `
+                             -StartTime $singleFileProgressStart `
+                             -CurrentFile "Running consistency checks"
+    }
+
     Write-Host "`n" -NoNewline
     Write-Host "═══════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
     Write-Host "  Running Consistency Checks" -ForegroundColor Cyan
@@ -12216,11 +12441,12 @@ try {
     Write-Host "  ✓ Anonymization Complete!" -ForegroundColor Green
     Write-Host "═══════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
     Write-Host ""
+    $counters = Get-ReportCounters
     Write-Host "📊 Statistics:" -ForegroundColor Yellow
     Write-Host "   Domains mapped: $($script:DomainMapping.Count)" -ForegroundColor White
-    Write-Host "   Users mapped: $($script:UserMapping.Count)" -ForegroundColor White
-    Write-Host "   Groups mapped: $($script:GroupMapping.Count)" -ForegroundColor White
-    Write-Host "   Computers mapped: $($script:ComputerMapping.Count)" -ForegroundColor White
+    Write-Host "   Users mapped: $($counters.Total.Users) (AD: $($counters.AD.Users), Azure: $($counters.Azure.Users))" -ForegroundColor White
+    Write-Host "   Groups mapped: $($counters.Total.Groups) (AD: $($counters.AD.Groups), Azure: $($counters.Azure.Groups))" -ForegroundColor White
+    Write-Host "   Computers mapped: $($counters.Total.Computers) (AD: $($counters.AD.Computers), Azure devices: $($counters.Azure.Computers))" -ForegroundColor White
     Write-Host "   CNs mapped: $($script:CNMapping.Count)" -ForegroundColor White
     Write-Host "   CNs preserved: $($script:PreservedItems.CNs.Count)" -ForegroundColor White
     if ($RandomizeTimestamps) {
@@ -12256,11 +12482,21 @@ try {
     Write-Host ""
 
     # Display comprehensive summary with visual formatting
+    if ($singleFileProgressStart) {
+        # Phase 3/3: final report and output packaging
+        Show-ProgressWithETA -Activity $singleFileProgressActivity `
+                             -Current 3 `
+                             -Total 3 `
+                             -StartTime $singleFileProgressStart `
+                             -CurrentFile "Finalizing outputs"
+        Write-Progress -Activity $singleFileProgressActivity -Completed
+    }
+
     $processingDuration = (Get-Date) - $scriptStartTime
     $summaryStats = @{
-        Users = $script:UserMapping.Count
-        Groups = $script:GroupMapping.Count
-        Computers = $script:ComputerMapping.Count
+        Users = $counters.Total.Users
+        Groups = $counters.Total.Groups
+        Computers = $counters.Total.Computers
         Domains = $script:DomainMapping.Count
         CNs = $script:CNMapping.Count
         CNsPreserved = if ($script:PreservedItems.CNs) { $script:PreservedItems.CNs.Count } else { 0 }
